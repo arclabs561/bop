@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+# Hookwise - Pre-commit checks (orchestrates code-quality and doc-bloat)
+HOOKWISE_HOOK="/Users/arc/Documents/dev/bop/node_modules/@arclabs561/hookwise/src/hooks/pre-commit.mjs"
+if [ -f "$HOOKWISE_HOOK" ]; then
+  node "$HOOKWISE_HOOK" || exit 1
+else
+  # Fallback: try relative path
+  node "$(dirname -- "$0")/../../node_modules/@arclabs561/hookwise/src/hooks/pre-commit.mjs" || exit 1
+fi

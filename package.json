@@ -1,0 +1,16 @@
+{
+  "name": "bop",
+  "version": "0.1.0",
+  "description": "Knowledge Structure Research Agent",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prepare": "husky || true"
+  },
+  "devDependencies": {
+    "@arclabs561/hookwise": "file:../hookwise",
+    "@arclabs561/llm-utils": "^0.1.0",
+    "husky": "^9.1.7"
+  }
+}
+
