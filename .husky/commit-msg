@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
 # Hookwise - Commit message validation
+# Load environment variables from .env if it exists
+if [ -f .env ]; then
+  export $(grep -v '^#' .env | grep -v '^$' | xargs)
+fi
+
 HOOKWISE_HOOK="/Users/arc/Documents/dev/bop/node_modules/@arclabs561/hookwise/src/hooks/commit-msg.mjs"
 if [ -f "$HOOKWISE_HOOK" ]; then
   node "$HOOKWISE_HOOK" "$1"
