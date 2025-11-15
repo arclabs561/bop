@@ -1,0 +1,64 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist
+build
+.venv
+venv
+env
+
+# Testing
+.pytest_cache
+.coverage
+htmlcov
+*.log
+e2e_constraints_trace.log
+
+# Documentation
+*.md
+!README.md
+docs/
+tests/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules
+package-lock.json
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+.DS_Store
+
+# Evaluation outputs
+eval_outputs/
+semantic_eval_outputs/
+sessions/
+quality_history.json
+adaptive_learning.json
+
+# Scripts (keep tailscale-start.sh, exclude others)
+scripts/*
+!scripts/tailscale-start.sh
+

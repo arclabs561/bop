@@ -1,8 +1,28 @@
 #!/usr/bin/env sh
 # Hookwise - Commit message validation
-# Load environment variables from .env if it exists
-if [ -f .env ]; then
-  export $(grep -v '^#' .env | grep -v '^$' | xargs)
+# Load environment variables from .env if it exists (for LLM API keys)
+
+# Find repo root (handle subdirectories)
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+ENV_FILE="$REPO_ROOT/.env"
+
+# Load .env file safely (handles quoted values, comments, empty lines)
+if [ -f "$ENV_FILE" ]; then
+  # Use set -a to auto-export, then source with proper handling
+  set -a
+  # Load .env, handling comments and empty lines
+  . "$ENV_FILE" 2>/dev/null || {
+    # Fallback: manual parsing for shells that don't support . command
+    while IFS= read -r line || [ -n "$line" ]; do
+      # Skip comments and empty lines
+      case "$line" in
+        \#*|'') continue ;;
+      esac
+      # Export variable (handles KEY=value and KEY="value")
+      export "$line" 2>/dev/null || true
+    done < "$ENV_FILE"
+  }
+  set +a
 fi
 
 HOOKWISE_HOOK="/Users/arc/Documents/dev/bop/node_modules/@arclabs561/hookwise/src/hooks/commit-msg.mjs"

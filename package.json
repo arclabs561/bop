@@ -10,6 +10,8 @@
   "devDependencies": {
     "@arclabs561/hookwise": "file:../hookwise",
     "@arclabs561/llm-utils": "^0.1.0",
+    "@arclabs561/ai-visual-test": "file:../ai-visual-test",
+    "@playwright/test": "^1.48.0",
     "husky": "^9.1.7"
   }
 }

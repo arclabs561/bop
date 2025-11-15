@@ -43,16 +43,24 @@ Examples:
 
 ### Testing Hooks
 
+**Hookwise now auto-loads `.env`** (built into hookwise):
+
 ```bash
-# Test commit message validation
+# Auto-loads .env automatically - no wrapper needed
 npx hookwise test-commit "feat: your message"
-
-# Test documentation bloat detection
 npx hookwise test-docs
-
-# Run all checks (adhoc)
 npx hookwise garden
 ```
+
+**Or use justfile commands**:
+
+```bash
+just hook-test-commit "feat: your message"
+just hook-test-docs
+just hook-garden
+```
+
+**Note**: Both git hooks and CLI commands automatically load `.env` from repo root.
 
 ### Configuration
 
@@ -75,13 +83,31 @@ Hooks are configured in `.hookwise.config.mjs`. See `HOOKWISE_DEV_EXPERIENCE_CRI
 2. **Research Tools**: Extend `research.py` to integrate new MCP tools
 3. **Evaluation Metrics**: Add new evaluation methods to `eval.py`
 4. **Constraint-Based Tool Selection**: Extend `constraints.py` to add new tool constraints or optimization objectives
+5. **Display Helpers**: Add new formatting functions to `display_helpers.py` for knowledge display
+6. **Trust Metrics**: Extend `ContextTopology` in `context_topology.py` for new trust/uncertainty metrics
 
 ## Testing
 
 All new features should include tests in `tests/`. Run tests with:
 
 ```bash
+# Run all tests
 uv run pytest tests/ -v
+
+# Run specific test suites
+uv run pytest tests/test_constraints*.py -v  # Constraint solver tests
+uv run pytest tests/test_orchestrator*.py -v  # Orchestrator tests
+uv run pytest tests/test_eval*.py -v  # Evaluation tests
+
+# Run E2E tests
+uv run pytest tests/test_constraints_e2e.py -v  # Constraint solver E2E
+uv run pytest tests/test_integration_full_workflow.py -v  # Full workflow E2E
+
+# Run security/red team tests
+uv run pytest tests/test_security_redteam.py -v  # Security tests
+./scripts/redteam_quick.sh  # Quick security check
+./scripts/redteam_test.sh  # Basic security tests
+./scripts/redteam_comprehensive.sh  # Comprehensive security tests
 ```
 
 ## Code Style

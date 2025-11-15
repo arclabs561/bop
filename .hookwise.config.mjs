@@ -16,36 +16,84 @@ export default {
     agentic: true,    // Enable agentic loop with tool calling for thorough analysis
   },
   documentation: {
-    enabled: false,  // Temporarily disabled to test agentic commit analysis
+    enabled: true,  // Re-enabled - helps steer toward clean documentation structure
     maxRootFiles: 25,  // BOP is a research project with many docs - allow more
     archivePatterns: [
+      // Implementation/Summary patterns
       'FINAL_',
       'COMPLETE_',
+      'IMPLEMENTATION_',
+      'VALIDATION_',
+      'INTEGRATION_',
       'SESSION_',
+      '_SUMMARY.md',
+      '_STATUS.md',
+      '_REPORT.md',
+      '_NOTES.md',
+      '_RESULTS.md',
+      // Analysis patterns
       'ANALYSIS_',
       'CRITICAL_',
       'DEEP_',
-      'EXECUTION_',
-      'IMPLEMENTATION_',
-      'VALIDATION_',
       'CRITIQUE_',
-      'INTEGRATION_',
-      'TRUST_',
-      '_REVIEW.md',
+      'AMBIENT_',
+      'EXECUTION_',
       '_ANALYSIS.md',
+      '_REVIEW.md',
+      '_CRITIQUE.md',
+      '_DESIGN.md',
+      '_RESEARCH_SYNTHESIS.md',
+      // Planning/Recommendation patterns
       '_PLAN.md',
-      '_SUMMARY.md',
       '_RECOMMENDATIONS.md',
       '_IMPROVEMENTS.md',
-      '_STATUS.md',
-      '_REPORT.md',
-      '_DESIGN.md',
+      '_NEXT_STEPS.md',
+      '_ENHANCEMENT.md',
+      // Theory/Research patterns
+      'TRUST_',
+      'THEORY_',
       '_THEORY.md',
-      '_RESEARCH_SYNTHESIS.md',
+      '_RESEARCH.md',
+      // Deployment/Setup patterns
+      '_DEPLOY.md',
+      '_SETUP.md',
+      '_COMMANDS.md',
+      '_DEPLOYMENT.md',
+      // External analysis (should be in docs/archive/external-analysis/)
+      'KUMORFM_',
+      'DOCUMENTATION_HARMONIZATION',
+    ],
+    // Archive directories to check for learning patterns
+    archiveDirs: [
+      'docs/archive/',
+      'docs/archive/external-analysis/',
+      'docs/archive/analysis-docs/',
     ],
   },
   codeQuality: {
     enabled: false,  // Disable JS-specific checks (console.log, etc.)
+    // Python quality checks are handled via config/rules/python-quality.mjs
+    // and can be enabled in .hookwise.hooks.mjs if needed
+  },
+  // Additional BOP-specific settings
+  bop: {
+    // Research project allowances
+    allowResearchDocs: true,  // Allow more documentation for research projects
+    // Commit message enhancements
+    requireScopeForTypes: ['feat', 'fix', 'refactor'],  // Require scope for major changes
+    // Documentation organization
+    coreDocs: [
+      'README.md',
+      'ARCHITECTURE.md',
+      'AGENTS.md',
+      'CONTRIBUTING.md',
+      'CODE_STYLE.md',
+    ],
+    userGuides: [
+      'KNOWLEDGE_DISPLAY_GUIDE.md',
+      'TRUST_AND_UNCERTAINTY_USER_GUIDE.md',
+      'MIGRATION_GUIDE.md',
+    ],
   },
 };
 

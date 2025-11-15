@@ -1,9 +1,66 @@
 #!/usr/bin/env sh
+# Pre-commit guard: Fast checks before committing
 # Hookwise - Pre-commit checks (orchestrates code-quality and doc-bloat)
+
+set -e
+
+# Load .env file for LLM API keys (if needed by hookwise)
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+ENV_FILE="$REPO_ROOT/.env"
+if [ -f "$ENV_FILE" ]; then
+  set -a
+  . "$ENV_FILE" 2>/dev/null || {
+    while IFS= read -r line || [ -n "$line" ]; do
+      case "$line" in
+        \#*|'') continue ;;
+      esac
+      export "$line" 2>/dev/null || true
+    done < "$ENV_FILE"
+  }
+  set +a
+fi
+
+# Validate hookwise configuration (steering toward correct setup)
+if command -v node &> /dev/null; then
+  echo "🔍 Validating hookwise configuration..."
+  npx hookwise validate-config 2>/dev/null || {
+    echo "⚠️  Hookwise config validation had issues (non-blocking)"
+  }
+fi
+
+# Run hookwise checks
 HOOKWISE_HOOK="/Users/arc/Documents/dev/bop/node_modules/@arclabs561/hookwise/src/hooks/pre-commit.mjs"
 if [ -f "$HOOKWISE_HOOK" ]; then
   node "$HOOKWISE_HOOK" || exit 1
 else
   # Fallback: try relative path
   node "$(dirname -- "$0")/../../node_modules/@arclabs561/hookwise/src/hooks/pre-commit.mjs" || exit 1
+fi
+
+# Python-specific quality checks (complements hookwise's JS checks)
+if command -v node &> /dev/null && [ -f "scripts/python_quality_check.mjs" ]; then
+  echo "🐍 Running Python-specific quality checks..."
+  node scripts/python_quality_check.mjs || {
+    echo "❌ Python quality checks failed"
+    exit 1
+  }
+fi
+
+# Fast Python linting (only on staged files) - using Astral tools via uv
+if command -v uv &> /dev/null; then
+  # Get staged Python files
+  STAGED_PY=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$' || true)
+  
+  if [ -n "$STAGED_PY" ]; then
+    echo "📝 Linting staged Python files (ruff via uv)..."
+    echo "$STAGED_PY" | xargs uv run ruff check --fix || {
+      echo "❌ Linting failed. Run 'just lint-fix' to fix issues"
+      exit 1
+    }
+    
+    # Re-stage fixed files
+    echo "$STAGED_PY" | xargs git add 2>/dev/null || true
+  fi
+else
+  echo "⚠️  uv (Astral) not found, skipping Python linting"
 fi
