@@ -63,7 +63,11 @@ class CacheEntry:
             return False
         try:
             expires = datetime.fromisoformat(self.expires_at)
-            return datetime.now(expires.tzinfo) > expires
+            now = datetime.utcnow()
+            # Handle timezone-aware vs naive datetimes
+            if expires.tzinfo is not None:
+                now = now.replace(tzinfo=expires.tzinfo)
+            return now > expires
         except Exception:
             return False
     
