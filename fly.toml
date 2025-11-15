@@ -42,9 +42,7 @@ primary_region = 'iad'
   memory_mb = 512
 
 # Persistent storage for caching (tool results, LLM responses, sessions)
-# Create volume: flyctl volumes create bop_cache --size 1 --region iad -a bop-wispy-voice-3017
-# Attach volume: flyctl volumes attach <volume_id> <machine_id> -a bop-wispy-voice-3017
-# Note: Cache automatically uses /data if volume mounted, ./cache otherwise
-# [[mounts]]
-#   source = "bop_cache"
-#   destination = "/data"
+# Volume: bop_cache (1GB) created in region iad
+[[mounts]]
+  source = "bop_cache"
+  destination = "/data"
