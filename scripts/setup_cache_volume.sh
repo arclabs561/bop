@@ -31,7 +31,8 @@ else
     flyctl volumes create "$VOLUME_NAME" \
         --size "$VOLUME_SIZE" \
         --region "$REGION" \
-        -a "$APP_NAME"
+        -a "$APP_NAME" \
+        --yes
     
     echo ""
     echo "✅ Volume created successfully!"
