@@ -97,6 +97,14 @@ test-security-all:
     TEST_DEPLOYMENT=1 uv run pytest tests/test_security_flyio.py -v
     TEST_DEPLOYMENT=1 uv run pytest tests/test_persistence_flyio.py -v
 
+# Run cache tests
+test-cache:
+    uv run pytest tests/test_cache.py -v
+
+# Setup cache volume (Fly.io)
+setup-cache-volume:
+    ./scripts/setup_cache_volume.sh
+
 # Run tests by category
 test-category CATEGORY:
     uv run python tests/run_all_tests.py --category {{CATEGORY}}
