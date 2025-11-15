@@ -28,7 +28,7 @@ echo "🗑️  Releasing public IPv6 addresses..."
 PUBLIC_IPV6=$(flyctl ips list -a "$APP_NAME" | grep "v6" | grep -v "private" | awk '{print $2}' | head -1)
 if [ -n "$PUBLIC_IPV6" ] && [ "$PUBLIC_IPV6" != "IP" ]; then
     echo "   Releasing: $PUBLIC_IPV6"
-    flyctl ips release6 "$PUBLIC_IPV6" -a "$APP_NAME" || echo "   (Already released or not found)"
+    flyctl ips release "$PUBLIC_IPV6" -a "$APP_NAME" || echo "   (Already released or not found)"
 else
     echo "   No public IPv6 found"
 fi
