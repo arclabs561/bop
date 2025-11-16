@@ -222,6 +222,8 @@ class ChatRequest(BaseModel):
     schema_name: Optional[str] = None  # Renamed to avoid shadowing BaseModel.schema
     research: bool = False
     use_constraints: Optional[bool] = None  # Override default (but don't modify global state)
+    enable_skills: bool = False  # Enable Skills pattern for dynamic context loading
+    enable_system_reminders: bool = False  # Enable system reminders to keep agent on track
     
     @field_validator('message')
     @classmethod
@@ -330,6 +332,21 @@ async def chat(request: ChatRequest):
         original_use_constraints = orchestrator.use_constraints
         orchestrator.use_constraints = request.use_constraints and PYSAT_AVAILABLE
     
+    # Handle per-request feature flags (skills, reminders)
+    # These override global settings for this request only
+    original_enable_skills = None
+    original_enable_reminders = None
+    if hasattr(request_agent, 'enable_skills'):
+        original_enable_skills = request_agent.enable_skills
+        original_enable_reminders = request_agent.enable_system_reminders
+        # Override with request-specific settings
+        request_agent.enable_skills = request.enable_skills
+        request_agent.enable_system_reminders = request.enable_system_reminders
+        # Update skills_manager if needed
+        if request.enable_skills and not request_agent.skills_manager:
+            from .skills import SkillsManager
+            request_agent.skills_manager = SkillsManager()
+    
     try:
         # Add timeout protection
         response = await asyncio.wait_for(
@@ -353,6 +370,10 @@ async def chat(request: ChatRequest):
         # Restore original constraint solver setting
         if original_use_constraints is not None and orchestrator:
             orchestrator.use_constraints = original_use_constraints
+        # Restore original feature flags
+        if original_enable_skills is not None and hasattr(request_agent, 'enable_skills'):
+            request_agent.enable_skills = original_enable_skills
+            request_agent.enable_system_reminders = original_enable_reminders
     
     # Extract metrics
     tools_called = 0

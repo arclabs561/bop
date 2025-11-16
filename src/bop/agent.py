@@ -256,23 +256,41 @@ class KnowledgeAgent:
         # Generate response using LLM
         # This creates the actual response text that users read
         # It's based on message + context (which includes research.final_synthesis if available)
-        # META: Include experience context in message if available (for response generation)
+        # 
+        # CONTEXT INJECTION ORDER (highest to lowest priority):
+        # 1. System reminders (keep agent on track - highest priority)
+        # 2. Skills context (domain guidance)
+        # 3. Experience context (learned patterns)
+        # 4. User message (base query)
+        #
+        # This ordering ensures system instructions are most prominent, followed by
+        # domain guidance, then learned patterns, then the actual query.
         message_with_context = message
+        
+        # Add experience context (learned patterns) - lowest priority context
         if experience_context and not use_research:
             # Only inject if research wasn't used (research already got it)
             # If research was used, experience context was already in research_query
-            message_with_context = experience_context + "\n\n" + message
+            message_with_context = experience_context + "\n\n" + message_with_context
         
-        # Add skills context if available
+        # Add skills context (domain guidance) - medium priority
         if skills_context:
             message_with_context = skills_context + "\n\n" + message_with_context
+        
+        # System reminders (keep agent on track) - highest priority, prepended last
+        # so they appear first in the final prompt
+        if system_reminders:
+            reminders_text = "\n\n".join([
+                f"<system-reminder>\n{r}\n</system-reminder>"
+                for r in system_reminders
+            ])
+            message_with_context = reminders_text + "\n\n" + message_with_context
         
         response["response"] = await self._generate_response(
             message_with_context, 
             response,  # This context dict includes research results if available
             schema,
-            expected_length=expected_length,
-            system_reminders=system_reminders
+            expected_length=expected_length
         )
         
         # Store original response text BEFORE source references are added

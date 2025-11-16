@@ -167,6 +167,72 @@ depth allocation:
 - **Implementation**: `AdaptiveQualityManager.estimate_reasoning_depth()`, `should_early_stop()`
 - **Benefits**: 15-25% compute reduction for simple queries, maintained quality for complex
 
+### Context Injection System
+
+BOP implements a **prioritized context injection system** that follows information-theoretic principles to maximize relevance while minimizing attention dilution.
+
+#### Context Injection Priority Order
+
+Context is injected in priority order (highest to lowest):
+
+1. **System Reminders** (highest priority)
+   - Keep agent on track during long sessions
+   - Based on TODO list state and conversation context
+   - Format: `<system-reminder>...</system-reminder>` tags
+   - Purpose: Prevent drift, reinforce key instructions
+
+2. **Skills Context** (domain guidance)
+   - Dynamic context loading via Skills pattern
+   - Markdown files in `skills/` directory
+   - Auto-discovered and relevance-matched to queries
+   - Purpose: Provide domain-specific guidance without permanent context overhead
+
+3. **Experience Context** (learned patterns)
+   - Meta-learning insights from previous tasks
+   - Injected before research (helps with tool selection)
+   - Injected before response generation (helps with synthesis)
+   - Purpose: Leverage learned patterns for better performance
+
+4. **User Message** (base query)
+   - Original user query
+   - Lowest priority (appears last in prompt)
+
+#### Implementation
+
+**Skills Pattern:**
+- Opt-in feature (`enable_skills=False` by default)
+- Skills loaded on-demand based on query relevance
+- Skills are markdown files with metadata (purpose, tags, usage)
+- Automatically discovered from `skills/` directory
+- Relevance matching via keyword/tag/content analysis
+
+**System Reminders:**
+- Opt-in feature (`enable_system_reminders=False` by default)
+- Generated based on TODO list state
+- Injected as structured XML tags for LLM parsing
+- Reinforces key instructions (scope, focus, etc.)
+
+**Experience Context:**
+- Always enabled when `meta_learner` is available
+- Injected before research (helps tool selection)
+- Injected before response (helps synthesis)
+- Tracked in meta-learning for reflection
+
+#### Integration Points
+
+- **CLI**: `--skills/--no-skills`, `--reminders/--no-reminders` flags
+- **Server API**: `enable_skills`, `enable_system_reminders` in `ChatRequest`
+- **Environment**: `BOP_ENABLE_SKILLS`, `BOP_ENABLE_SYSTEM_REMINDERS`
+- **Meta-Learning**: Skills usage tracked for reflection
+- **Context Topology**: Skills can be considered as context nodes (optional)
+
+#### Benefits
+
+- **Reduced Context Bloat**: Skills loaded on-demand, not permanently
+- **Better Focus**: System reminders keep agent on track
+- **Learned Patterns**: Experience context improves over time
+- **Flexibility**: All features opt-in, backward compatible
+
 ### Logical Depth Computation
 
 BOP estimates **Bennett's logical depth** for knowledge structures.

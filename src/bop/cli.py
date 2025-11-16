@@ -47,9 +47,16 @@ def chat(
     quality_feedback: bool = typer.Option(True, "--quality-feedback/--no-quality-feedback", help="Enable quality feedback loop"),
     use_constraints: bool = typer.Option(None, "--constraints/--no-constraints", help="Use constraint solver for tool selection (default: from BOP_USE_CONSTRAINTS env)"),
     show_details: bool = typer.Option(False, "--show-details", help="Show full response instead of summary (progressive disclosure)"),
+    enable_skills: bool = typer.Option(False, "--skills/--no-skills", help="Enable Skills pattern for dynamic context loading"),
+    enable_reminders: bool = typer.Option(False, "--reminders/--no-reminders", help="Enable system reminders to keep agent on track"),
 ) -> None:
     """Start interactive chat session."""
-    agent = KnowledgeAgent(content_dir=content_dir, enable_quality_feedback=quality_feedback)
+    agent = KnowledgeAgent(
+        content_dir=content_dir,
+        enable_quality_feedback=quality_feedback,
+        enable_skills=enable_skills,
+        enable_system_reminders=enable_reminders,
+    )
     
     # Override constraint solver setting if specified
     if use_constraints is not None:
