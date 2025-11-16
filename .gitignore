@@ -1,5 +1,6 @@
 # Python
 __pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 *.so
@@ -19,6 +20,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.pyc
 
 # Virtual environments
 venv/
@@ -56,6 +58,14 @@ results/
 evaluations/
 eval_outputs/
 analysis_output/
+
+# Runtime data
+cache/
+sessions/
+
+# Mutation testing workspace (if used, otherwise can be removed)
+mutants/.pytest_cache/
+mutants/**/__pycache__/
 
 # Node.js
 node_modules/

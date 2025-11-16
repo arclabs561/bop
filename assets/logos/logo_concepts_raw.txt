@@ -1,0 +1,124 @@
+Title: The Connected Monogram
+Description: The letters B, O, and P are stylized as nodes in a simple, elegant network. A single line connects them, representing the flow of reasoning and structural linkage between concepts.
+Elements: Letters B, O, P, connecting lines, nodes
+Style: Minimalist
+
+Title: The Unfolding Kno-Cube
+Description: A geometric cube is shown in mid-unfold, revealing an intricate network diagram on its inner faces. This visualizes the process of revealing the hidden structure of knowledge.
+Elements: Unfolding cube, geometric planes, network pattern, perspective lines
+Style: Geometric
+
+Title: The Clique Constellation
+Description: A cluster of interconnected triangles (a clique complex) forms a larger, star-like or crystalline shape. It represents the dense, foundational structures within a larger knowledge graph.
+Elements: Interlocking triangles, nodes, network graph, facets
+Style: Technical
+
+Title: The Structural Lens
+Description: A magnifying glass focuses on a set of abstract points, revealing the causal arrows and connections between them that were previously invisible. This signifies the agent's ability to uncover underlying relationships.
+Elements: Magnifying glass, nodes, directed arrows, focal point
+Style: Symbolic
+
+Title: The Topological Torus
+Description: A donut shape (torus) has a complex network of lines wrapping around its surface, highlighting a non-trivial structure with a "hole" (Betti number). It represents the shape of complex information spaces.
+Elements: Torus shape, surface network pattern, continuous lines, central void
+Style: Abstract
+
+Title: The Causal Arrow
+Description: A bold, clean arrow forms the primary shape, but its shaft is composed of a simplified directed acyclic graph (DAG). It directly visualizes the theme of causal inference and directed reasoning.
+Elements: Arrow silhouette, nodes, branching paths, directed lines
+Style: Bold
+
+Title: The B-Graph Nexus
+Description: The letter 'B' is formed from two distinct but connected clusters of nodes and edges. This represents two related concepts or attractor basins linked within a single system.
+Elements: Letter B, network clusters, nodes, edges
+Style: Logotype
+
+Title: The D-Separation Path
+Description: A simple path of arrows flows from one point to another, but a central node has a clear barrier or break line through it. This is a direct visual representation of a d-separated variable blocking a causal path.
+Elements: Directed arrows, nodes, barrier line, broken connection
+Style: Diagrammatic
+
+Title: The Attractor Basin
+Description: An abstract icon showing lines spiraling inward towards a central point, like a topographical map of a valley or a whirlpool. It visualizes the concept of an attractor pulling a system towards a stable state.
+Elements: Concentric spirals, gradient, central point, flowing lines
+Style: Dynamic
+
+Title: The Information Manifold
+Description: A flat grid is warped and curved into a 3D surface, representing how information geometry describes knowledge as a curved space. The letters BOP could be subtly placed as coordinates on this surface.
+Elements: Curved grid, surface plane, perspective lines, coordinates
+Style: Mathematical
+
+Title: The Edge of Chaos
+Description: A perfect square or circle is cleanly divided. One half contains an ordered, symmetrical pattern, while the other dissolves into a chaotic, organic network, representing the creative space between order and randomness.
+Elements: Geometric grid, chaotic lines, distinct boundary, dualism
+Style: Conceptual
+
+Title: The Reasoning Schema
+Description: The letters B, O, and P are presented as stacked, interlocking blocks, like an architectural structure or a flowchart. This evokes the idea of structured, hierarchical reasoning schemas.
+Elements: Block letters, architectural lines, interlocking shapes, 3D effect
+Style: Architectural
+
+Title: The Origami Idea
+Description: A stylized bird or abstract shape made of folded paper, with the fold lines suggesting a complex graph or diagram. It represents how a simple foundation can be structured into a complex, functional "shape of an idea."
+Elements: Origami shape, fold lines, paper texture, geometric pattern
+Style: Elegant
+
+Title: The Neural Abstract
+Description: A silhouette of a brain or a circle is filled with a network of clean, geometric lines and nodes, rather than organic neurons. It bridges the gap between biological intelligence and structured computational knowledge.
+Elements: Brain silhouette, geometric nodes, straight connection lines
+Style: Neuro-tech
+
+Title: The Knowledge Labyrinth
+Description: A top-down view of a circular or square labyrinth where the path subtly spells out BOP. This represents the journey of research and deep exploration through complex knowledge structures.
+Elements: Labyrinth walls, clear path, integrated letters
+Style: Intricate
+
+Title: The Polyhedral Web
+Description: A wireframe of a complex polyhedron (like an icosahedron or dodecahedron) serves as the logo. Each vertex is a node, representing a highly structured, multi-dimensional knowledge graph.
+Elements: Wireframe polyhedron, vertices as nodes, connecting edges
+Style: Wireframe
+
+Title: The Lazy Evaluation Path
+Description: A dotted or faded line traces the shape of the letters BOP. Only the very beginning of the 'B' is solid and glowing, representing a process that is only computed as needed.
+Elements: Dotted line path, glowing segment, letters B, O, P outline
+Style: Modern
+
+Title: The Emergent Form
+Description: A chaotic cloud of points and small lines begins to self-organize, with structure and connections emerging from the randomness. The emergent structure subtly hints at the shape of a 'B'.
+Elements: Cloud of points, emerging lines, partial structure, chaotic texture
+Style: Emergent
+
+Title: The Betti Number Void
+Description: An abstract, solid shape contains a distinct, clean hole or void within it. A simple network pattern covers the solid part, emphasizing the topological significance of the void in the knowledge structure.
+Elements: Abstract solid shape, central void, surface pattern
+Style: Typological
+
+Title: The Fisher Information Lens
+Description: A stylized eye where the iris is not a color but a contoured, topographical map. This represents the Fisher Information matrix as a way of "seeing" the shape and curvature of a statistical model.
+Elements: Stylized eye, iris as contour map, pupil, topographical lines
+Style: Scientific
+
+Title: The Knowledge Compass
+Description: A compass rose, but instead of cardinal directions, the points are major nodes in a network diagram. The needle is a causal arrow, signifying that the agent provides direction in research exploration.
+Elements: Compass rose, network pattern, central arrow, nodes
+Style: Navigational
+
+Title: The Simplicial Shard
+Description: A sharp, crystalline fragment composed entirely of 2D and 3D triangles (simplices). This provides a hard, technical look that directly references the mathematical foundation of clique complexes.
+Elements: Interlocking triangles, 3D facets, crystalline form, sharp edges
+Style: Crystalline
+
+Title: The Structured Spark
+Description: A classic lightbulb icon, symbolizing an idea, where the filament is replaced by an intricate and orderly network graph. It literally depicts the "structure" inside the "shape of an idea."
+Elements: Lightbulb outline, filament as network graph, nodes, clean lines
+Style: Illustrative
+
+Title: The Causal Dominoes
+Description: Three dominoes, labeled B, O, and P, are arranged in a chain reaction. The first one is falling, illustrating a clear, sequential causal inference process.
+Elements: Three dominoes, falling motion, letters B, O, P
+Style: Playful
+
+Title: The Research Beacon
+Description: A stylized lighthouse or beacon, where the light beam is not a solid cone but is made of radiating lines of a network diagram. It symbolizes the agent as a guiding light in the vast sea of information.
+Elements: Lighthouse/beacon tower, radiating network lines, light beam
+Style: Emblematic
