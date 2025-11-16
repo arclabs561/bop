@@ -143,7 +143,21 @@ Research Effectiveness:
 2. **Query-Specific Strategies**: Different approaches for different query types
 3. **Data-Driven Decisions**: All adaptations based on actual performance data
 4. **Continuous Improvement**: Gets better with each evaluation
-5. **Transparent Learning**: Can view what the system has learned
+
+## Monitoring Adaptive Learning
+
+To see if adaptive learning is helping, check the performance insights:
+
+```python
+insights = agent.adaptive_manager.get_performance_insights()
+# Shows:
+# - Query type performance (mean scores by type)
+# - Schema recommendations (best schema per query type)
+# - Research effectiveness (improvement when research enabled)
+# - Optimal response lengths (learned targets)
+```
+
+Or use the CLI: `bop quality --adaptive` to see formatted insights.
 
 ## Integration Status
 

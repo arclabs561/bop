@@ -36,19 +36,28 @@ if [ -n "$TAILSCALE_AUTHKEY" ]; then
     # Wait for tailscaled to be ready
     sleep 3
     
-    # Authenticate Tailscale
+    # Authenticate Tailscale (non-blocking - don't wait for approval)
     echo "🔑 Authenticating Tailscale..."
     tailscale up \
         --authkey="$TAILSCALE_AUTHKEY" \
         --hostname="${FLY_APP_NAME:-bop-wispy-voice-3017}" \
         --accept-routes \
         --accept-dns=false \
-        --advertise-exit-node=false
+        --advertise-exit-node=false &
+    TAILSCALE_UP_PID=$!
     
-    # Get and display Tailscale IP
+    # Wait a moment for Tailscale to start connecting
+    sleep 2
+    
+    # Get and display Tailscale IP (may not be available yet if not approved)
     TAILSCALE_IP=$(tailscale ip -4 2>/dev/null || echo "not available")
-    echo "✅ Tailscale connected! IP: $TAILSCALE_IP"
-    echo "📱 Access from Tailscale devices: http://$TAILSCALE_IP:${PORT:-8080}"
+    if [ "$TAILSCALE_IP" != "not available" ]; then
+        echo "✅ Tailscale connected! IP: $TAILSCALE_IP"
+        echo "📱 Access from Tailscale devices: http://$TAILSCALE_IP:${PORT:-8080}"
+    else
+        echo "⏳ Tailscale connecting (waiting for approval)..."
+        echo "💡 Approve at: https://login.tailscale.com/admin/machines"
+    fi
 else
     echo "⚠️  TAILSCALE_AUTHKEY not set, skipping Tailscale setup"
     echo "💡 Set it with: flyctl secrets set TAILSCALE_AUTHKEY=tskey-... -a bop-wispy-voice-3017"
@@ -56,5 +65,10 @@ fi
 
 # Start the BOP server
 echo "🌐 Starting BOP web server on port ${PORT:-8080}..."
-exec uv run python -m uvicorn bop.server:app --host 0.0.0.0 --port ${PORT:-8080}
+echo "📦 Python path: $PYTHONPATH"
+echo "📦 Working directory: $(pwd)"
+echo "📦 Checking if bop.server module exists..."
+python3 -c "import sys; sys.path.insert(0, '/app/src'); from bop.server import app; print('✅ Server module loads successfully')" || echo "⚠️  Server module check failed"
+echo "🚀 Launching Uvicorn..."
+exec uv run python -m uvicorn bop.server:app --host 0.0.0.0 --port ${PORT:-8080} --log-level info
 

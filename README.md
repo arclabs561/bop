@@ -35,8 +35,11 @@ This project explores the "shape of ideas" across philosophical traditions and i
 
 - **Deep research capabilities** via MCP tools (Perplexity, Firecrawl, etc.)
 - **Structured reasoning schemas** for improved LLM reasoning
+- **Skills pattern** for dynamic context loading (domain-specific guidance)
+- **System reminders** to keep agent on track during long sessions
 - **Evaluation framework** for reasoning quality assessment
 - **CLI/chat interface** for interactive exploration
+- **Meta-analysis capabilities** - BOP can analyze itself using its own tools
 
 ## Automated Analysis
 
@@ -93,11 +96,17 @@ Once in the chat, try:
 > What is the shape of ideas?
 ```
 
+Or for a simpler test:
+```
+> What is d-separation?
+```
+
 BOP will:
-1. Conduct research across multiple sources
+1. Conduct research across multiple sources (if `--research` flag used)
 2. Synthesize findings with trust metrics
 3. Show source credibility and agreement clusters
 4. Provide progressive disclosure (summary → detailed → evidence)
+5. Handle failures gracefully (continues even if research tools fail)
 
 ### Choose Your Path
 
@@ -299,7 +308,25 @@ See `KNOWLEDGE_DISPLAY_GUIDE.md` for a guide to trust metrics, source credibilit
 
 ## Trust and Uncertainty
 
-See `TRUST_AND_UNCERTAINTY_USER_GUIDE.md` for interpreting trust scores, calibration error, and source credibility.
+See `docs/guides/TRUST_AND_UNCERTAINTY_USER_GUIDE.md` for interpreting trust scores, calibration error, and source credibility.
+
+## Developer Questions
+
+See `docs/guides/DEVELOPER_QUESTIONS_ANSWERED.md` for answers to common questions about debugging, adaptive learning metrics, constraint solver usage, and trust calibration.
+
+## Capabilities Exploration
+
+See `docs/guides/CAPABILITIES_EXPLORATION.md` for a comprehensive guide to how BOP works, what tools it has, evaluation frameworks, and advanced capabilities.
+
+## Web API Features
+
+See `docs/guides/WEB_API_FEATURES.md` for session management, adhoc tool registration, and web-based MCP tool calling via FastAPI.
+
+## Meta Capabilities
+
+See `docs/guides/META_CAPABILITIES.md` for self-analysis, dynamic schema generation, meta-tools, and recursive tool orchestration. BOP can now analyze itself, generate new reasoning schemas, and create tools that manage other tools.
+
+**Research-Informed**: See `docs/guides/META_CAPABILITIES_REFINED.md` for priorities based on latest MetaAgent, Bayesian Meta-Learning, and self-improving AI research (self-reflection, tool meta-learning, dynamic context engineering).
 
 ## Testing
 

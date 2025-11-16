@@ -21,6 +21,7 @@ from .eval import EvaluationFramework
 from .semantic_eval import SemanticEvaluator
 from .quality_feedback import QualityFeedbackLoop
 from .display_helpers import create_trust_table, format_source_credibility, format_clique_clusters
+from .ingestion import BOPIngestion
 from .visualizations import (
     create_source_matrix_heatmap,
     create_trust_metrics_chart,
@@ -890,6 +891,56 @@ def serve(
     
     from .server import app
     uvicorn.run(app, host=host, port=port, log_level="info")
+
+
+@app.command()
+def ingest(
+    archive_path: Path = typer.Argument(..., help="Path to chat archive file or directory"),
+    output_dir: Optional[Path] = typer.Option(None, "--output", "-o", help="Output directory (default: ./content/)"),
+    format: Optional[str] = typer.Option(None, "--format", "-f", help="Force format (json, markdown, text)"),
+    extract_metadata: bool = typer.Option(True, "--metadata/--no-metadata", help="Extract metadata"),
+) -> None:
+    """Ingest chat archives using HOP and prepare for BOP queries."""
+    console.print(Panel.fit("[bold blue]BOP: Ingesting Chat Archives[/bold blue]", border_style="blue"))
+    
+    ingestion = BOPIngestion()
+    
+    if not ingestion.is_available():
+        console.print("[red]Error: HOP is not available[/red]")
+        console.print("[yellow]Install HOP with: pip install hop[/yellow]")
+        console.print("[dim]Or use standalone HOP CLI: hop ingest <path>[/dim]")
+        raise typer.Exit(1)
+    
+    # Default output directory
+    if output_dir is None:
+        output_dir = Path("./content/")
+    
+    try:
+        result = ingestion.ingest_archives(
+            archive_path=archive_path,
+            output_dir=output_dir,
+            extract_metadata=extract_metadata,
+            format=format,
+        )
+        
+        console.print(f"[green]✓ Processed {result['files_processed']} files[/green]")
+        console.print(f"[green]✓ Extracted {result['messages_extracted']} messages[/green]")
+        
+        if result.get("metadata"):
+            meta = result["metadata"]
+            if meta.get("participants"):
+                console.print(f"[dim]Participants: {', '.join(meta['participants'])}[/dim]")
+            if meta.get("date_range"):
+                dr = meta["date_range"]
+                console.print(f"[dim]Date Range: {dr.get('earliest')} to {dr.get('latest')}[/dim]")
+        
+        console.print(f"\n[bold green]Content ready for BOP![/bold green]")
+        console.print(f"[dim]Query with: bop chat --content-dir {output_dir}[/dim]")
+        
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        logger.exception("Ingestion failed")
+        raise typer.Exit(1)
 
 
 if __name__ == "__main__":

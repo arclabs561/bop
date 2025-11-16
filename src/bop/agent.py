@@ -14,6 +14,8 @@ from .adaptive_quality import AdaptiveQualityManager
 from .provenance import build_provenance_map, extract_claims_from_response, match_claim_to_sources
 from .knowledge_tracking import KnowledgeTracker
 from .query_refinement import refine_query_from_provenance
+from .meta_learning import MetaLearner
+from .skills import SkillsManager
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +28,9 @@ class KnowledgeAgent:
         content_dir: Optional[Path] = None,
         llm_service: Optional[LLMService] = None,
         enable_quality_feedback: bool = True,
+        enable_skills: bool = False,
+        skills_dir: Optional[Path] = None,
+        enable_system_reminders: bool = False,
     ):
         """
         Initialize the knowledge agent.
@@ -34,6 +39,9 @@ class KnowledgeAgent:
             content_dir: Directory containing knowledge base content
             llm_service: Optional LLM service (will create one if not provided)
             enable_quality_feedback: Enable quality feedback loop for continuous improvement
+            enable_skills: Enable Skills pattern for dynamic context loading
+            skills_dir: Directory containing skill files (default: skills/)
+            enable_system_reminders: Enable system reminders to keep agent on track
         """
         self.research_agent = ResearchAgent()
         self.llm_service = llm_service
@@ -74,6 +82,24 @@ class KnowledgeAgent:
             persistence_path=knowledge_path,
             auto_save_interval=10,  # Save every 10 queries
         )
+        
+        # Meta-learning component (self-reflection, tool learning, context engineering)
+        experience_path = None
+        if self.quality_feedback:
+            experience_path = self.quality_feedback.evaluation_history_path.parent / "experiences.json"
+        self.meta_learner = MetaLearner(
+            enable_reflection=True,
+            enable_context_injection=True,
+            storage_path=experience_path,
+        )
+        
+        # Skills system (optional, opt-in)
+        self.enable_skills = enable_skills
+        self.skills_manager = SkillsManager(skills_dir) if enable_skills else None
+        
+        # System reminders (optional, opt-in)
+        self.enable_system_reminders = enable_system_reminders
+        self.todo_list: List[Dict[str, Any]] = []  # Track TODO list for reminders
 
     async def chat(
         self,
@@ -109,6 +135,26 @@ class KnowledgeAgent:
         # Add to conversation history
         self.conversation_history.append({"role": "user", "content": message})
 
+        # Load relevant skills if enabled
+        skills_context = ""
+        if self.enable_skills and self.skills_manager:
+            try:
+                relevant_skills = self.skills_manager.find_relevant_skills(message, limit=2)
+                if relevant_skills:
+                    skills_context = "\n\n".join([
+                        f"## {skill.name}\n{skill.content[:1000]}..."  # Limit each skill to 1000 chars
+                        if len(skill.content) > 1000 else f"## {skill.name}\n{skill.content}"
+                        for skill in relevant_skills
+                    ])
+                    logger.debug(f"Loaded {len(relevant_skills)} relevant skills")
+            except Exception as e:
+                logger.warning(f"Error loading skills: {e}")
+
+        # Generate system reminders if enabled
+        system_reminders = []
+        if self.enable_system_reminders:
+            system_reminders = self._generate_system_reminders(message)
+
         schema = None
         # Use structured schema if specified
         if use_schema:
@@ -126,26 +172,6 @@ class KnowledgeAgent:
                 else:
                     response["structured_reasoning"] = hydrate_schema(schema, message)
 
-        # Conduct research if requested
-        if use_research:
-            try:
-                # Use structured orchestration if schema is provided
-                if use_schema and schema:
-                    research_result = await self.orchestrator.research_with_schema(
-                        message,
-                        schema_name=use_schema,
-                        prior_beliefs=self.prior_beliefs,  # Pass prior beliefs for alignment
-                        adaptive_manager=self.adaptive_manager,  # NEW: Pass adaptive manager for early stopping
-                    )
-                else:
-                    research_result = await self.research_agent.deep_research(message)
-                response["research_conducted"] = True
-                response["research"] = research_result
-            except Exception as e:
-                # If research fails, continue without it
-                response["research_conducted"] = False
-                response["research_error"] = str(e)
-
         # Extract prior beliefs from conversation history
         self._extract_prior_beliefs(message)
         
@@ -153,40 +179,100 @@ class KnowledgeAgent:
         self._track_recent_query(message)
         
         # Get expected length from adaptive strategy if available
+        # CRITICAL: Classify query type EARLY so we can use it for experience injection BEFORE research
         expected_length = None
+        query_type = None
         if self.adaptive_manager and self.quality_feedback:
             current_session = None
             if self.quality_feedback.session_manager:
                 current_session = self.quality_feedback.session_manager.get_current_session()
             strategy = self.adaptive_manager.get_adaptive_strategy(message, current_session=current_session)
             expected_length = strategy.expected_length
+            query_type = self.adaptive_manager._classify_query(message)
+        elif self.adaptive_manager:
+            # Fallback: classify query even without quality_feedback
+            query_type = self.adaptive_manager._classify_query(message)
+        
+        # META: Inject experience context BEFORE research (so it can help with tool selection)
+        experience_context = ""
+        if self.meta_learner and query_type:
+            try:
+                experience_context = self.meta_learner.get_context_experience(
+                    query=message,
+                    query_type=query_type,
+                    max_experiences=5,
+                )
+                if experience_context:
+                    logger.debug(f"Injecting {len(experience_context)} chars of experience context")
+            except Exception as e:
+                logger.warning(f"Failed to get experience context: {e}", exc_info=True)
+        
+        # Context-dependent adaptation: adjust based on recent queries
+        if self.recent_queries:
+            # If user is asking similar questions, they might want exploration mode
+            # If questions are very different, they want extraction mode
+            recent_topics = [q.get("topic", "") for q in self.recent_queries[-3:]]
+            topic_similarity = self._compute_topic_similarity(message, recent_topics)
             
-            # Context-dependent adaptation: adjust based on recent queries
-            if self.recent_queries:
-                # If user is asking similar questions, they might want exploration mode
-                # If questions are very different, they want extraction mode
-                recent_topics = [q.get("topic", "") for q in self.recent_queries[-3:]]
-                topic_similarity = self._compute_topic_similarity(message, recent_topics)
-                
-                if topic_similarity > 0.5:
-                    # Exploration mode: user is diving deeper
-                    # Increase detail level
-                    if expected_length:
-                        expected_length = int(expected_length * 1.2)
+            if topic_similarity > 0.5:
+                # Exploration mode: user is diving deeper
+                # Increase detail level
+                if expected_length:
+                    expected_length = int(expected_length * 1.2)
+            else:
+                # Extraction mode: user wants quick answers
+                # Decrease detail level
+                if expected_length:
+                    expected_length = int(expected_length * 0.8)
+
+        # Conduct research if requested
+        # META: Include experience context in research query if available (helps with tool selection)
+        research_query = message
+        if experience_context and use_research:
+            # Prepend experience context to help with query decomposition and tool selection
+            research_query = experience_context + "\n\nUser Query: " + message
+        
+        if use_research:
+            try:
+                # Use structured orchestration if schema is provided
+                if use_schema and schema:
+                    research_result = await self.orchestrator.research_with_schema(
+                        research_query,  # Use query with experience context
+                        schema_name=use_schema,
+                        prior_beliefs=self.prior_beliefs,  # Pass prior beliefs for alignment
+                        adaptive_manager=self.adaptive_manager,  # NEW: Pass adaptive manager for early stopping
+                    )
                 else:
-                    # Extraction mode: user wants quick answers
-                    # Decrease detail level
-                    if expected_length:
-                        expected_length = int(expected_length * 0.8)
+                    research_result = await self.research_agent.deep_research(research_query)
+                response["research_conducted"] = True
+                response["research"] = research_result
+            except Exception as e:
+                # If research fails, continue without it (graceful degradation)
+                logger.warning(f"Research failed for query '{message[:50]}...': {e}")
+                response["research_conducted"] = False
+                response["research_error"] = str(e)
+
         
         # Generate response using LLM
         # This creates the actual response text that users read
         # It's based on message + context (which includes research.final_synthesis if available)
+        # META: Include experience context in message if available (for response generation)
+        message_with_context = message
+        if experience_context and not use_research:
+            # Only inject if research wasn't used (research already got it)
+            # If research was used, experience context was already in research_query
+            message_with_context = experience_context + "\n\n" + message
+        
+        # Add skills context if available
+        if skills_context:
+            message_with_context = skills_context + "\n\n" + message_with_context
+        
         response["response"] = await self._generate_response(
-            message, 
-            response, 
+            message_with_context, 
+            response,  # This context dict includes research results if available
             schema,
-            expected_length=expected_length
+            expected_length=expected_length,
+            system_reminders=system_reminders
         )
         
         # Store original response text BEFORE source references are added
@@ -303,6 +389,36 @@ class KnowledgeAgent:
                 )
                 # Merge with quality suggestions
                 quality_result["suggestions"].extend(adaptive_suggestions)
+            
+            # META: Reflect on task completion and store insights
+            if self.meta_learner:
+                try:
+                    tools_used_for_reflection = []
+                    if use_research and response.get("research"):
+                        research_data = response.get("research", {})
+                        if isinstance(research_data, dict):
+                            for subsolution in research_data.get("subsolutions", []):
+                                tools_used_for_reflection.extend(subsolution.get("tools_used", []))
+                    
+                    # Ensure query_type is set (fallback to "general" if classification failed)
+                    reflection_query_type = query_type or "general"
+                    
+                    reflection_text = await self.meta_learner.reflect_on_completion(
+                        query=message,
+                        response=response["response"],
+                        query_type=reflection_query_type,
+                        tools_used=tools_used_for_reflection,
+                        quality_score=quality_result.get("relevance"),
+                        llm_service=self.llm_service,
+                        reflection_type="self",  # Could be "verified" if ground truth available
+                    )
+                    
+                    if reflection_text:
+                        response["meta_reflection"] = reflection_text[:500]  # Store truncated version
+                        response["meta_reflection_query_type"] = reflection_query_type
+                except Exception as e:
+                    # Reflection failure shouldn't break the response
+                    logger.warning(f"Meta-reflection failed: {e}", exc_info=True)
             
             # Auto-retry with better schema if quality is low
             if quality_result["relevance"] < 0.5:
@@ -546,6 +662,7 @@ class KnowledgeAgent:
         context: Dict[str, Any],
         schema: Optional[Any] = None,
         expected_length: Optional[int] = None,
+        system_reminders: Optional[List[str]] = None,
     ) -> str:
         """
         Generate response based on message and context.
@@ -555,6 +672,7 @@ class KnowledgeAgent:
             context: Context dictionary
             schema: Optional reasoning schema
             expected_length: Optional target response length (for adaptation)
+            system_reminders: Optional system reminders to keep agent on track
         """
         if self.llm_service:
             try:

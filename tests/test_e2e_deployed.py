@@ -12,7 +12,11 @@ import time
 from typing import Optional
 
 # Get deployment URL from environment or use default
-DEPLOYED_URL = os.getenv("BOP_DEPLOYED_URL", "http://bop-wispy-voice-3017:8000")
+# Try Tailscale hostname first, fallback to direct hostname
+# Server runs on port 8080 (Fly.io PORT env var), not 8000
+TAILSCALE_HOST = os.getenv("BOP_TAILSCALE_HOST", "bop-wispy-voice-3017-1.tailf8f94.ts.net")
+DEPLOYED_PORT = os.getenv("BOP_DEPLOYED_PORT", "8080")
+DEPLOYED_URL = os.getenv("BOP_DEPLOYED_URL", f"http://{TAILSCALE_HOST}:{DEPLOYED_PORT}")
 API_KEY = os.getenv("BOP_API_KEY", "")
 
 # Timeout for requests

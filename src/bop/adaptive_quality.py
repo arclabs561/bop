@@ -56,7 +56,7 @@ class AdaptiveQualityManager:
             learning_data_path: Optional path to persist/load learning data
         """
         self.quality_feedback = quality_feedback
-        self.learning_data_path = learning_data_path or Path("adaptive_learning.json")
+        self.learning_data_path = learning_data_path or Path("data/results/adaptive_learning.json")
         
         # Learning data structures
         self.query_type_to_schema: Dict[str, Dict[str, List[float]]] = defaultdict(lambda: defaultdict(list))

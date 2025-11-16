@@ -497,7 +497,8 @@ class StructuredOrchestrator:
                 try:
                     topology_impact = self.topology.analyze_context_injection_impact(new_nodes)
                 except Exception as e:
-                    # If topology analysis fails, continue without it
+                    # If topology analysis fails, continue without it (graceful degradation)
+                    logger.debug(f"Topology analysis failed for subproblem {i+1}: {e}")
                     topology_impact = {"error": str(e)}
             else:
                 topology_impact = {}
@@ -576,7 +577,8 @@ class StructuredOrchestrator:
             fisher_info = self.topology.compute_fisher_information_estimate()
             euler_char = self.topology.compute_euler_characteristic()
         except Exception as e:
-            # If topology computation fails, use defaults
+            # If topology computation fails, use defaults (graceful degradation)
+            logger.warning(f"Topology computation failed: {e}")
             attractor_basins = []
             fisher_info = 0.0
             euler_char = 0
@@ -1434,7 +1436,7 @@ class StructuredOrchestrator:
                 )
                 return selected[:max_tools]
             else:
-                logger.warning("Constraint solver found no solution, falling back to heuristics")
+                logger.debug("Constraint solver found no solution, falling back to heuristics")
         except Exception as e:
             logger.error(f"Constraint solver error: {e}", exc_info=True)
         

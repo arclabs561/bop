@@ -400,9 +400,9 @@ Unified Planning (UP) offers a formal framework for modeling tool orchestration 
 - Problem modeling requires domain expertise
 - Planning overhead may not justify for simple queries
 
-**When to Use Planning vs. Heuristics**:
-- **Use Planning**: Complex queries, cost optimization important, complex dependencies
-- **Use Heuristics**: Simple queries, real-time constraints, obvious tool selection
+**When to Use Constraint Solver vs. Heuristics**:
+- **Use Constraint Solver**: Complex queries with multiple subproblems, cost optimization important, complex tool dependencies, budget constraints
+- **Use Heuristics**: Simple queries, real-time constraints, obvious tool selection, development/debugging
 
 **Recommendation**: Start with heuristics, add planning as optional enhancement only if:
 1. Real queries show optimization would help

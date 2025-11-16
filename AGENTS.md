@@ -16,6 +16,8 @@ BOP implements a multi-agent architecture for knowledge structure research and r
 - `LLMService`: LLM interactions and schema hydration
 - `QualityFeedbackLoop`: Continuous quality evaluation and learning
 - `AdaptiveQualityManager`: Adaptive strategy selection based on feedback
+- `SkillsManager`: Dynamic context loading via Skills pattern (optional)
+- `System Reminders`: Keep agent on track during long sessions (optional)
 
 **State Management**:
 - `conversation_history`: Tracks conversation context
@@ -37,12 +39,25 @@ BOP implements a multi-agent architecture for knowledge structure research and r
 ```python
 from bop.agent import KnowledgeAgent
 
+# Basic usage
 agent = KnowledgeAgent(enable_quality_feedback=True)
 response = await agent.chat(
     message="What is the shape of ideas?",
     use_schema="decompose_and_synthesize",
     use_research=True,
 )
+
+# With Skills pattern (dynamic context loading)
+agent = KnowledgeAgent(
+    enable_quality_feedback=True,
+    enable_skills=True,  # Enable Skills pattern
+    enable_system_reminders=True,  # Enable system reminders
+)
+response = await agent.chat(
+    message="Analyze this repository's structure",
+    use_research=True,
+)
+# Skills are automatically loaded based on query relevance
 
 # Access progressive disclosure tiers
 summary = response["response_tiers"]["summary"]
@@ -430,6 +445,28 @@ response = await agent.chat(
 2. Add schema hydration logic if needed
 3. Update `AdaptiveQualityManager` to learn schema effectiveness
 
+### Adding New Skills
+
+1. Create markdown file in `skills/` directory
+2. Include purpose, tags, and usage sections
+3. Skills are automatically discovered and loaded when `enable_skills=True`
+4. Agent automatically finds relevant skills based on query
+
+**Example:**
+```markdown
+# My Skill
+
+**Purpose:** Guide for specific domain
+
+**Tags:** domain, keyword1, keyword2
+
+## Content
+[Skill content here]
+
+## Usage
+This skill should be loaded when...
+```
+
 ### Custom Quality Metrics
 
 1. Extend `SemanticEvaluator` in `semantic_eval.py`
@@ -440,21 +477,31 @@ response = await agent.chat(
 
 1. **Enable Quality Feedback**: Always enable for production use
 2. **Use Appropriate Schemas**: Match schema to query complexity
+   - Simple factual queries: `chain_of_thought`
+   - Complex analytical queries: `decompose_and_synthesize`
+   - Comparative queries: `scenario_analysis`
 3. **Research When Needed**: Use research for complex, open-ended queries
-4. **Monitor Adaptive Learning**: Review `adaptive_learning.json` periodically
+   - Research adds latency but improves quality for analytical/evaluative queries
+   - Skip research for simple factual queries (system learns this automatically)
+4. **Monitor Adaptive Learning**: Review `adaptive_learning.json` periodically to see learned patterns
 5. **Session Management**: Use hierarchical sessions for multi-turn conversations
 6. **Trust Metrics**: Review trust scores and source credibility for important decisions
+   - Check `calibration_error` - if > 0.2, trust scores may be unreliable
+   - High trust (>0.7) with low calibration error = reliable information
 7. **Progressive Disclosure**: Use `response_tiers["summary"]` for quick overviews, expand to `detailed` or `evidence` when needed
 8. **Belief Alignment**: State your beliefs explicitly (e.g., "I think X") to enable better evidence alignment
 9. **Source Diversity**: Check source agreement matrices to identify consensus vs. conflicts
 10. **Context Adaptation**: System automatically adapts detail level based on query patterns
+11. **Error Handling**: Check `response.get("research_error")` if research was requested but failed
+12. **Constraint Solver**: Enable for production workloads where cost/latency optimization matters; heuristics are sufficient for development
 
 ## See Also
 
 - `ARCHITECTURE.md` - Theoretical foundations
 - `README.md` - Quick start guide
 - `CONTRIBUTING.md` - Development guidelines
-- `KNOWLEDGE_DISPLAY_GUIDE.md` - Knowledge display features guide
-- `TRUST_AND_UNCERTAINTY_USER_GUIDE.md` - Trust metrics interpretation guide
+- `docs/guides/DEVELOPER_QUESTIONS_ANSWERED.md` - Answers to common developer questions
+- `docs/guides/KNOWLEDGE_DISPLAY_GUIDE.md` - Knowledge display features guide
+- `docs/guides/TRUST_AND_UNCERTAINTY_USER_GUIDE.md` - Trust metrics interpretation guide
 - `MIGRATION_GUIDE.md` - Migration guide for new features
 

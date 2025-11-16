@@ -51,7 +51,7 @@ class QualityFeedbackLoop:
             use_sessions: Whether to use hierarchical session management
             session_context: Optional context for the current session
         """
-        self.evaluation_history_path = evaluation_history_path or Path("quality_history.json")
+        self.evaluation_history_path = evaluation_history_path or Path("data/results/quality_history.json")
         self.evaluator = SemanticEvaluator()
         self.history: List[Dict[str, Any]] = []
         
