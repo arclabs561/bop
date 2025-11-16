@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 from collections import defaultdict
 import httpx
 
-from fastapi import FastAPI, HTTPException, Header, Depends, Request, status
+from fastapi import FastAPI, HTTPException, Header, Depends, Request, status, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.security import APIKeyHeader
@@ -1649,8 +1649,7 @@ async def get_experience(query_type: Optional[str] = None, limit: int = 10):
 
 @app.post("/meta/context/inject", dependencies=[Depends(verify_api_key)])
 async def inject_experience(
-    query: str = Field(..., min_length=1, max_length=1000),
-    max_experiences: int = Field(default=5, ge=1, le=20),
+    request: Dict[str, Any] = Body(..., description="Request with query and optional max_experiences"),
 ):
     """
     Get experience to inject into context for a query (dynamic context engineering).
@@ -1663,6 +1662,18 @@ async def inject_experience(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Agent not initialized"
         )
+    
+    # Extract query and max_experiences from request body
+    query = request.get("query", "")
+    if not query or len(query) < 1 or len(query) > 1000:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Query must be between 1 and 1000 characters"
+        )
+    
+    max_experiences = request.get("max_experiences", 5)
+    if not isinstance(max_experiences, int) or max_experiences < 1 or max_experiences > 20:
+        max_experiences = 5
     
     # Classify query
     query_type = agent.adaptive_manager._classify_query(query)

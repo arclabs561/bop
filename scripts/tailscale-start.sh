@@ -68,7 +68,7 @@ echo "🌐 Starting BOP web server on port ${PORT:-8080}..."
 echo "📦 Python path: $PYTHONPATH"
 echo "📦 Working directory: $(pwd)"
 echo "📦 Checking if bop.server module exists..."
-python3 -c "import sys; sys.path.insert(0, '/app/src'); from bop.server import app; print('✅ Server module loads successfully')" || echo "⚠️  Server module check failed"
+uv run python -c "import sys; sys.path.insert(0, '/app/src'); from bop.server import app; print('✅ Server module loads successfully')" || echo "⚠️  Server module check failed (non-critical)"
 echo "🚀 Launching Uvicorn..."
 exec uv run python -m uvicorn bop.server:app --host 0.0.0.0 --port ${PORT:-8080} --log-level info
 
