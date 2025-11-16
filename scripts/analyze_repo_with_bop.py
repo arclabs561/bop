@@ -75,7 +75,7 @@ async def analyze_repository():
             response = await agent.chat(
                 message=query,
                 use_schema="decompose_and_synthesize",
-                use_research=False,  # Skip research for faster analysis
+                use_research=True,  # Enable MCP tools for best practices research
             )
             
             results.append({
