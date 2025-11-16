@@ -524,7 +524,7 @@ async def main():
     print_results_table(results)
     
     # Save results
-    output_path = Path(__file__).parent.parent / "evaluation_results.json"
+    output_path = Path(__file__).parent.parent / "data" / "results" / "evaluation_results.json"
     with open(output_path, "w") as f:
         json.dump(results, f, indent=2)
     
