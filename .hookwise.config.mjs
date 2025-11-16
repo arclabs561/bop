@@ -17,7 +17,7 @@ export default {
   },
   documentation: {
     enabled: true,  // Re-enabled - helps steer toward clean documentation structure
-    maxRootFiles: 25,  // BOP is a research project with many docs - allow more
+    maxRootFiles: 10,  // Reduced after cleanup - root is now clean (8 markdown files)
     archivePatterns: [
       // Implementation/Summary patterns
       'FINAL_',
@@ -93,6 +93,9 @@ export default {
       'KNOWLEDGE_DISPLAY_GUIDE.md',
       'TRUST_AND_UNCERTAINTY_USER_GUIDE.md',
       'MIGRATION_GUIDE.md',
+      'DEPLOYMENT.md',
+      'SEMANTIC_EVALUATION_GUIDE.md',
+      'TESTING_AND_SECURITY_GUIDE.md',
     ],
   },
 };
