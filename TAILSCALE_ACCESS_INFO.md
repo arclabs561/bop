@@ -63,8 +63,8 @@ flyctl ssh console -a bop-wispy-voice-3017 -C "tailscale status"
 # Check if app is running
 flyctl status -a bop-wispy-voice-3017
 
-# Check Tailscale logs
-flyctl logs -a bop-wispy-voice-3017 | grep -i tailscale
+# Check Tailscale logs (use --no-tail to avoid hanging)
+flyctl logs -a bop-wispy-voice-3017 --no-tail | grep -i tailscale
 
 # Restart if needed
 flyctl apps restart bop-wispy-voice-3017
