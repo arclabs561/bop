@@ -113,11 +113,21 @@ class PersistentCache:
         
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         
+        # Set secure permissions (owner read/write/execute only)
+        # Note: On Fly.io volumes, permissions are managed by the volume
+        try:
+            os.chmod(self.cache_dir, 0o700)  # rwx------
+        except Exception as e:
+            logger.debug(f"Could not set cache directory permissions: {e}")
+        
         # Create subdirectories
-        (self.cache_dir / "tools").mkdir(exist_ok=True)
-        (self.cache_dir / "llm").mkdir(exist_ok=True)
-        (self.cache_dir / "tokens").mkdir(exist_ok=True)
-        (self.cache_dir / "sessions").mkdir(exist_ok=True)
+        for subdir in ["tools", "llm", "tokens", "sessions"]:
+            subdir_path = self.cache_dir / subdir
+            subdir_path.mkdir(exist_ok=True)
+            try:
+                os.chmod(subdir_path, 0o700)  # rwx------
+            except Exception as e:
+                logger.debug(f"Could not set subdirectory permissions: {e}")
         
         self.default_ttl_hours = default_ttl_hours
         self.max_size_bytes = max_size_mb * 1024 * 1024
@@ -267,8 +277,25 @@ class PersistentCache:
             cache_file = self._get_cache_file(category, key)
             
             try:
-                with open(cache_file, "w") as f:
+                # Write to temp file first, then rename (atomic write)
+                temp_file = cache_file.with_suffix(".tmp")
+                with open(temp_file, "w") as f:
                     json.dump(entry.to_dict(), f, indent=2)
+                
+                # Set secure permissions on temp file
+                try:
+                    os.chmod(temp_file, 0o600)  # rw-------
+                except Exception:
+                    pass  # Permissions may not be settable on all systems
+                
+                # Atomic rename
+                temp_file.replace(cache_file)
+                
+                # Set permissions on final file
+                try:
+                    os.chmod(cache_file, 0o600)  # rw-------
+                except Exception:
+                    pass
                 
                 self._index[key] = str(cache_file)
                 self._save_index()
@@ -276,6 +303,13 @@ class PersistentCache:
                 return True
             except Exception as e:
                 logger.warning(f"Failed to write cache entry {key}: {e}")
+                # Clean up temp file if it exists
+                temp_file = cache_file.with_suffix(".tmp")
+                if temp_file.exists():
+                    try:
+                        temp_file.unlink()
+                    except Exception:
+                        pass
                 return False
     
     def _get_cache_size(self) -> int:

@@ -1,0 +1,53 @@
+[
+  {
+    "query": "How do I implement d-separation in Python?",
+    "domain": "technical",
+    "subdomain": "implementation",
+    "complexity": "moderate",
+    "expected_concepts": ["d-separation", "Python", "implementation", "code"],
+    "query_type": "procedural",
+    "requires_research": false,
+    "temporal_aspect": false
+  },
+  {
+    "query": "What are the computational complexity considerations for Bayesian network inference?",
+    "domain": "technical",
+    "subdomain": "complexity",
+    "complexity": "moderate",
+    "expected_concepts": ["computational complexity", "Bayesian networks", "inference"],
+    "query_type": "technical",
+    "requires_research": true,
+    "temporal_aspect": false
+  },
+  {
+    "query": "Compare different algorithms for computing Fisher Information",
+    "domain": "technical",
+    "subdomain": "algorithms",
+    "complexity": "moderate",
+    "expected_concepts": ["Fisher Information", "algorithms", "computation"],
+    "query_type": "comparative",
+    "requires_research": true,
+    "temporal_aspect": false
+  },
+  {
+    "query": "What are the best practices for implementing trust propagation in knowledge graphs?",
+    "domain": "technical",
+    "subdomain": "best_practices",
+    "complexity": "moderate",
+    "expected_concepts": ["trust propagation", "knowledge graphs", "best practices"],
+    "query_type": "procedural",
+    "requires_research": true,
+    "temporal_aspect": false
+  },
+  {
+    "query": "How do I handle uncertainty quantification in machine learning models?",
+    "domain": "technical",
+    "subdomain": "machine_learning",
+    "complexity": "moderate",
+    "expected_concepts": ["uncertainty quantification", "machine learning", "models"],
+    "query_type": "procedural",
+    "requires_research": true,
+    "temporal_aspect": false
+  }
+]
+

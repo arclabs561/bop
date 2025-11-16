@@ -1,0 +1,79 @@
+[
+  {
+    "query": "",
+    "domain": "edge_cases",
+    "subdomain": "empty_query",
+    "complexity": "simple",
+    "expected_concepts": [],
+    "query_type": "empty",
+    "requires_research": false,
+    "temporal_aspect": false,
+    "note": "Should handle gracefully"
+  },
+  {
+    "query": "a",
+    "domain": "edge_cases",
+    "subdomain": "minimal_query",
+    "complexity": "simple",
+    "expected_concepts": [],
+    "query_type": "minimal",
+    "requires_research": false,
+    "temporal_aspect": false,
+    "note": "Single character query"
+  },
+  {
+    "query": "What is x?",
+    "domain": "edge_cases",
+    "subdomain": "very_long_query",
+    "complexity": "simple",
+    "expected_concepts": [],
+    "query_type": "very_long",
+    "requires_research": false,
+    "temporal_aspect": false,
+    "note": "Very long query placeholder - actual test uses 1000 chars"
+  },
+  {
+    "query": "What is d-separation? What is d-separation? What is d-separation?",
+    "domain": "edge_cases",
+    "subdomain": "repetitive_query",
+    "complexity": "simple",
+    "expected_concepts": ["d-separation"],
+    "query_type": "repetitive",
+    "requires_research": false,
+    "temporal_aspect": false,
+    "note": "Highly repetitive query"
+  },
+  {
+    "query": "What is d-separation? What is d-separation? What is d-separation?",
+    "domain": "edge_cases",
+    "subdomain": "duplicate_questions",
+    "complexity": "simple",
+    "expected_concepts": ["d-separation"],
+    "query_type": "duplicate",
+    "requires_research": false,
+    "temporal_aspect": false,
+    "note": "Multiple identical questions"
+  },
+  {
+    "query": "What is d-separation? Also explain causality. And information geometry. And trust. And uncertainty.",
+    "domain": "edge_cases",
+    "subdomain": "multi_topic_query",
+    "complexity": "complex",
+    "expected_concepts": ["d-separation", "causality", "information geometry", "trust", "uncertainty"],
+    "query_type": "multi_topic",
+    "requires_research": true,
+    "temporal_aspect": false,
+    "note": "Multiple unrelated topics in one query"
+  },
+  {
+    "query": "What is d-separation?",
+    "domain": "edge_cases",
+    "subdomain": "normal_query",
+    "complexity": "simple",
+    "expected_concepts": ["d-separation"],
+    "query_type": "factual",
+    "requires_research": false,
+    "temporal_aspect": false,
+    "note": "Baseline normal query for comparison"
+  }
+]

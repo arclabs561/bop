@@ -1,0 +1,1184 @@
+[
+  {
+    "query": "What is d-separation and how does it relate to causal inference?",
+    "response": {
+      "message": "What is d-separation and how does it relate to causal inference?",
+      "response": "[Summary or solution] - to be filled based on: What is d-separation and how does it relate to causal inference?",
+      "schema_used": "chain_of_thought",
+      "research_conducted": true,
+      "structured_reasoning": {
+        "decomposition": "[Break the problem into smaller parts] - to be filled based on: What is d-separation and how does it relate to causal inference?",
+        "subsolutions": "[Solutions for each component] - to be filled based on: What is d-separation and how does it relate to causal inference?",
+        "synthesis": "[Combine subsolutions into cohesive answer] - to be filled based on: What is d-separation and how does it relate to causal inference?"
+      },
+      "research": {
+        "query": "What is d-separation and how does it relate to causal inference?",
+        "schema_used": "decompose_and_synthesize",
+        "decomposition": [
+          "Theoretical foundation: What is d-separation and how does it relate to causal inference?",
+          "Recent empirical results: What is d-separation and how does it relate to causal inference?",
+          "Alternative perspectives: What is d-separation and how does it relate to causal inference?"
+        ],
+        "subsolutions": [
+          {
+            "subproblem": "Theoretical foundation: What is d-separation and how does it relate to causal inference?",
+            "tools_used": [
+              "perplexity_reason",
+              "perplexity_search"
+            ],
+            "results": [
+              {
+                "tool": "perplexity_reason",
+                "query": "Theoretical foundation: What is d-separation and how does it relate to causal inference?",
+                "result": "[MCP integration ready] perplexity_reason for: Theoretical foundation: What is d-separation and how does it relate to causal inference?",
+                "sources": [],
+                "mcp_tool": "mcp_perplexity_reason",
+                "mcp_args": {
+                  "query": "Theoretical foundation: What is d-separation and how does it relate to causal inference?"
+                },
+                "note": "MCP tool call structure prepared. Actual call should be made via MCP client when available."
+              },
+              {
+                "tool": "perplexity_search",
+                "query": "Theoretical foundation: What is d-separation and how does it relate to causal inference?",
+                "result": "[MCP integration ready] perplexity_search for: Theoretical foundation: What is d-separation and how does it relate to causal inference?",
+                "sources": [],
+                "mcp_tool": "mcp_perplexity_search",
+                "mcp_args": {
+                  "query": "Theoretical foundation: What is d-separation and how does it relate to causal inference?",
+                  "max_results": 5
+                },
+                "note": "MCP tool call structure prepared. Actual call should be made via MCP client when available."
+              }
+            ],
+            "synthesis": "[MCP integration ready] perplexity_reason for: Theoretical foundation: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Theoretical foundation: What is d-separation and how does it relate to causal inference?",
+            "topology_impact": {
+              "new_cliques": 0,
+              "betti_delta": {
+                "0": 2,
+                "1": 0
+              },
+              "fisher_delta": 0.0,
+              "topology_changed": true,
+              "adversarial_patterns": 0,
+              "trust_summary": {
+                "avg_trust": 0.5,
+                "high_trust_edges": 0,
+                "low_trust_edges": 0,
+                "avg_credibility": 0.5,
+                "avg_confidence": 0.5,
+                "calibration_error": null,
+                "schema_violations": 0
+              }
+            }
+          },
+          {
+            "subproblem": "Recent empirical results: What is d-separation and how does it relate to causal inference?",
+            "tools_used": [
+              "perplexity_reason",
+              "perplexity_search"
+            ],
+            "results": [
+              {
+                "tool": "perplexity_reason",
+                "query": "Recent empirical results: What is d-separation and how does it relate to causal inference?",
+                "result": "[MCP integration ready] perplexity_reason for: Recent empirical results: What is d-separation and how does it relate to causal inference?",
+                "sources": [],
+                "mcp_tool": "mcp_perplexity_reason",
+                "mcp_args": {
+                  "query": "Recent empirical results: What is d-separation and how does it relate to causal inference?"
+                },
+                "note": "MCP tool call structure prepared. Actual call should be made via MCP client when available."
+              },
+              {
+                "tool": "perplexity_search",
+                "query": "Recent empirical results: What is d-separation and how does it relate to causal inference?",
+                "result": "[MCP integration ready] perplexity_search for: Recent empirical results: What is d-separation and how does it relate to causal inference?",
+                "sources": [],
+                "mcp_tool": "mcp_perplexity_search",
+                "mcp_args": {
+                  "query": "Recent empirical results: What is d-separation and how does it relate to causal inference?",
+                  "max_results": 5
+                },
+                "note": "MCP tool call structure prepared. Actual call should be made via MCP client when available."
+              }
+            ],
+            "synthesis": "[MCP integration ready] perplexity_reason for: Recent empirical results: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Recent empirical results: What is d-separation and how does it relate to causal inference?",
+            "topology_impact": {
+              "new_cliques": 2,
+              "betti_delta": {
+                "0": -1,
+                "1": 1
+              },
+              "fisher_delta": 0.24500000000000002,
+              "topology_changed": true,
+              "adversarial_patterns": 0,
+              "trust_summary": {
+                "avg_trust": 0.674768439080801,
+                "high_trust_edges": 0,
+                "low_trust_edges": 0,
+                "avg_credibility": 0.6749999999999999,
+                "avg_confidence": 0.5,
+                "calibration_error": null,
+                "schema_violations": 0
+              }
+            }
+          },
+          {
+            "subproblem": "Alternative perspectives: What is d-separation and how does it relate to causal inference?",
+            "tools_used": [
+              "perplexity_reason",
+              "perplexity_search"
+            ],
+            "results": [
+              {
+                "tool": "perplexity_reason",
+                "query": "Alternative perspectives: What is d-separation and how does it relate to causal inference?",
+                "result": "[MCP integration ready] perplexity_reason for: Alternative perspectives: What is d-separation and how does it relate to causal inference?",
+                "sources": [],
+                "mcp_tool": "mcp_perplexity_reason",
+                "mcp_args": {
+                  "query": "Alternative perspectives: What is d-separation and how does it relate to causal inference?"
+                },
+                "note": "MCP tool call structure prepared. Actual call should be made via MCP client when available."
+              },
+              {
+                "tool": "perplexity_search",
+                "query": "Alternative perspectives: What is d-separation and how does it relate to causal inference?",
+                "result": "[MCP integration ready] perplexity_search for: Alternative perspectives: What is d-separation and how does it relate to causal inference?",
+                "sources": [],
+                "mcp_tool": "mcp_perplexity_search",
+                "mcp_args": {
+                  "query": "Alternative perspectives: What is d-separation and how does it relate to causal inference?",
+                  "max_results": 5
+                },
+                "note": "MCP tool call structure prepared. Actual call should be made via MCP client when available."
+              }
+            ],
+            "synthesis": "[MCP integration ready] perplexity_reason for: Alternative perspectives: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Alternative perspectives: What is d-separation and how does it relate to causal inference?",
+            "topology_impact": {
+              "new_cliques": 1,
+              "betti_delta": {
+                "0": 0,
+                "1": 6
+              },
+              "fisher_delta": -0.18416666666666667,
+              "topology_changed": true,
+              "adversarial_patterns": 0,
+              "trust_summary": {
+                "avg_trust": 0.6747684390808012,
+                "high_trust_edges": 0,
+                "low_trust_edges": 0,
+                "avg_credibility": 0.6749999999999999,
+                "avg_confidence": 0.5,
+                "calibration_error": null,
+                "schema_violations": 0
+              }
+            }
+          }
+        ],
+        "final_synthesis": "**Theoretical foundation: What is d-separation and how does it relate to causal inference?**:\n[MCP integration ready] perplexity_reason for: Theoretical foundation: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Theoretical foundation: What is d-separation and how does it relate to causal inference?\n[Topology: 0 new cliques, Fisher \u0394: 0.000]\n\n**Recent empirical results: What is d-separation and how does it relate to causal inference?**:\n[MCP integration ready] perplexity_reason for: Recent empirical results: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Recent empirical results: What is d-separation and how does it relate to causal inference?\n[Topology: 2 new cliques, Fisher \u0394: 0.245]\n\n**Alternative perspectives: What is d-separation and how does it relate to causal inference?**:\n[MCP integration ready] perplexity_reason for: Alternative perspectives: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Alternative perspectives: What is d-separation and how does it relate to causal inference?\n[Topology: 1 new cliques, Fisher \u0394: -0.184]",
+        "tools_called": 6,
+        "source_matrix": {
+          "Theoretical": {
+            "sources": {
+              "perplexity_reason": "supports",
+              "perplexity_search": "supports"
+            },
+            "consensus": "strong_agreement",
+            "conflict": false
+          },
+          "relate to causal": {
+            "sources": {
+              "perplexity_reason": "supports",
+              "perplexity_search": "supports"
+            },
+            "consensus": "strong_agreement",
+            "conflict": false
+          },
+          "Recent": {
+            "sources": {
+              "perplexity_reason": "supports",
+              "perplexity_search": "supports"
+            },
+            "consensus": "strong_agreement",
+            "conflict": false
+          },
+          "Alternative": {
+            "sources": {
+              "perplexity_reason": "supports",
+              "perplexity_search": "supports"
+            },
+            "consensus": "strong_agreement",
+            "conflict": false
+          }
+        },
+        "token_importance": {
+          "term_importance": {
+            "mcp": 1.0,
+            "integration": 1.0,
+            "ready": 1.0,
+            "theoretical": 1.0,
+            "foundation": 1.0,
+            "relate": 1.0,
+            "causal": 1.0,
+            "inference": 1.0,
+            "recent": 1.0,
+            "empirical": 1.0,
+            "results": 1.0,
+            "alternative": 1.0,
+            "perspectives": 1.0
+          },
+          "per_result_importance": [
+            {
+              "mcp": 1.0,
+              "integration": 1.0,
+              "ready": 1.0,
+              "theoretical": 1.0,
+              "foundation": 1.0,
+              "relate": 1.0,
+              "causal": 1.0,
+              "inference": 1.0
+            },
+            {
+              "mcp": 1.0,
+              "integration": 1.0,
+              "ready": 1.0,
+              "theoretical": 1.0,
+              "foundation": 1.0,
+              "relate": 1.0,
+              "causal": 1.0,
+              "inference": 1.0
+            },
+            {
+              "mcp": 1.0,
+              "integration": 1.0,
+              "ready": 1.0,
+              "recent": 1.0,
+              "empirical": 1.0,
+              "results": 1.0,
+              "relate": 1.0,
+              "causal": 1.0,
+              "inference": 1.0
+            },
+            {
+              "mcp": 1.0,
+              "integration": 1.0,
+              "ready": 1.0,
+              "recent": 1.0,
+              "empirical": 1.0,
+              "results": 1.0,
+              "relate": 1.0,
+              "causal": 1.0,
+              "inference": 1.0
+            },
+            {
+              "mcp": 1.0,
+              "integration": 1.0,
+              "ready": 1.0,
+              "alternative": 1.0,
+              "perspectives": 1.0,
+              "relate": 1.0,
+              "causal": 1.0,
+              "inference": 1.0
+            },
+            {
+              "mcp": 1.0,
+              "integration": 1.0,
+              "ready": 1.0,
+              "alternative": 1.0,
+              "perspectives": 1.0,
+              "relate": 1.0,
+              "causal": 1.0,
+              "inference": 1.0
+            }
+          ],
+          "top_terms": [
+            "mcp",
+            "integration",
+            "ready",
+            "theoretical",
+            "foundation",
+            "relate",
+            "causal",
+            "inference",
+            "recent",
+            "empirical",
+            "results",
+            "alternative",
+            "perspectives"
+          ],
+          "query_terms": [
+            "relate",
+            "causal",
+            "inference"
+          ]
+        },
+        "topology": {
+          "betti_numbers": {
+            "0": 1,
+            "1": 7
+          },
+          "euler_characteristic": 1,
+          "fisher_information": 0.06083333333333334,
+          "attractor_basins": 3,
+          "max_clique_size": 3,
+          "trust_summary": {
+            "avg_trust": 0.6747684390808012,
+            "high_trust_edges": 0,
+            "low_trust_edges": 0,
+            "avg_credibility": 0.6749999999999999,
+            "avg_confidence": 0.5,
+            "calibration_error": null,
+            "schema_violations": 0
+          },
+          "source_credibility": {
+            "perplexity_reason": 0.7,
+            "perplexity_search": 0.6499999999999999
+          },
+          "verification_info": {
+            "perplexity_reason": {
+              "verification_count": 0,
+              "nodes": 3
+            },
+            "perplexity_search": {
+              "verification_count": 0,
+              "nodes": 3
+            }
+          },
+          "cliques": [
+            {
+              "node_ids": [
+                "q1_perplexity_search_2_1",
+                "q1_perplexity_reason_1_0",
+                "q1_perplexity_reason_0_0"
+              ],
+              "node_sources": [
+                "perplexity_search",
+                "perplexity_reason",
+                "perplexity_reason"
+              ],
+              "unique_sources": [
+                "perplexity_search",
+                "perplexity_reason"
+              ],
+              "source_diversity": 2,
+              "verification_count": 0,
+              "coherence": 0.8000000000000002,
+              "trust": 0.6099999999999999,
+              "risk": 0.0,
+              "size": 3
+            },
+            {
+              "node_ids": [
+                "q1_perplexity_reason_2_0",
+                "q1_perplexity_search_0_1",
+                "q1_perplexity_reason_1_0"
+              ],
+              "node_sources": [
+                "perplexity_reason",
+                "perplexity_search",
+                "perplexity_reason"
+              ],
+              "unique_sources": [
+                "perplexity_search",
+                "perplexity_reason"
+              ],
+              "source_diversity": 2,
+              "verification_count": 0,
+              "coherence": 0.8000000000000002,
+              "trust": 0.6099999999999999,
+              "risk": 0.0,
+              "size": 3
+            },
+            {
+              "node_ids": [
+                "q1_perplexity_reason_2_0",
+                "q1_perplexity_search_1_1"
+              ],
+              "node_sources": [
+                "perplexity_reason",
+                "perplexity_search"
+              ],
+              "unique_sources": [
+                "perplexity_search",
+                "perplexity_reason"
+              ],
+              "source_diversity": 2,
+              "verification_count": 0,
+              "coherence": 0.8,
+              "trust": 0.605,
+              "risk": 0.0,
+              "size": 2
+            }
+          ],
+          "trusted_cliques": 3
+        },
+        "d_separation_preserved": true
+      },
+      "response_tiers": {
+        "summary": "Response to: What is d-separation and how does it relate to causal inference?\n[LLM service not available - please set OPENAI_API_KEY]\n\n**Sources:**...",
+        "structured": "**Theoretical foundation: What is d-separation and how does it relate to causal inference?**:\n[MCP integration ready] perplexity_reason for: Theoretical foundation: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Theoretical foundation: What is d-separation and how does it relate to causal inference?\n[Topology: 0 new cliques, Fisher \u0394: 0.000]\n\n**Recent empirical results: What is d-separation and how does it relate to causal inference?**:\n[MCP integration ready] perplexity_reason for: Recent empirical results: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Recent empirical results: What is d-separation and how does it relate to causal inference?\n[Topology: 2 new cliques, Fisher \u0394: 0.245]\n\n**Alternative perspectives: What is d-separation and how does it relate to causal inference?**:\n[MCP integration ready] perplexity_reason for: Alternative perspectives: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Alternative perspectives: What is d-separation and how does it relate to causal inference?\n[Topology: 1 new cliques, Fisher \u0394: -0.184]",
+        "detailed": "Response to: What is d-separation and how does it relate to causal inference?\n[LLM service not available - please set OPENAI_API_KEY]\n\n**Sources:**\n- [MCP integration ready] perplexity_reason for: Theoretical f... [Sources: perplexity_reason, perplexity_search]\n- [MCP integration ready] perplexity_reason for: Recent empiri... [Sources: perplexity_reason, perplexity_search]\n- [MCP integration ready] perplexity_reason for: Alternative p... [Sources: perplexity_reason, perplexity_search]\n",
+        "evidence": "**Final Synthesis**:\n**Theoretical foundation: What is d-separation and how does it relate to causal inference?**:\n[MCP integration ready] perplexity_reason for: Theoretical foundation: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Theoretical foundation: What is d-separation and how does it relate to causal inference?\n[Topology: 0 new cliques, Fisher \u0394: 0.000]\n\n**Recent empirical results: What is d-separation and how does it relate to causal inference?**:\n[MCP integration ready] perplexity_reason for: Recent empirical results: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Recent empirical results: What is d-separation and how does it relate to causal inference?\n[Topology: 2 new cliques, Fisher \u0394: 0.245]\n\n**Alternative perspectives: What is d-separation and how does it relate to causal inference?**:\n[MCP integration ready] perplexity_reason for: Alternative perspectives: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Alternative perspectives: What is d-separation and how does it relate to causal inference?\n[Topology: 1 new cliques, Fisher \u0394: -0.184]\n\n\n**Detailed Breakdown**:\n\n\n**Theoretical foundation: What is d-separation and how does it relate to causal inference?**\nTools: perplexity_reason, perplexity_search\n[MCP integration ready] perplexity_reason for: Theoretical foundation: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Theoretical foundation: What is d-separation and how does it relate to causal inference?\n\n\n**Recent empirical results: What is d-separation and how does it relate to causal inference?**\nTools: perplexity_reason, perplexity_search\n[MCP integration ready] perplexity_reason for: Recent empirical results: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Recent empirical results: What is d-separation and how does it relate to causal inference?\n\n\n**Alternative perspectives: What is d-separation and how does it relate to causal inference?**\nTools: perplexity_reason, perplexity_search\n[MCP integration ready] perplexity_reason for: Alternative perspectives: What is d-separation and how does it relate to causal inference?\n[MCP integration ready] perplexity_search for: Alternative perspectives: What is d-separation and how does it relate to causal inference?"
+      },
+      "quality": {
+        "score": 0.03724511278195497,
+        "flags": [
+          "placeholder"
+        ],
+        "suggestions": [
+          {
+            "type": "configuration",
+            "message": "LLM service not configured - responses are placeholders",
+            "action": "Set OPENAI_API_KEY environment variable",
+            "priority": "high"
+          },
+          {
+            "type": "query_handling",
+            "message": "Multi-part query may need decomposition",
+            "action": "Consider using 'decompose_and_synthesize' schema",
+            "priority": "low"
+          }
+        ],
+        "adaptive_strategy": {
+          "schema": "decompose_and_synthesize",
+          "expected_length": 200,
+          "should_use_research": false,
+          "confidence": 0.32000000000000006
+        }
+      },
+      "metadata": {
+        "validation_issues": [
+          {
+            "severity": "info",
+            "category": "response_tiers",
+            "message": "Structured tier (1241 chars) is much longer than detailed (490 chars). May indicate issue with structured tier creation.",
+            "location": "_create_response_tiers",
+            "suggestion": null,
+            "metadata": null
+          }
+        ]
+      }
+    }
+  },
+  {
+    "query": "Explain information geometry and its applications to knowledge structures.",
+    "response": {
+      "message": "Explain information geometry and its applications to knowledge structures.",
+      "response": "[Summary or solution] - to be filled based on: Explain information geometry and its applications to knowledge structures.",
+      "schema_used": "chain_of_thought",
+      "research_conducted": true,
+      "structured_reasoning": {
+        "decomposition": "[Break the problem into smaller parts] - to be filled based on: Explain information geometry and its applications to knowledge structures.",
+        "subsolutions": "[Solutions for each component] - to be filled based on: Explain information geometry and its applications to knowledge structures.",
+        "synthesis": "[Combine subsolutions into cohesive answer] - to be filled based on: Explain information geometry and its applications to knowledge structures."
+      },
+      "research": {
+        "query": "Explain information geometry and its applications to knowledge structures.",
+        "schema_used": "decompose_and_synthesize",
+        "decomposition": [
+          "Theoretical foundation: Explain information geometry and its applications to knowledge structures.",
+          "Recent empirical results: Explain information geometry and its applications to knowledge structures.",
+          "Alternative perspectives: Explain information geometry and its applications to knowledge structures."
+        ],
+        "subsolutions": [
+          {
+            "subproblem": "Theoretical foundation: Explain information geometry and its applications to knowledge structures.",
+            "tools_used": [
+              "perplexity_reason"
+            ],
+            "results": [
+              {
+                "tool": "perplexity_reason",
+                "query": "Theoretical foundation: Explain information geometry and its applications to knowledge structures.",
+                "result": "[MCP integration ready] perplexity_reason for: Theoretical foundation: Explain information geometry and its applications to knowledge structures.",
+                "sources": [],
+                "mcp_tool": "mcp_perplexity_reason",
+                "mcp_args": {
+                  "query": "Theoretical foundation: Explain information geometry and its applications to knowledge structures."
+                },
+                "note": "MCP tool call structure prepared. Actual call should be made via MCP client when available."
+              }
+            ],
+            "synthesis": "[MCP integration ready] perplexity_reason for: Theoretical foundation: Explain information geometry and its applications to knowledge structures.",
+            "topology_impact": {
+              "new_cliques": 0,
+              "betti_delta": {
+                "0": 1,
+                "1": 0
+              },
+              "fisher_delta": 0.0,
+              "topology_changed": true,
+              "adversarial_patterns": 0,
+              "trust_summary": {
+                "avg_trust": 0.5,
+                "high_trust_edges": 0,
+                "low_trust_edges": 0,
+                "avg_credibility": 0.5,
+                "avg_confidence": 0.5,
+                "calibration_error": null,
+                "schema_violations": 0
+              }
+            }
+          },
+          {
+            "subproblem": "Recent empirical results: Explain information geometry and its applications to knowledge structures.",
+            "tools_used": [
+              "perplexity_reason"
+            ],
+            "results": [
+              {
+                "tool": "perplexity_reason",
+                "query": "Recent empirical results: Explain information geometry and its applications to knowledge structures.",
+                "result": "[MCP integration ready] perplexity_reason for: Recent empirical results: Explain information geometry and its applications to knowledge structures.",
+                "sources": [],
+                "mcp_tool": "mcp_perplexity_reason",
+                "mcp_args": {
+                  "query": "Recent empirical results: Explain information geometry and its applications to knowledge structures."
+                },
+                "note": "MCP tool call structure prepared. Actual call should be made via MCP client when available."
+              }
+            ],
+            "synthesis": "[MCP integration ready] perplexity_reason for: Recent empirical results: Explain information geometry and its applications to knowledge structures.",
+            "topology_impact": {
+              "new_cliques": 1,
+              "betti_delta": {
+                "0": 0,
+                "1": 0
+              },
+              "fisher_delta": 0.496,
+              "topology_changed": false,
+              "adversarial_patterns": 0,
+              "trust_summary": {
+                "avg_trust": 0.7,
+                "high_trust_edges": 0,
+                "low_trust_edges": 0,
+                "avg_credibility": 0.7,
+                "avg_confidence": 0.5,
+                "calibration_error": null,
+                "schema_violations": 0
+              }
+            }
+          },
+          {
+            "subproblem": "Alternative perspectives: Explain information geometry and its applications to knowledge structures.",
+            "tools_used": [
+              "perplexity_reason"
+            ],
+            "results": [
+              {
+                "tool": "perplexity_reason",
+                "query": "Alternative perspectives: Explain information geometry and its applications to knowledge structures.",
+                "result": "[MCP integration ready] perplexity_reason for: Alternative perspectives: Explain information geometry and its applications to knowledge structures.",
+                "sources": [],
+                "mcp_tool": "mcp_perplexity_reason",
+                "mcp_args": {
+                  "query": "Alternative perspectives: Explain information geometry and its applications to knowledge structures."
+                },
+                "note": "MCP tool call structure prepared. Actual call should be made via MCP client when available."
+              }
+            ],
+            "synthesis": "[MCP integration ready] perplexity_reason for: Alternative perspectives: Explain information geometry and its applications to knowledge structures.",
+            "topology_impact": {
+              "new_cliques": 0,
+              "betti_delta": {
+                "0": 0,
+                "1": 1
+              },
+              "fisher_delta": -0.248,
+              "topology_changed": true,
+              "adversarial_patterns": 0,
+              "trust_summary": {
+                "avg_trust": 0.6999999999999998,
+                "high_trust_edges": 0,
+                "low_trust_edges": 0,
+                "avg_credibility": 0.6999999999999998,
+                "avg_confidence": 0.5,
+                "calibration_error": null,
+                "schema_violations": 0
+              }
+            }
+          }
+        ],
+        "final_synthesis": "**Theoretical foundation: Explain information geometry and its applications to knowledge structures.**:\n[MCP integration ready] perplexity_reason for: Theoretical foundation: Explain information geometry and its applications to knowledge structures.\n[Topology: 0 new cliques, Fisher \u0394: 0.000]\n\n**Recent empirical results: Explain information geometry and its applications to knowledge structures.**:\n[MCP integration ready] perplexity_reason for: Recent empirical results: Explain information geometry and its applications to knowledge structures.\n\n**Alternative perspectives: Explain information geometry and its applications to knowledge structures.**:\n[MCP integration ready] perplexity_reason for: Alternative perspectives: Explain information geometry and its applications to knowledge structures.\n[Topology: 0 new cliques, Fisher \u0394: -0.248]",
+        "tools_called": 3,
+        "source_matrix": {
+          "Theoretical": {
+            "sources": {
+              "perplexity_reason": "supports"
+            },
+            "consensus": "strong_agreement",
+            "conflict": false
+          },
+          "Explain": {
+            "sources": {
+              "perplexity_reason": "supports"
+            },
+            "consensus": "strong_agreement",
+            "conflict": false
+          },
+          "applications to knowledge": {
+            "sources": {
+              "perplexity_reason": "supports"
+            },
+            "consensus": "strong_agreement",
+            "conflict": false
+          },
+          "Recent": {
+            "sources": {
+              "perplexity_reason": "supports"
+            },
+            "consensus": "strong_agreement",
+            "conflict": false
+          },
+          "Alternative": {
+            "sources": {
+              "perplexity_reason": "supports"
+            },
+            "consensus": "strong_agreement",
+            "conflict": false
+          }
+        },
+        "token_importance": {
+          "term_importance": {
+            "mcp": 1.0,
+            "integration": 1.0,
+            "ready": 1.0,
+            "theoretical": 1.0,
+            "foundation": 1.0,
+            "explain": 1.0,
+            "information": 1.0,
+            "geometry": 1.0,
+            "applications": 1.0,
+            "knowledge": 1.0,
+            "structures": 1.0,
+            "recent": 1.0,
+            "empirical": 1.0,
+            "results": 1.0,
+            "alternative": 1.0,
+            "perspectives": 1.0
+          },
+          "per_result_importance": [
+            {
+              "mcp": 1.0,
+              "integration": 1.0,
+              "ready": 1.0,
+              "theoretical": 1.0,
+              "foundation": 1.0,
+              "explain": 1.0,
+              "information": 1.0,
+              "geometry": 1.0,
+              "applications": 1.0,
+              "knowledge": 1.0,
+              "structures": 1.0
+            },
+            {
+              "mcp": 1.0,
+              "integration": 1.0,
+              "ready": 1.0,
+              "recent": 1.0,
+              "empirical": 1.0,
+              "results": 1.0,
+              "explain": 1.0,
+              "information": 1.0,
+              "geometry": 1.0,
+              "applications": 1.0,
+              "knowledge": 1.0,
+              "structures": 1.0
+            },
+            {
+              "mcp": 1.0,
+              "integration": 1.0,
+              "ready": 1.0,
+              "alternative": 1.0,
+              "perspectives": 1.0,
+              "explain": 1.0,
+              "information": 1.0,
+              "geometry": 1.0,
+              "applications": 1.0,
+              "knowledge": 1.0,
+              "structures": 1.0
+            }
+          ],
+          "top_terms": [
+            "mcp",
+            "integration",
+            "ready",
+            "theoretical",
+            "foundation",
+            "explain",
+            "information",
+            "geometry",
+            "applications",
+            "knowledge",
+            "structures",
+            "recent",
+            "empirical",
+            "results",
+            "alternative",
+            "perspectives"
+          ],
+          "query_terms": [
+            "explain",
+            "information",
+            "geometry",
+            "applications",
+            "knowledge",
+            "structures"
+          ]
+        },
+        "topology": {
+          "betti_numbers": {
+            "0": 1,
+            "1": 1
+          },
+          "euler_characteristic": 1,
+          "fisher_information": 0.248,
+          "attractor_basins": 1,
+          "max_clique_size": 3,
+          "trust_summary": {
+            "avg_trust": 0.6999999999999998,
+            "high_trust_edges": 0,
+            "low_trust_edges": 0,
+            "avg_credibility": 0.6999999999999998,
+            "avg_confidence": 0.5,
+            "calibration_error": null,
+            "schema_violations": 0
+          },
+          "source_credibility": {
+            "perplexity_reason": 0.7
+          },
+          "verification_info": {
+            "perplexity_reason": {
+              "verification_count": 0,
+              "nodes": 3
+            }
+          },
+          "cliques": [
+            {
+              "node_ids": [
+                "q1_perplexity_reason_2_0",
+                "q1_perplexity_reason_1_0",
+                "q1_perplexity_reason_0_0"
+              ],
+              "node_sources": [
+                "perplexity_reason",
+                "perplexity_reason",
+                "perplexity_reason"
+              ],
+              "unique_sources": [
+                "perplexity_reason"
+              ],
+              "source_diversity": 1,
+              "verification_count": 0,
+              "coherence": 0.8000000000000002,
+              "trust": 0.6199999999999999,
+              "risk": 0.0,
+              "size": 3
+            }
+          ],
+          "trusted_cliques": 1
+        },
+        "d_separation_preserved": true
+      },
+      "response_tiers": {
+        "summary": "Response to: Explain information geometry and its applications to knowledge structures",
+        "structured": "**Theoretical foundation: Explain information geometry and its applications to knowledge structures.**:\n[MCP integration ready] perplexity_reason for: Theoretical foundation: Explain information geometry and its applications to knowledge structures.\n[Topology: 0 new cliques, Fisher \u0394: 0.000]\n\n**Recent empirical results: Explain information geometry and its applications to knowledge structures.**:\n[MCP integration ready] perplexity_reason for: Recent empirical results: Explain information geometry and its applications to knowledge structures.\n\n**Alternative perspectives: Explain information geometry and its applications to knowledge structures.**:\n[MCP integration ready] perplexity_reason for: Alternative perspectives: Explain information geometry and its applications to knowledge structures.\n[Topology: 0 new cliques, Fisher \u0394: -0.248]",
+        "detailed": "Response to: Explain information geometry and its applications to knowledge structures.\n[LLM service not available - please set OPENAI_API_KEY]\n\n**Sources:**\n- [MCP integration ready] perplexity_reason for: Theoretical f... [Sources: perplexity_reason]\n- [MCP integration ready] perplexity_reason for: Recent empiri... [Sources: perplexity_reason]\n- [MCP integration ready] perplexity_reason for: Alternative p... [Sources: perplexity_reason]\n",
+        "evidence": "**Final Synthesis**:\n**Theoretical foundation: Explain information geometry and its applications to knowledge structures.**:\n[MCP integration ready] perplexity_reason for: Theoretical foundation: Explain information geometry and its applications to knowledge structures.\n[Topology: 0 new cliques, Fisher \u0394: 0.000]\n\n**Recent empirical results: Explain information geometry and its applications to knowledge structures.**:\n[MCP integration ready] perplexity_reason for: Recent empirical results: Explain information geometry and its applications to knowledge structures.\n\n**Alternative perspectives: Explain information geometry and its applications to knowledge structures.**:\n[MCP integration ready] perplexity_reason for: Alternative perspectives: Explain information geometry and its applications to knowledge structures.\n[Topology: 0 new cliques, Fisher \u0394: -0.248]\n\n\n**Detailed Breakdown**:\n\n\n**Theoretical foundation: Explain information geometry and its applications to knowledge structures.**\nTools: perplexity_reason\n[MCP integration ready] perplexity_reason for: Theoretical foundation: Explain information geometry and its applications to knowledge structures.\n\n\n**Recent empirical results: Explain information geometry and its applications to knowledge structures.**\nTools: perplexity_reason\n[MCP integration ready] perplexity_reason for: Recent empirical results: Explain information geometry and its applications to knowledge structures.\n\n\n**Alternative perspectives: Explain information geometry and its applications to knowledge structures.**\nTools: perplexity_reason\n[MCP integration ready] perplexity_reason for: Alternative perspectives: Explain information geometry and its applications to knowledge structures."
+      },
+      "quality": {
+        "score": 0.05060633484162891,
+        "flags": [
+          "placeholder"
+        ],
+        "suggestions": [
+          {
+            "type": "configuration",
+            "message": "LLM service not configured - responses are placeholders",
+            "action": "Set OPENAI_API_KEY environment variable",
+            "priority": "high"
+          },
+          {
+            "type": "query_handling",
+            "message": "Multi-part query may need decomposition",
+            "action": "Consider using 'decompose_and_synthesize' schema",
+            "priority": "low"
+          }
+        ],
+        "adaptive_strategy": {
+          "schema": "decompose_and_synthesize",
+          "expected_length": 200,
+          "should_use_research": false,
+          "confidence": 0.32000000000000006
+        }
+      },
+      "metadata": {
+        "validation_issues": [
+          {
+            "severity": "info",
+            "category": "response_tiers",
+            "message": "Structured tier (846 chars) is much longer than detailed (443 chars). May indicate issue with structured tier creation.",
+            "location": "_create_response_tiers",
+            "suggestion": null,
+            "metadata": null
+          }
+        ]
+      }
+    }
+  },
+  {
+    "query": "How do trust metrics work in knowledge systems?",
+    "response": {
+      "message": "How do trust metrics work in knowledge systems?",
+      "response": "[Summary or solution] - to be filled based on: How do trust metrics work in knowledge systems?",
+      "schema_used": "chain_of_thought",
+      "research_conducted": true,
+      "structured_reasoning": {
+        "decomposition": "[Break the problem into smaller parts] - to be filled based on: How do trust metrics work in knowledge systems?",
+        "subsolutions": "[Solutions for each component] - to be filled based on: How do trust metrics work in knowledge systems?",
+        "synthesis": "[Combine subsolutions into cohesive answer] - to be filled based on: How do trust metrics work in knowledge systems?"
+      },
+      "research": {
+        "query": "How do trust metrics work in knowledge systems?",
+        "schema_used": "decompose_and_synthesize",
+        "decomposition": [
+          "Theoretical foundation: How do trust metrics work in knowledge systems?",
+          "Recent empirical results: How do trust metrics work in knowledge systems?",
+          "Alternative perspectives: How do trust metrics work in knowledge systems?"
+        ],
+        "subsolutions": [
+          {
+            "subproblem": "Theoretical foundation: How do trust metrics work in knowledge systems?",
+            "tools_used": [
+              "perplexity_reason"
+            ],
+            "results": [
+              {
+                "tool": "perplexity_reason",
+                "query": "Theoretical foundation: How do trust metrics work in knowledge systems?",
+                "result": "[MCP integration ready] perplexity_reason for: Theoretical foundation: How do trust metrics work in knowledge systems?",
+                "sources": [],
+                "mcp_tool": "mcp_perplexity_reason",
+                "mcp_args": {
+                  "query": "Theoretical foundation: How do trust metrics work in knowledge systems?"
+                },
+                "note": "MCP tool call structure prepared. Actual call should be made via MCP client when available."
+              }
+            ],
+            "synthesis": "[MCP integration ready] perplexity_reason for: Theoretical foundation: How do trust metrics work in knowledge systems?",
+            "topology_impact": {
+              "new_cliques": 0,
+              "betti_delta": {
+                "0": 1,
+                "1": 0
+              },
+              "fisher_delta": 0.0,
+              "topology_changed": true,
+              "adversarial_patterns": 0,
+              "trust_summary": {
+                "avg_trust": 0.5,
+                "high_trust_edges": 0,
+                "low_trust_edges": 0,
+                "avg_credibility": 0.5,
+                "avg_confidence": 0.5,
+                "calibration_error": null,
+                "schema_violations": 0
+              }
+            }
+          },
+          {
+            "subproblem": "Recent empirical results: How do trust metrics work in knowledge systems?",
+            "tools_used": [
+              "perplexity_reason"
+            ],
+            "results": [
+              {
+                "tool": "perplexity_reason",
+                "query": "Recent empirical results: How do trust metrics work in knowledge systems?",
+                "result": "[MCP integration ready] perplexity_reason for: Recent empirical results: How do trust metrics work in knowledge systems?",
+                "sources": [],
+                "mcp_tool": "mcp_perplexity_reason",
+                "mcp_args": {
+                  "query": "Recent empirical results: How do trust metrics work in knowledge systems?"
+                },
+                "note": "MCP tool call structure prepared. Actual call should be made via MCP client when available."
+              }
+            ],
+            "synthesis": "[MCP integration ready] perplexity_reason for: Recent empirical results: How do trust metrics work in knowledge systems?",
+            "topology_impact": {
+              "new_cliques": 1,
+              "betti_delta": {
+                "0": 0,
+                "1": 0
+              },
+              "fisher_delta": 0.496,
+              "topology_changed": false,
+              "adversarial_patterns": 0,
+              "trust_summary": {
+                "avg_trust": 0.7,
+                "high_trust_edges": 0,
+                "low_trust_edges": 0,
+                "avg_credibility": 0.7,
+                "avg_confidence": 0.5,
+                "calibration_error": null,
+                "schema_violations": 0
+              }
+            }
+          },
+          {
+            "subproblem": "Alternative perspectives: How do trust metrics work in knowledge systems?",
+            "tools_used": [
+              "perplexity_reason"
+            ],
+            "results": [
+              {
+                "tool": "perplexity_reason",
+                "query": "Alternative perspectives: How do trust metrics work in knowledge systems?",
+                "result": "[MCP integration ready] perplexity_reason for: Alternative perspectives: How do trust metrics work in knowledge systems?",
+                "sources": [],
+                "mcp_tool": "mcp_perplexity_reason",
+                "mcp_args": {
+                  "query": "Alternative perspectives: How do trust metrics work in knowledge systems?"
+                },
+                "note": "MCP tool call structure prepared. Actual call should be made via MCP client when available."
+              }
+            ],
+            "synthesis": "[MCP integration ready] perplexity_reason for: Alternative perspectives: How do trust metrics work in knowledge systems?",
+            "topology_impact": {
+              "new_cliques": 0,
+              "betti_delta": {
+                "0": 0,
+                "1": 1
+              },
+              "fisher_delta": -0.248,
+              "topology_changed": true,
+              "adversarial_patterns": 0,
+              "trust_summary": {
+                "avg_trust": 0.6999999999999998,
+                "high_trust_edges": 0,
+                "low_trust_edges": 0,
+                "avg_credibility": 0.6999999999999998,
+                "avg_confidence": 0.5,
+                "calibration_error": null,
+                "schema_violations": 0
+              }
+            }
+          }
+        ],
+        "final_synthesis": "**Theoretical foundation: How do trust metrics work in knowledge systems?**:\n[MCP integration ready] perplexity_reason for: Theoretical foundation: How do trust metrics work in knowledge systems?\n[Topology: 0 new cliques, Fisher \u0394: 0.000]\n\n**Recent empirical results: How do trust metrics work in knowledge systems?**:\n[MCP integration ready] perplexity_reason for: Recent empirical results: How do trust metrics work in knowledge systems?\n\n**Alternative perspectives: How do trust metrics work in knowledge systems?**:\n[MCP integration ready] perplexity_reason for: Alternative perspectives: How do trust metrics work in knowledge systems?\n[Topology: 0 new cliques, Fisher \u0394: -0.248]",
+        "tools_called": 3,
+        "source_matrix": {
+          "Theoretical": {
+            "sources": {
+              "perplexity_reason": "supports"
+            },
+            "consensus": "strong_agreement",
+            "conflict": false
+          },
+          "work in knowledge": {
+            "sources": {
+              "perplexity_reason": "supports"
+            },
+            "consensus": "strong_agreement",
+            "conflict": false
+          },
+          "Recent": {
+            "sources": {
+              "perplexity_reason": "supports"
+            },
+            "consensus": "strong_agreement",
+            "conflict": false
+          },
+          "Alternative": {
+            "sources": {
+              "perplexity_reason": "supports"
+            },
+            "consensus": "strong_agreement",
+            "conflict": false
+          }
+        },
+        "token_importance": {
+          "term_importance": {
+            "mcp": 1.0,
+            "integration": 1.0,
+            "ready": 1.0,
+            "theoretical": 1.0,
+            "foundation": 1.0,
+            "trust": 1.0,
+            "metrics": 1.0,
+            "work": 1.0,
+            "knowledge": 1.0,
+            "systems": 1.0,
+            "recent": 1.0,
+            "empirical": 1.0,
+            "results": 1.0,
+            "alternative": 1.0,
+            "perspectives": 1.0
+          },
+          "per_result_importance": [
+            {
+              "mcp": 1.0,
+              "integration": 1.0,
+              "ready": 1.0,
+              "theoretical": 1.0,
+              "foundation": 1.0,
+              "trust": 1.0,
+              "metrics": 1.0,
+              "work": 1.0,
+              "knowledge": 1.0,
+              "systems": 1.0
+            },
+            {
+              "mcp": 1.0,
+              "integration": 1.0,
+              "ready": 1.0,
+              "recent": 1.0,
+              "empirical": 1.0,
+              "results": 1.0,
+              "trust": 1.0,
+              "metrics": 1.0,
+              "work": 1.0,
+              "knowledge": 1.0,
+              "systems": 1.0
+            },
+            {
+              "mcp": 1.0,
+              "integration": 1.0,
+              "ready": 1.0,
+              "alternative": 1.0,
+              "perspectives": 1.0,
+              "trust": 1.0,
+              "metrics": 1.0,
+              "work": 1.0,
+              "knowledge": 1.0,
+              "systems": 1.0
+            }
+          ],
+          "top_terms": [
+            "mcp",
+            "integration",
+            "ready",
+            "theoretical",
+            "foundation",
+            "trust",
+            "metrics",
+            "work",
+            "knowledge",
+            "systems",
+            "recent",
+            "empirical",
+            "results",
+            "alternative",
+            "perspectives"
+          ],
+          "query_terms": [
+            "trust",
+            "metrics",
+            "work",
+            "knowledge",
+            "systems"
+          ]
+        },
+        "topology": {
+          "betti_numbers": {
+            "0": 1,
+            "1": 1
+          },
+          "euler_characteristic": 1,
+          "fisher_information": 0.248,
+          "attractor_basins": 1,
+          "max_clique_size": 3,
+          "trust_summary": {
+            "avg_trust": 0.6999999999999998,
+            "high_trust_edges": 0,
+            "low_trust_edges": 0,
+            "avg_credibility": 0.6999999999999998,
+            "avg_confidence": 0.5,
+            "calibration_error": null,
+            "schema_violations": 0
+          },
+          "source_credibility": {
+            "perplexity_reason": 0.7
+          },
+          "verification_info": {
+            "perplexity_reason": {
+              "verification_count": 0,
+              "nodes": 3
+            }
+          },
+          "cliques": [
+            {
+              "node_ids": [
+                "q1_perplexity_reason_2_0",
+                "q1_perplexity_reason_1_0",
+                "q1_perplexity_reason_0_0"
+              ],
+              "node_sources": [
+                "perplexity_reason",
+                "perplexity_reason",
+                "perplexity_reason"
+              ],
+              "unique_sources": [
+                "perplexity_reason"
+              ],
+              "source_diversity": 1,
+              "verification_count": 0,
+              "coherence": 0.8000000000000002,
+              "trust": 0.6199999999999999,
+              "risk": 0.0,
+              "size": 3
+            }
+          ],
+          "trusted_cliques": 1
+        },
+        "d_separation_preserved": true
+      },
+      "response_tiers": {
+        "summary": "Response to: How do trust metrics work in knowledge systems?\n[LLM service not available - please set OPENAI_API_KEY]\n\n**Sources:**\n- [MCP integrati...",
+        "structured": "**Theoretical foundation: How do trust metrics work in knowledge systems?**:\n[MCP integration ready] perplexity_reason for: Theoretical foundation: How do trust metrics work in knowledge systems?\n[Topology: 0 new cliques, Fisher \u0394: 0.000]\n\n**Recent empirical results: How do trust metrics work in knowledge systems?**:\n[MCP integration ready] perplexity_reason for: Recent empirical results: How do trust metrics work in knowledge systems?\n\n**Alternative perspectives: How do trust metrics work in knowledge systems?**:\n[MCP integration ready] perplexity_reason for: Alternative perspectives: How do trust metrics work in knowledge systems?\n[Topology: 0 new cliques, Fisher \u0394: -0.248]",
+        "detailed": "Response to: How do trust metrics work in knowledge systems?\n[LLM service not available - please set OPENAI_API_KEY]\n\n**Sources:**\n- [MCP integration ready] perplexity_reason for: Theoretical f... [Sources: perplexity_reason]\n- [MCP integration ready] perplexity_reason for: Recent empiri... [Sources: perplexity_reason]\n- [MCP integration ready] perplexity_reason for: Alternative p... [Sources: perplexity_reason]\n",
+        "evidence": "**Final Synthesis**:\n**Theoretical foundation: How do trust metrics work in knowledge systems?**:\n[MCP integration ready] perplexity_reason for: Theoretical foundation: How do trust metrics work in knowledge systems?\n[Topology: 0 new cliques, Fisher \u0394: 0.000]\n\n**Recent empirical results: How do trust metrics work in knowledge systems?**:\n[MCP integration ready] perplexity_reason for: Recent empirical results: How do trust metrics work in knowledge systems?\n\n**Alternative perspectives: How do trust metrics work in knowledge systems?**:\n[MCP integration ready] perplexity_reason for: Alternative perspectives: How do trust metrics work in knowledge systems?\n[Topology: 0 new cliques, Fisher \u0394: -0.248]\n\n\n**Detailed Breakdown**:\n\n\n**Theoretical foundation: How do trust metrics work in knowledge systems?**\nTools: perplexity_reason\n[MCP integration ready] perplexity_reason for: Theoretical foundation: How do trust metrics work in knowledge systems?\n\n\n**Recent empirical results: How do trust metrics work in knowledge systems?**\nTools: perplexity_reason\n[MCP integration ready] perplexity_reason for: Recent empirical results: How do trust metrics work in knowledge systems?\n\n\n**Alternative perspectives: How do trust metrics work in knowledge systems?**\nTools: perplexity_reason\n[MCP integration ready] perplexity_reason for: Alternative perspectives: How do trust metrics work in knowledge systems?"
+      },
+      "quality": {
+        "score": 0.0,
+        "flags": [
+          "placeholder"
+        ],
+        "suggestions": [
+          {
+            "type": "configuration",
+            "message": "LLM service not configured - responses are placeholders",
+            "action": "Set OPENAI_API_KEY environment variable",
+            "priority": "high"
+          },
+          {
+            "type": "query_handling",
+            "message": "Multi-part query may need decomposition",
+            "action": "Consider using 'decompose_and_synthesize' schema",
+            "priority": "low"
+          }
+        ],
+        "adaptive_strategy": {
+          "schema": "decompose_and_synthesize",
+          "expected_length": 200,
+          "should_use_research": false,
+          "confidence": 0.32000000000000006
+        }
+      },
+      "metadata": {
+        "validation_issues": [
+          {
+            "severity": "info",
+            "category": "response_tiers",
+            "message": "Structured tier (684 chars) is much longer than detailed (416 chars). May indicate issue with structured tier creation.",
+            "location": "_create_response_tiers",
+            "suggestion": null,
+            "metadata": null
+          }
+        ]
+      }
+    }
+  }
+]

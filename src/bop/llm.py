@@ -379,6 +379,8 @@ Return a JSON array of subproblem strings.
         self,
         tool_results: List[Dict[str, Any]],
         subproblem: str,
+        use_ib_filtering: bool = True,
+        ib_beta: float = 0.5,
     ) -> str:
         """
         Synthesize results from multiple tools into coherent answer.
@@ -386,6 +388,8 @@ Return a JSON array of subproblem strings.
         Args:
             tool_results: Results from multiple tools
             subproblem: The subproblem being addressed
+            use_ib_filtering: Whether to apply Information Bottleneck filtering
+            ib_beta: Beta parameter for IB filtering (higher = more compression)
 
         Returns:
             Synthesized answer
@@ -398,6 +402,40 @@ Return a JSON array of subproblem strings.
 
         if not valid_results:
             return f"No valid results found for: {subproblem}"
+
+        # Apply IB filtering before synthesis if enabled and we have multiple results
+        # 
+        # Why IB Filtering: Research (arXiv 2406.01549) shows that most retrieved content
+        # is noise. IB filtering removes irrelevant passages before synthesis, reducing
+        # token usage by 20-30% while maintaining or improving quality. This addresses the
+        # "waste" component of the degradation triple.
+        # 
+        # We only filter when we have multiple results (>2) to avoid over-filtering.
+        # The min_mi=0.3 threshold filters out low-relevance results while preserving
+        # high-relevance ones. The max_results=5 limit prevents token overflow while
+        # keeping the most relevant information.
+        ib_metadata = None
+        if use_ib_filtering and len(valid_results) > 2:
+            try:
+                from .information_bottleneck import filter_with_information_bottleneck
+                filtered_results, ib_metadata = filter_with_information_bottleneck(
+                    valid_results,
+                    query=subproblem,
+                    beta=ib_beta,
+                    min_mi=0.3,  # Filter out results with <30% mutual information
+                    max_results=5,  # Limit to top 5 most relevant (prevents token overflow)
+                )
+                if filtered_results:
+                    valid_results = filtered_results
+                    logger.debug(
+                        f"IB filtering: {ib_metadata['compression_ratio']:.2%} compression, "
+                        f"removed {ib_metadata['removed_count']} results, "
+                        f"avg MI: {ib_metadata['avg_mi']:.3f}"
+                    )
+            except Exception as e:
+                # Fallback: If IB filtering fails, use all results (graceful degradation)
+                logger.warning(f"IB filtering failed: {e}, using all results", exc_info=True)
+                ib_metadata = None
 
         # Build synthesis prompt
         results_text = "\n\n".join(

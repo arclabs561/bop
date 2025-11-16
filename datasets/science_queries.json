@@ -1,0 +1,73 @@
+[
+  {
+    "query": "What is d-separation and how does it relate to causal inference?",
+    "domain": "science",
+    "subdomain": "statistics",
+    "complexity": "complex",
+    "expected_concepts": ["d-separation", "causal inference", "Bayesian networks", "conditional independence"],
+    "query_type": "explanatory",
+    "requires_research": true,
+    "temporal_aspect": false
+  },
+  {
+    "query": "Explain information geometry and its applications in machine learning",
+    "domain": "science",
+    "subdomain": "mathematics",
+    "complexity": "complex",
+    "expected_concepts": ["information geometry", "manifold", "Fisher information", "machine learning"],
+    "query_type": "explanatory",
+    "requires_research": true,
+    "temporal_aspect": false
+  },
+  {
+    "query": "How do Kolmogorov complexity and algorithmic information theory relate?",
+    "domain": "science",
+    "subdomain": "computer_science",
+    "complexity": "moderate",
+    "expected_concepts": ["Kolmogorov complexity", "algorithmic information theory", "computability"],
+    "query_type": "comparative",
+    "requires_research": true,
+    "temporal_aspect": false
+  },
+  {
+    "query": "What is the relationship between entropy and information?",
+    "domain": "science",
+    "subdomain": "information_theory",
+    "complexity": "moderate",
+    "expected_concepts": ["entropy", "information", "Shannon entropy", "mutual information"],
+    "query_type": "explanatory",
+    "requires_research": false,
+    "temporal_aspect": false
+  },
+  {
+    "query": "Compare Bayesian and frequentist approaches to statistical inference",
+    "domain": "science",
+    "subdomain": "statistics",
+    "complexity": "complex",
+    "expected_concepts": ["Bayesian", "frequentist", "statistical inference", "probability"],
+    "query_type": "comparative",
+    "requires_research": true,
+    "temporal_aspect": false
+  },
+  {
+    "query": "What are the latest developments in transformer architectures?",
+    "domain": "science",
+    "subdomain": "machine_learning",
+    "complexity": "moderate",
+    "expected_concepts": ["transformer", "attention mechanism", "neural networks"],
+    "query_type": "temporal",
+    "requires_research": true,
+    "temporal_aspect": true
+  },
+  {
+    "query": "How has our understanding of quantum entanglement evolved?",
+    "domain": "science",
+    "subdomain": "physics",
+    "complexity": "complex",
+    "expected_concepts": ["quantum entanglement", "quantum mechanics", "Bell's theorem"],
+    "query_type": "temporal",
+    "requires_research": true,
+    "temporal_aspect": true
+  }
+]
+

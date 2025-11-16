@@ -83,7 +83,7 @@ cat tests/TEST_ANNOTATIONS.json
 Evaluate test quality by introducing mutations to code:
 
 ```bash
-# Quick mutation test (limited mutations)
+# Quick mutation test
 just test-mutate-quick
 
 # Full mutation testing with HTML report
@@ -91,18 +91,9 @@ just test-mutate-html
 
 # View results
 just test-mutate-show
-
-# Run mutation tests directly (faster, no mutation generation)
-pytest tests/test_mutation_agent.py -v
 ```
 
-**Documentation:**
-- [MUTATION_TESTING.md](MUTATION_TESTING.md) - User guide
-- [MUTATION_TESTING_EXAMPLES.md](MUTATION_TESTING_EXAMPLES.md) - Real examples from agent code
-- [MUTATION_TESTING_CRITIQUE.md](MUTATION_TESTING_CRITIQUE.md) - Analysis and recommendations
-- [MUTATION_TESTING_SUMMARY.md](MUTATION_TESTING_SUMMARY.md) - Implementation overview
-
-**Test Count**: 26 tests (17 basic + 9 critical logic tests)
+See [MUTATION_TESTING.md](MUTATION_TESTING.md) for complete guide.
 
 ## Documentation
 

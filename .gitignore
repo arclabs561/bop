@@ -58,6 +58,8 @@ results/
 evaluations/
 eval_outputs/
 analysis_output/
+data/evaluation-outputs/
+data/results/
 
 # Runtime data
 cache/

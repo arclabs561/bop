@@ -13,7 +13,6 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Header, Depends, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -22,8 +21,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel, Field, field_validator
 
-# Load environment variables from .env file
-load_dotenv()
+# .env is auto-loaded by src/bop/__init__.py when package is imported
 
 from .agent import KnowledgeAgent
 from .orchestrator import StructuredOrchestrator
@@ -31,6 +29,17 @@ from .research import ResearchAgent
 from .constraints import PYSAT_AVAILABLE
 from .web_ui import router as web_ui_router
 from .server_context import get_request_agent, get_request_id, set_request_id
+from .middleware import SecurityHeadersMiddleware, RequestLoggingMiddleware, EnhancedRateLimitMiddleware
+from .request_limits import RequestSizeLimitMiddleware
+from .error_handling import handle_exception, sanitize_error_message, get_request_id
+from .input_validation import validate_category, sanitize_string, sanitize_json_input
+from .exception_handlers import (
+    http_exception_handler,
+    validation_exception_handler,
+    general_exception_handler,
+)
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 logger = logging.getLogger(__name__)
 
@@ -38,10 +47,9 @@ logger = logging.getLogger(__name__)
 agent: Optional[KnowledgeAgent] = None
 orchestrator: Optional[StructuredOrchestrator] = None
 
-# Rate limiting (simple in-memory, use Redis for production)
-_rate_limit_store: Dict[str, List[float]] = {}
-RATE_LIMIT_WINDOW = 60  # 1 minute
-RATE_LIMIT_MAX_REQUESTS = 30  # 30 requests per minute per IP
+# Rate limiting configuration
+RATE_LIMIT_WINDOW = int(os.getenv("BOP_RATE_LIMIT_WINDOW", "60"))  # 1 minute
+RATE_LIMIT_MAX_REQUESTS = int(os.getenv("BOP_RATE_LIMIT_MAX", "30"))  # 30 requests per minute
 
 # API Key authentication
 API_KEY_HEADER = APIKeyHeader(name="X-API-Key", auto_error=False)
@@ -78,39 +86,11 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         request_id = str(uuid.uuid4())
         set_request_id(request_id)
+        # Store in request state for logging middleware
+        request.state.request_id = request_id
         response = await call_next(request)
         response.headers["X-Request-ID"] = request_id
         return response
-
-
-class RateLimitMiddleware(BaseHTTPMiddleware):
-    """Simple rate limiting middleware."""
-    
-    async def dispatch(self, request: Request, call_next):
-        # Get client IP
-        client_ip = request.client.host if request.client else "unknown"
-        
-        # Check rate limit
-        now = time.time()
-        if client_ip in _rate_limit_store:
-            # Remove old entries
-            _rate_limit_store[client_ip] = [
-                t for t in _rate_limit_store[client_ip]
-                if now - t < RATE_LIMIT_WINDOW
-            ]
-            
-            # Check limit
-            if len(_rate_limit_store[client_ip]) >= RATE_LIMIT_MAX_REQUESTS:
-                return JSONResponse(
-                    status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                    content={"detail": "Rate limit exceeded. Max 30 requests per minute."}
-                )
-            
-            _rate_limit_store[client_ip].append(now)
-        else:
-            _rate_limit_store[client_ip] = [now]
-        
-        return await call_next(request)
 
 
 @asynccontextmanager
@@ -151,20 +131,46 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.warning(f"Failed to save knowledge tracker state: {e}")
     
-    # Clear rate limit store
-    _rate_limit_store.clear()
+    # Rate limit cleanup is handled by middleware
 
 
 app = FastAPI(
     title="BOP Knowledge Structure Research Agent",
-    description="HTTP API for BOP with constraint-based tool selection (Private)",
-    version="0.1.0",
+    description="HTTP API for knowledge structure research (Private)",
+    version="0.1.0",  # Version in OpenAPI spec is acceptable
     lifespan=lifespan,
+    docs_url=None,  # Disable automatic docs (private deployment)
+    redoc_url=None,  # Disable ReDoc (private deployment)
+    openapi_url=None,  # Disable OpenAPI schema (private deployment)
 )
 
-# Add middleware (order matters - first added is outermost)
+# Add middleware (order matters - first added is outermost, last is innermost)
+# Middleware executes in reverse order (last added executes first)
+# 1. CORS (outermost - handles preflight requests first)
+#    (Added later after CORS config)
+# 2. Request size limits (protect against DoS from large requests)
+app.add_middleware(
+    RequestSizeLimitMiddleware,
+    max_body_size=int(os.getenv("BOP_MAX_BODY_SIZE", str(10 * 1024 * 1024))),  # 10MB default
+    max_header_size=int(os.getenv("BOP_MAX_HEADER_SIZE", str(8 * 1024))),  # 8KB default
+    max_query_string_size=int(os.getenv("BOP_MAX_QUERY_SIZE", str(2 * 1024))),  # 2KB default
+)
+# 3. Rate limiting (protect against DoS from many requests)
+app.add_middleware(
+    EnhancedRateLimitMiddleware,
+    window_seconds=RATE_LIMIT_WINDOW,
+    max_requests=RATE_LIMIT_MAX_REQUESTS,
+)
+# 4. Request logging (log all requests for audit trail)
+app.add_middleware(
+    RequestLoggingMiddleware,
+    log_body=os.getenv("BOP_LOG_REQUEST_BODY", "false").lower() == "true",
+    log_headers=os.getenv("BOP_LOG_REQUEST_HEADERS", "false").lower() == "true",
+)
+# 5. Security headers (add headers to all responses)
+app.add_middleware(SecurityHeadersMiddleware)
+# 6. Request ID (innermost - sets ID for all other middleware)
 app.add_middleware(RequestIDMiddleware)
-app.add_middleware(RateLimitMiddleware)
 
 # Mount static files and web UI
 # Static files path - check both project root and current directory
@@ -180,15 +186,31 @@ if static_path:
 
 app.include_router(web_ui_router)
 
+# Add global exception handlers
+app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(Exception, general_exception_handler)
+
 # CORS middleware - restrict to private network
-# Allow specific origins if configured, otherwise allow all (for private network)
-allowed_origins = os.getenv("BOP_CORS_ORIGINS", "*").split(",")
+# Default: no CORS (private network doesn't need it)
+# Set BOP_CORS_ORIGINS to enable CORS for specific origins
+cors_origins_env = os.getenv("BOP_CORS_ORIGINS", "")
+if cors_origins_env:
+    allowed_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
+    # Never allow wildcard in production
+    if "*" in allowed_origins and os.getenv("BOP_ALLOW_NO_AUTH", "false").lower() != "true":
+        logger.warning("CORS wildcard (*) is not allowed in production. Restricting to empty list.")
+        allowed_origins = []
+else:
+    allowed_origins = []
+
+# CORS middleware (outermost - handles preflight requests)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins if "*" not in allowed_origins else ["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=allowed_origins,
+    allow_credentials=True if allowed_origins else False,  # Only allow credentials if origins specified
+    allow_methods=["GET", "POST", "OPTIONS"],  # Restrict methods
+    allow_headers=["Content-Type", "X-API-Key", "X-Request-ID"],  # Restrict headers
 )
 
 
@@ -204,8 +226,11 @@ class ChatRequest(BaseModel):
         """Validate message content."""
         if not v or not v.strip():
             raise ValueError("Message cannot be empty")
-        # Basic sanitization - remove control characters
-        return ''.join(c for c in v if ord(c) >= 32 or c in '\n\r\t')
+        # Use input validation utility for comprehensive sanitization
+        try:
+            return sanitize_string(v, max_length=10000)
+        except ValueError as e:
+            raise ValueError(f"Invalid message: {str(e)}")
 
 
 class ChatResponse(BaseModel):
@@ -237,11 +262,9 @@ class ChatResponse(BaseModel):
 @app.get("/")
 async def root():
     """Health check and info endpoint (public)."""
+    # Minimal information disclosure - don't expose internal details
     return {
         "service": "BOP Knowledge Structure Research Agent",
-        "version": "0.1.0",
-        "constraint_solver_available": PYSAT_AVAILABLE,
-        "constraint_solver_enabled": orchestrator.use_constraints if orchestrator else False,
         "status": "running",
         "access": "private",
     }
@@ -250,9 +273,9 @@ async def root():
 @app.get("/health")
 async def health():
     """Health check endpoint (public) - actually checks system health."""
+    # Minimal information disclosure - don't expose internal implementation details
     health_status = {
         "status": "healthy",
-        "constraint_solver": PYSAT_AVAILABLE,
         "checks": {}
     }
     
@@ -321,18 +344,8 @@ async def chat(request: ChatRequest):
             detail="Request timed out. Please try a simpler query."
         )
     except Exception as e:
-        # Sanitize error messages
-        logger.error(f"Chat error (request {request_id}): {e}", exc_info=True)
-        # Don't expose internal details
-        error_msg = "An error occurred processing your request."
-        if "API key" in str(e) or "authentication" in str(e).lower():
-            error_msg = "Authentication error. Please check your API key."
-        elif "timeout" in str(e).lower():
-            error_msg = "Request timed out. Please try a simpler query."
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=error_msg
-        )
+        # Use enhanced error handling
+        raise handle_exception(e, request_id=request_id)
     finally:
         # Restore original constraint solver setting
         if original_use_constraints is not None and orchestrator:
@@ -418,12 +431,15 @@ async def chat(request: ChatRequest):
 async def constraints_status():
     """Get constraint solver status and metrics (protected)."""
     if not orchestrator:
-        raise HTTPException(status_code=503, detail="Orchestrator not initialized")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Service temporarily unavailable"
+        )
     
+    # Don't expose internal implementation details
     return {
-        "available": PYSAT_AVAILABLE,
         "enabled": orchestrator.use_constraints,
-        "solver_initialized": orchestrator.constraint_solver is not None,
+        "status": "available" if orchestrator.use_constraints else "disabled",
     }
 
 
@@ -431,10 +447,16 @@ async def constraints_status():
 async def toggle_constraints(enabled: bool):
     """Toggle constraint solver on/off (protected)."""
     if not orchestrator:
-        raise HTTPException(status_code=503, detail="Orchestrator not initialized")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Service temporarily unavailable"
+        )
     
     if enabled and not PYSAT_AVAILABLE:
-        raise HTTPException(status_code=400, detail="PySAT not available")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Constraint solver not available"
+        )
     
     orchestrator.use_constraints = enabled
     if enabled and PYSAT_AVAILABLE:
@@ -453,15 +475,12 @@ async def metrics():
             detail="Agent not initialized"
         )
     
+    # Minimize information disclosure - only expose essential metrics
     metrics_data = {
-        "constraint_solver": {
-            "available": PYSAT_AVAILABLE,
-            "enabled": orchestrator.use_constraints,
-        },
+        "status": "operational",
         "topology": {
             "nodes": len(orchestrator.topology.nodes) if orchestrator else 0,
             "edges": len(orchestrator.topology.edges) if orchestrator else 0,
-            "cliques": len(orchestrator.topology.cliques) if orchestrator else 0,
         },
     }
     
@@ -499,9 +518,11 @@ async def cache_stats():
         cache = get_cache()
         return cache.get_stats()
     except Exception as e:
+        # Sanitize error message
+        logger.error(f"Cache not available: {e}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=f"Cache not available: {str(e)}"
+            detail="Cache service temporarily unavailable"
         )
 
 
@@ -511,7 +532,16 @@ async def clear_cache(category: Optional[str] = None):
     try:
         from .cache import get_cache
         cache = get_cache()
+        
+        # Validate category if provided
         if category:
+            try:
+                category = validate_category(category)
+            except ValueError as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=str(e)
+                )
             cache.clear_category(category)
             return {"message": f"Cleared cache category: {category}"}
         else:
@@ -519,17 +549,27 @@ async def clear_cache(category: Optional[str] = None):
             for cat in ["tools", "llm", "tokens", "sessions"]:
                 cache.clear_category(cat)
             return {"message": "Cleared all cache categories"}
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to clear cache: {str(e)}"
-        )
+        # Use enhanced error handling
+        logger.error(f"Failed to clear cache: {e}", exc_info=True)
+        raise handle_exception(e)
 
 
 class EvaluateCompareRequest(BaseModel):
     """Request model for evaluate/compare endpoint."""
     query: str = Field(..., min_length=1, max_length=1000)
     iterations: int = Field(default=3, ge=1, le=10)  # Limit iterations
+    
+    @field_validator('query')
+    @classmethod
+    def validate_query(cls, v: str) -> str:
+        """Validate query content."""
+        try:
+            return sanitize_string(v, max_length=1000)
+        except ValueError as e:
+            raise ValueError(f"Invalid query: {str(e)}")
 
 
 @app.post("/evaluate/compare", dependencies=[Depends(verify_api_key)])

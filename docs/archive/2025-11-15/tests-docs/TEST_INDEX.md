@@ -73,14 +73,9 @@ Comprehensive index of all tests, evaluations, and run files for discoverability
 - **`test_semantic_realistic.py`** - Realistic semantic evaluation scenarios
 - **`test_mutation_agent.py`** - Mutation testing focused tests for agent
 
-### Mutation Testing (26 tests)
+### Mutation Testing
 - **`test_mutation_agent.py`** - Comprehensive tests designed to catch mutations in agent code
-  - Basic functionality tests (17 tests)
-  - Critical logic tests targeting thresholds, boundaries, and limits (9 tests)
-- **`MUTATION_TESTING.md`** - User guide for mutation testing
-- **`MUTATION_TESTING_CRITIQUE.md`** - Analysis, critique, and refinement recommendations
-- **`MUTATION_TESTING_EXAMPLES.md`** - Real mutation examples from agent code with test coverage
-- **`MUTATION_TESTING_SUMMARY.md`** - Implementation overview and practical recommendations
+- See [MUTATION_TESTING.md](MUTATION_TESTING.md) for guide on using mutation testing
 
 ## Running Tests
 

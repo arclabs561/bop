@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>BOP - Knowledge Structure Research Agent</title>
+    <link rel="stylesheet" href="/static/css/chat.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="app-title">🧠 BOP</h1>
+                <p class="app-subtitle">Knowledge Structure Research Agent</p>
+            </div>
+        </header>
+
+        <!-- Chat Messages Container -->
+        <main class="chat-container" id="chatContainer">
+            <div class="welcome-message" id="welcomeMessage">
+                <div class="welcome-icon">✨</div>
+                <h2>Welcome to BOP</h2>
+                <p>Ask me anything about knowledge structures, reasoning, or deep research.</p>
+                <div class="example-queries">
+                    <button 
+                        class="example-query" 
+                        onclick="setQuery('What is d-separation in causal inference?')"
+                        aria-label="Example query: What is d-separation?"
+                    >
+                        What is d-separation?
+                    </button>
+                    <button 
+                        class="example-query" 
+                        onclick="setQuery('Explain information geometry')"
+                        aria-label="Example query: Explain information geometry"
+                    >
+                        Explain information geometry
+                    </button>
+                    <button 
+                        class="example-query" 
+                        onclick="setQuery('How do attractor basins form in knowledge structures?')"
+                        aria-label="Example query: How do attractor basins form in knowledge structures?"
+                    >
+                        Attractor basins
+                    </button>
+                </div>
+            </div>
+            <div class="messages" id="messages"></div>
+        </main>
+
+        <!-- Input Area -->
+        <footer class="input-area">
+            <div class="input-container">
+                <div class="controls">
+                    <label class="toggle-switch" aria-label="Enable research mode">
+                        <input 
+                            type="checkbox" 
+                            id="researchToggle" 
+                            checked
+                            aria-label="Enable research mode"
+                            aria-describedby="research-help"
+                        >
+                        <span class="slider"></span>
+                        <span class="label-text">Research</span>
+                    </label>
+                    <span id="research-help" class="sr-only">Toggle to enable deep research using MCP tools</span>
+                    <span id="schema-help" class="sr-only">Choose a reasoning schema or leave on Auto for adaptive selection</span>
+                    <select 
+                        id="schemaSelect" 
+                        class="schema-select"
+                        aria-label="Select reasoning schema"
+                        aria-describedby="schema-help"
+                    >
+                        <option value="">Auto (Adaptive)</option>
+                        <option value="chain_of_thought">Chain of Thought</option>
+                        <option value="decompose_and_synthesize">Decompose & Synthesize</option>
+                        <option value="iterative_elaboration">Iterative Elaboration</option>
+                        <option value="hypothesize_and_test">Hypothesize & Test</option>
+                        <option value="scenario_analysis">Scenario Analysis</option>
+                    </select>
+                </div>
+                <div class="input-wrapper">
+                    <textarea 
+                        id="messageInput" 
+                        class="message-input" 
+                        placeholder="Ask me anything..."
+                        rows="1"
+                        maxlength="2000"
+                        aria-label="Message input"
+                        aria-describedby="input-help"
+                    ></textarea>
+                    <span id="input-help" class="sr-only">Enter your question or message. Press Enter to send, Shift+Enter for new line.</span>
+                    <button 
+                        id="sendButton" 
+                        class="send-button" 
+                        onclick="sendMessage()"
+                        aria-label="Send message"
+                        type="button"
+                    >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Loading Indicator -->
+        <div 
+            class="loading-indicator" 
+            id="loadingIndicator" 
+            style="display: none;"
+            role="status"
+            aria-live="polite"
+            aria-label="Processing your request"
+        >
+            <div class="loading-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <span class="loading-text">Processing...</span>
+        </div>
+    </div>
+
+    <script src="/static/js/chat.js"></script>
+</body>
+</html>
+

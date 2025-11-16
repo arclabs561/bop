@@ -125,6 +125,55 @@ test-list:
 test-cov:
     uv run pytest tests/ --cov=src/bop --cov-report=html --cov-report=term
 
+# ============================================================================
+# Mutation Testing
+# ============================================================================
+
+# Run mutation testing on agent (full run)
+# Configuration in pyproject.toml [tool.mutmut]
+test-mutate:
+    @echo "🧬 Running mutation testing on agent..."
+    @echo "⚠️  This may take several minutes"
+    uv run mutmut run
+
+# Run mutation testing with HTML report
+test-mutate-html:
+    @echo "🧬 Running mutation testing with HTML report..."
+    uv run mutmut run
+    uv run mutmut html
+    @echo "📊 HTML report generated in html/mutmut/index.html"
+
+# Show mutation testing results
+test-mutate-show:
+    uv run mutmut show
+
+# Show specific mutation
+test-mutate-show-id ID:
+    uv run mutmut show {{ID}}
+
+# Apply specific mutation (for debugging)
+test-mutate-apply ID:
+    uv run mutmut apply {{ID}}
+
+# Run mutation testing on specific function/method
+test-mutate-function FUNCTION:
+    @echo "🧬 Running mutation testing on {{FUNCTION}}..."
+    uv run mutmut run --function {{FUNCTION}}
+
+# Run mutation testing with coverage (shows which mutations are covered)
+test-mutate-cov:
+    @echo "🧬 Running mutation testing with coverage analysis..."
+    uv run mutmut run --use-coverage
+    uv run mutmut html
+    @echo "📊 HTML report with coverage in html/mutmut/index.html"
+
+# Quick mutation test (limited mutations)
+# Note: Edit max_mutations in pyproject.toml [tool.mutmut] to change limit
+test-mutate-quick:
+    @echo "🧬 Running quick mutation test (limited mutations)..."
+    @echo "⚠️  Edit pyproject.toml [tool.mutmut].max_mutations to change limit (currently 100)"
+    uv run mutmut run
+
 # Run visual E2E tests (requires server running)
 test-visual:
     npx playwright test tests/test_e2e_visual.mjs

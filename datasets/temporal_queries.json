@@ -1,0 +1,57 @@
+[
+  {
+    "query": "What was known about d-separation in 2010 versus 2020?",
+    "domain": "temporal",
+    "subdomain": "knowledge_evolution",
+    "complexity": "complex",
+    "expected_concepts": ["d-separation", "temporal comparison", "knowledge evolution"],
+    "query_type": "temporal_comparison",
+    "requires_research": true,
+    "temporal_aspect": true,
+    "time_points": ["2010", "2020"]
+  },
+  {
+    "query": "How has understanding of information geometry changed over the past decade?",
+    "domain": "temporal",
+    "subdomain": "knowledge_evolution",
+    "complexity": "complex",
+    "expected_concepts": ["information geometry", "temporal evolution", "understanding"],
+    "query_type": "temporal_evolution",
+    "requires_research": true,
+    "temporal_aspect": true,
+    "time_range": "past_decade"
+  },
+  {
+    "query": "What are the latest developments in causal inference methods?",
+    "domain": "temporal",
+    "subdomain": "recent_developments",
+    "complexity": "moderate",
+    "expected_concepts": ["causal inference", "recent", "developments", "methods"],
+    "query_type": "temporal_recent",
+    "requires_research": true,
+    "temporal_aspect": true,
+    "time_focus": "recent"
+  },
+  {
+    "query": "Show me how the concept of trust has evolved in epistemology",
+    "domain": "temporal",
+    "subdomain": "conceptual_evolution",
+    "complexity": "moderate",
+    "expected_concepts": ["trust", "epistemology", "evolution", "concept"],
+    "query_type": "temporal_evolution",
+    "requires_research": true,
+    "temporal_aspect": true
+  },
+  {
+    "query": "Compare early and modern views on uncertainty in knowledge systems",
+    "domain": "temporal",
+    "subdomain": "historical_comparison",
+    "complexity": "complex",
+    "expected_concepts": ["uncertainty", "knowledge systems", "historical comparison"],
+    "query_type": "temporal_comparison",
+    "requires_research": true,
+    "temporal_aspect": true,
+    "time_periods": ["early", "modern"]
+  }
+]
+

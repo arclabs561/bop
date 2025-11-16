@@ -1,0 +1,53 @@
+[
+  {
+    "scenario": "overconfident",
+    "description": "System is overconfident (high confidence, low accuracy)",
+    "predictions": [0.9, 0.8, 0.7, 0.6, 0.5],
+    "actual_outcomes": [0.6, 0.5, 0.4, 0.3, 0.2],
+    "expected_ece_before": 0.3,
+    "expected_ece_after": 0.15,
+    "expected_brier_before": 0.25,
+    "expected_brier_after": 0.15
+  },
+  {
+    "scenario": "underconfident",
+    "description": "System is underconfident (low confidence, high accuracy)",
+    "predictions": [0.4, 0.3, 0.2, 0.1, 0.05],
+    "actual_outcomes": [0.8, 0.7, 0.6, 0.5, 0.4],
+    "expected_ece_before": 0.35,
+    "expected_ece_after": 0.18,
+    "expected_brier_before": 0.30,
+    "expected_brier_after": 0.18
+  },
+  {
+    "scenario": "well_calibrated",
+    "description": "System is well-calibrated (confidence matches accuracy)",
+    "predictions": [0.9, 0.8, 0.7, 0.6, 0.5],
+    "actual_outcomes": [0.9, 0.8, 0.7, 0.6, 0.5],
+    "expected_ece_before": 0.05,
+    "expected_ece_after": 0.05,
+    "expected_brier_before": 0.02,
+    "expected_brier_after": 0.02
+  },
+  {
+    "scenario": "mixed_calibration",
+    "description": "Mixed calibration (some overconfident, some underconfident)",
+    "predictions": [0.9, 0.5, 0.2, 0.8, 0.3],
+    "actual_outcomes": [0.6, 0.5, 0.7, 0.4, 0.6],
+    "expected_ece_before": 0.25,
+    "expected_ece_after": 0.15,
+    "expected_brier_before": 0.20,
+    "expected_brier_after": 0.12
+  },
+  {
+    "scenario": "perfect_predictions",
+    "description": "Perfect predictions (confidence = outcome exactly)",
+    "predictions": [1.0, 1.0, 0.0, 0.0, 0.5],
+    "actual_outcomes": [1.0, 1.0, 0.0, 0.0, 0.5],
+    "expected_ece_before": 0.0,
+    "expected_ece_after": 0.0,
+    "expected_brier_before": 0.0,
+    "expected_brier_after": 0.0
+  }
+]
+

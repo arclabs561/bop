@@ -205,6 +205,7 @@ class StructuredOrchestrator:
         max_tools_per_subproblem: int = 2,
         preserve_d_separation: bool = True,
         prior_beliefs: Optional[List[Dict[str, Any]]] = None,
+        adaptive_manager: Optional[Any] = None,
     ) -> Dict[str, Any]:
         """
         Conduct research using structured schema with topological analysis.
@@ -262,8 +263,35 @@ class StructuredOrchestrator:
         # This implements lazy evaluation - only load context when needed
         subsolutions = []
         conditioning_set = set()  # Track what we've conditioned on
+        
+        # NEW: Get adaptive reasoning depth estimate
+        estimated_depth = None
+        query_type = None
+        if adaptive_manager:
+            try:
+                query_type = adaptive_manager._classify_query(query)
+                estimated_depth = adaptive_manager.estimate_reasoning_depth(query, query_type)
+                logger.info(f"Estimated reasoning depth: {estimated_depth} subproblems for query type: {query_type}")
+            except Exception as e:
+                logger.debug(f"Failed to estimate reasoning depth: {e}", exc_info=True)
 
         for i, subproblem in enumerate(decomposition):
+            # NEW: Check for early stopping
+            if adaptive_manager and query_type and i > 0 and len(subsolutions) >= 2:
+                try:
+                    # Estimate current quality (heuristic: based on subsolution quality)
+                    current_quality = self._estimate_current_quality(subsolutions)
+                    
+                    if adaptive_manager.should_early_stop(
+                        current_quality, query_type, len(subsolutions)
+                    ):
+                        logger.info(
+                            f"Early stopping: quality threshold met after {len(subsolutions)} subproblems "
+                            f"(quality: {current_quality:.3f})"
+                        )
+                        break
+                except Exception as e:
+                    logger.debug(f"Early stopping check failed: {e}", exc_info=True)
             # Select tools dynamically based on subproblem characteristics
             if self.use_constraints and self.constraint_solver:
                 logger.debug(f"Using constraint solver for subproblem {i+1}/{len(decomposition)}")
@@ -575,6 +603,15 @@ class StructuredOrchestrator:
         
         token_importance_data = compute_token_importance_for_results(query, all_results)
         
+        # NEW: Compute logical depth for all nodes
+        logical_depths = {}
+        try:
+            for node_id in self.topology.nodes:
+                logical_depths[node_id] = self.topology.compute_logical_depth_estimate(node_id)
+        except Exception as e:
+            logger.debug(f"Failed to compute logical depths: {e}", exc_info=True)
+            logical_depths = {}
+        
         # Get clique details for visualization
         clique_details = []
         for clique in self.topology.cliques[:10]:  # Top 10 cliques
@@ -626,6 +663,69 @@ class StructuredOrchestrator:
         except Exception:
             pipeline_uncertainty.final_response = 0.5
 
+        # NEW: Resource triple metrics (depth-width-coordination)
+        # 
+        # Theoretical Foundation: The "Triple Principle" from SSH research
+        # 
+        # The resource triple formalizes fundamental computational constraints:
+        # - Depth: Sequential reasoning steps (cannot be parallelized, SSH constraint)
+        # - Width: Parallel operations (tools, parallelism)
+        # - Coordination: Cost of coordinating parallel operations
+        # 
+        # These are non-interchangeable resources. Attempts to "beat" constraints by pushing
+        # on one dimension reintroduce costs in the others. For example:
+        # - More depth → better quality but slower (serial constraint)
+        # - More width → faster but higher coordination cost
+        # - Less coordination → simpler but may miss dependencies
+        # 
+        # Why Track This: Explicit metrics enable understanding of resource tradeoffs and
+        # guide optimization decisions. Without metrics, these tradeoffs are implicit and
+        # harder to reason about.
+        resource_metrics = {
+            "depth": len(subsolutions),  # Reasoning depth (subproblems) - SSH serial constraint
+            "width": sum(len(s.get("tools_used", [])) for s in subsolutions),  # Parallelism (total tools)
+            "coordination": len(set(
+                tool for s in subsolutions 
+                for tool in s.get("tools_used", [])
+            )),  # Unique tools (coordination cost - managing different tools)
+            "total_tokens": sum(len(s.get("synthesis", "")) for s in subsolutions),  # Total compute
+        }
+        
+        # NEW: Degradation triple metrics (corruption-loss-waste)
+        # 
+        # Theoretical Foundation: The "Degradation Triple" from information flow analysis
+        # 
+        # Information flow through systems suffers from three failure modes:
+        # - Noise (corruption): Information is corrupted during transmission/processing
+        # - Loss (death/forgetting): Information is lost entirely
+        # - Waste (irrelevance): Information capacity is wasted on irrelevant content
+        # 
+        # These are analogous to the resource triple but for information rather than computation.
+        # Just as we can't "beat" resource constraints, we can't eliminate all degradation.
+        # 
+        # Why Track This: Understanding degradation helps identify where information quality
+        # is lost and guides improvements (e.g., IB filtering reduces waste, better synthesis
+        # reduces loss, higher Fisher Information reduces noise).
+        # 
+        # Noise: inverse of Fisher Information (higher Fisher = lower noise)
+        # Fisher Information measures structure quality - high structure = less corruption
+        noise_estimate = 1.0 - (fisher_info if fisher_info > 0 else 0.5)
+        
+        # Loss: synthesis uncertainty (information lost in synthesis)
+        # Synthesis uncertainty measures how much information is lost when combining results
+        loss_estimate = pipeline_uncertainty.synthesis
+        
+        # Waste: compression waste (if IB filtering was used, track waste)
+        # Low coherence indicates wasted capacity on irrelevant or disconnected information
+        # For now, estimate based on topology coherence (low coherence = waste)
+        waste_estimate = 1.0 - (np.mean([c.coherence_score for c in self.topology.cliques[:5]]) if self.topology.cliques else 0.5)
+        
+        degradation_metrics = {
+            "noise": float(noise_estimate),  # Corruption (inverse of Fisher Information)
+            "loss": float(loss_estimate),  # Information loss (synthesis uncertainty)
+            "waste": float(waste_estimate),  # Wasted capacity (low coherence)
+        }
+
         return {
             "query": query,
             "schema_used": schema_name,
@@ -650,8 +750,12 @@ class StructuredOrchestrator:
                     c for c in self.topology.cliques
                     if c.trust_score > 0.6 and c.adversarial_risk < 0.3
                 ]),
+                "logical_depths": logical_depths,  # NEW: Logical depth estimates per node
+                "avg_logical_depth": float(np.mean(list(logical_depths.values()))) if logical_depths else 0.0,  # NEW: Average logical depth
             },
             "d_separation_preserved": preserve_d_separation,
+            "resource_triple": resource_metrics,  # NEW: Resource triple (depth-width-coordination)
+            "degradation_triple": degradation_metrics,  # NEW: Degradation triple (noise-loss-waste)
         }
 
     async def _decompose_query(self, query: str, schema: ReasoningSchema) -> List[str]:
@@ -1335,4 +1439,34 @@ class StructuredOrchestrator:
             logger.error(f"Constraint solver error: {e}", exc_info=True)
         
         return []
+    
+    def _estimate_current_quality(self, subsolutions: List[Dict[str, Any]]) -> float:
+        """
+        Estimate current quality based on subsolutions.
+        
+        Heuristic: Based on subsolution length, completeness, and number.
+        
+        Args:
+            subsolutions: List of subsolutions completed so far
+        
+        Returns:
+            Estimated quality score (0-1)
+        """
+        if not subsolutions:
+            return 0.0
+        
+        # Heuristic: longer, more complete subsolutions = higher quality
+        total_length = sum(len(s.get("synthesis", "")) for s in subsolutions)
+        avg_length = total_length / len(subsolutions) if subsolutions else 0
+        
+        # Normalize: 500 chars = decent quality (0.6), 1000+ = high quality (0.9)
+        length_score = min(0.9, 0.3 + (avg_length / 1000.0) * 0.6)
+        
+        # Bonus for having multiple subsolutions (more thorough)
+        completeness_score = min(1.0, len(subsolutions) / 5.0)  # 5 subproblems = complete
+        
+        # Weighted combination
+        quality = 0.6 * length_score + 0.4 * completeness_score
+        
+        return min(1.0, max(0.0, quality))
 

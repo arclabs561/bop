@@ -1,0 +1,110 @@
+[project]
+name = "bop"
+version = "0.1.0"
+description = "Knowledge Structure Research Agent"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "datasets>=2.14.0", # For FEVER, HotpotQA, SciFact
+    "pydantic>=2.0",
+    "pydantic-ai>=0.0.1",
+    "rich>=13.0.0",
+    "typer>=0.9.0",
+    "python-dotenv>=1.0.0",
+    "numpy>=2.3.4",
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "marimo>=0.8.0",
+    "jinja2>=3.1.0",
+    "google-generativeai>=0.8.5",
+    "pillow>=12.0.0",
+    "google-genai>=1.0.0",
+    "nltk>=3.8.1", # For improved token importance heuristics
+    "scipy>=1.11.0", # For Jensen-Shannon Divergence computation
+]
+
+[project.optional-dependencies]
+llm-openai = [
+    "pydantic-ai[openai]>=0.0.1",
+]
+llm-anthropic = [
+    "pydantic-ai[anthropic]>=0.0.1",
+]
+llm-google = [
+    "pydantic-ai[google]>=0.0.1",
+]
+llm-all = [
+    "pydantic-ai[openai,anthropic,google]>=0.0.1",
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+]
+planning = [
+    "unified-planning>=1.1.0",
+]
+constraints = [
+    "python-sat>=0.1.7",  # PySAT - lightweight SAT solver interface
+]
+# For full planning + constraint solving:
+planning-full = [
+    "unified-planning>=1.1.0",
+    "python-sat>=0.1.7",
+]
+
+[project.scripts]
+bop = "bop.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "pattern: Test pattern being validated",
+    "opinion: Opinion/hypothesis being tested",
+    "category: Test category for grouping",
+    "e2e: End-to-end tests requiring actual deployment",
+    "integration: Integration tests",
+]
+
+[tool.mutmut]
+paths_to_mutate = ["src/bop/agent.py"]
+backup = false
+runner = "PYTHONPATH=.:src uv run pytest tests/test_agent.py tests/test_agent_integration.py tests/test_agent_comprehensive.py tests/test_mutation_agent.py -x --ignore=tests/test_adaptive_quality.py"
+tests_dir = ["tests"]
+pre_mutation = "python -c \"import sys; sys.exit(0)\""
+post_mutation = "python -c \"import sys; sys.exit(0)\""
+max_mutations = 50
+debug = false
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.1",
+    "pytest-cov>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "hypothesis>=6.147.0",
+    "requests>=2.31.0",  # For e2e deployment tests
+    "mutmut>=2.4.0",  # Mutation testing
+]
+

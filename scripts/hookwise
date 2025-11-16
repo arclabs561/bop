@@ -1,0 +1,31 @@
+#!/bin/bash
+# Wrapper script for hookwise CLI that auto-loads .env
+# Usage: ./scripts/hookwise <hookwise-command> [args...]
+# Example: ./scripts/hookwise garden
+# Example: ./scripts/hookwise test-commit "feat: message"
+
+set -e
+
+# Find repo root
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+ENV_FILE="$REPO_ROOT/.env"
+
+# Auto-load .env if it exists
+if [ -f "$ENV_FILE" ]; then
+  # Load .env and export variables
+  set -a
+  . "$ENV_FILE" 2>/dev/null || {
+    # Fallback: manual parsing for shells that don't support . command
+    while IFS= read -r line || [ -n "$line" ]; do
+      case "$line" in
+        \#*|'') continue ;;
+      esac
+      export "$line" 2>/dev/null || true
+    done < "$ENV_FILE"
+  }
+  set +a
+fi
+
+# Run hookwise with all arguments
+npx hookwise "$@"
+

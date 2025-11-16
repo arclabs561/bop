@@ -1,0 +1,73 @@
+[
+  {
+    "source": "arxiv.org",
+    "credibility": 0.9,
+    "domain": "academic",
+    "verification_method": "peer_review",
+    "description": "Peer-reviewed research papers"
+  },
+  {
+    "source": "wikipedia.org",
+    "credibility": 0.7,
+    "domain": "general",
+    "verification_method": "crowdsourced",
+    "description": "Crowdsourced encyclopedia with editorial oversight"
+  },
+  {
+    "source": "pubmed.ncbi.nlm.nih.gov",
+    "credibility": 0.9,
+    "domain": "biomedical",
+    "verification_method": "peer_review",
+    "description": "Peer-reviewed biomedical research"
+  },
+  {
+    "source": "random-blog.com",
+    "credibility": 0.3,
+    "domain": "general",
+    "verification_method": "none",
+    "description": "Unverified blog post"
+  },
+  {
+    "source": "twitter.com",
+    "credibility": 0.2,
+    "domain": "social_media",
+    "verification_method": "none",
+    "description": "Social media post, unverified"
+  },
+  {
+    "source": "nature.com",
+    "credibility": 0.95,
+    "domain": "academic",
+    "verification_method": "peer_review",
+    "description": "High-impact peer-reviewed journal"
+  },
+  {
+    "source": "science.org",
+    "credibility": 0.95,
+    "domain": "academic",
+    "verification_method": "peer_review",
+    "description": "High-impact peer-reviewed journal"
+  },
+  {
+    "source": "stackoverflow.com",
+    "credibility": 0.6,
+    "domain": "technical",
+    "verification_method": "community_voting",
+    "description": "Community-voted technical answers"
+  },
+  {
+    "source": "github.com",
+    "credibility": 0.5,
+    "domain": "technical",
+    "verification_method": "code_review",
+    "description": "Open source code repository"
+  },
+  {
+    "source": "reddit.com",
+    "credibility": 0.4,
+    "domain": "social_media",
+    "verification_method": "community_voting",
+    "description": "Community discussion forum"
+  }
+]
+

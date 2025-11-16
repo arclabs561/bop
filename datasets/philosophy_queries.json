@@ -1,0 +1,63 @@
+[
+  {
+    "query": "What is the nature of knowledge and how is it structured?",
+    "domain": "philosophy",
+    "subdomain": "epistemology",
+    "complexity": "complex",
+    "expected_concepts": ["knowledge", "epistemology", "justification", "belief"],
+    "query_type": "abstract",
+    "requires_research": true,
+    "temporal_aspect": false
+  },
+  {
+    "query": "How do different philosophical traditions view the relationship between mind and body?",
+    "domain": "philosophy",
+    "subdomain": "philosophy_of_mind",
+    "complexity": "complex",
+    "expected_concepts": ["mind-body problem", "dualism", "materialism", "consciousness"],
+    "query_type": "comparative",
+    "requires_research": true,
+    "temporal_aspect": false
+  },
+  {
+    "query": "What is trust and how does it function in knowledge systems?",
+    "domain": "philosophy",
+    "subdomain": "epistemology",
+    "complexity": "moderate",
+    "expected_concepts": ["trust", "credibility", "testimony", "knowledge systems"],
+    "query_type": "explanatory",
+    "requires_research": true,
+    "temporal_aspect": false
+  },
+  {
+    "query": "Explain the concept of uncertainty in epistemic contexts",
+    "domain": "philosophy",
+    "subdomain": "epistemology",
+    "complexity": "moderate",
+    "expected_concepts": ["uncertainty", "epistemic", "knowledge", "doubt"],
+    "query_type": "explanatory",
+    "requires_research": true,
+    "temporal_aspect": false
+  },
+  {
+    "query": "How has the philosophy of science evolved from logical positivism to modern views?",
+    "domain": "philosophy",
+    "subdomain": "philosophy_of_science",
+    "complexity": "complex",
+    "expected_concepts": ["philosophy of science", "logical positivism", "scientific method"],
+    "query_type": "temporal",
+    "requires_research": true,
+    "temporal_aspect": true
+  },
+  {
+    "query": "What is the relationship between truth and meaning?",
+    "domain": "philosophy",
+    "subdomain": "philosophy_of_language",
+    "complexity": "complex",
+    "expected_concepts": ["truth", "meaning", "semantics", "reference"],
+    "query_type": "abstract",
+    "requires_research": true,
+    "temporal_aspect": false
+  }
+]
+

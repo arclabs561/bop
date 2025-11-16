@@ -1,0 +1,47 @@
+{
+  "test_multi_turn_conversation_as_session": {
+    "pattern": "multi_turn_conversation",
+    "opinion": "multi_turn_approximates_session",
+    "category": "conversation_modeling",
+    "description": "Each conversation turn adds an evaluation to the session",
+    "hypothesis": "Multi-turn conversations map to sessions",
+    "expected_behavior": null,
+    "metadata": {}
+  },
+  "test_write_buffer_failure_recovery": {
+    "pattern": "write_buffering",
+    "opinion": "buffering_handles_failures_gracefully",
+    "category": "error_handling",
+    "description": null,
+    "hypothesis": "Write buffer should handle failures without crashing",
+    "expected_behavior": null,
+    "metadata": {}
+  },
+  "test_session_with_many_evaluations": {
+    "pattern": "session_complexity",
+    "opinion": "sessions_scale_to_many_evaluations",
+    "category": "scalability",
+    "description": null,
+    "hypothesis": "Sessions can handle 100+ evaluations efficiently",
+    "expected_behavior": null,
+    "metadata": {}
+  },
+  "test_blank_slate_session": {
+    "pattern": "session_initialization",
+    "opinion": "empty_sessions_work_correctly",
+    "category": "edge_cases",
+    "description": null,
+    "hypothesis": "Empty sessions should have valid statistics and state",
+    "expected_behavior": null,
+    "metadata": {}
+  },
+  "test_cross_session_learning": {
+    "pattern": "adaptive_learning",
+    "opinion": "learning_transfers_across_sessions",
+    "category": "adaptive_learning",
+    "description": null,
+    "hypothesis": "Patterns learned in one session improve next session",
+    "expected_behavior": null,
+    "metadata": {}
+  }
+}

@@ -1,0 +1,70 @@
+#!/usr/bin/env sh
+# Pre-push guard: Run tests and quality checks before pushing
+# This prevents pushing broken code to remote
+
+set -e
+
+echo "🔍 Running pre-push guards..."
+
+# Check if we're in the right directory
+if [ ! -f "pyproject.toml" ]; then
+  echo "⚠️  Not in project root, skipping pre-push checks"
+  exit 0
+fi
+
+# Validate deployment configuration (steering toward correct setup)
+echo "🔍 Validating deployment configuration..."
+if command -v uv &> /dev/null; then
+  uv run python scripts/validate_deployment_config.py || {
+    echo "⚠️  Deployment config validation had issues (non-blocking)"
+  }
+fi
+
+# Scan for secrets (steering toward secure practices)
+echo ""
+echo "🔒 Scanning for potential secrets..."
+if command -v uv &> /dev/null; then
+  uv run python scripts/scan_secrets.py || {
+    echo "⚠️  Secret scan had issues (non-blocking)"
+  }
+fi
+
+# Run linting (fast check) - using Astral tools via uv
+echo ""
+echo "📝 Checking code quality (ruff)..."
+if command -v uv &> /dev/null; then
+  uv run ruff check src/ tests/ || {
+    echo "❌ Linting failed. Run 'just lint-fix' to auto-fix issues"
+    exit 1
+  }
+else
+  echo "⚠️  uv (Astral) not found, skipping lint check"
+  exit 1
+fi
+
+# Run type checking (optional, can be slow)
+if [ "$SKIP_TYPE_CHECK" != "1" ]; then
+  echo "🔍 Running type checks (mypy)..."
+  if command -v uv &> /dev/null; then
+    uv run mypy src/ || {
+      echo "⚠️  Type checking found issues (non-blocking)"
+      echo "   Set SKIP_TYPE_CHECK=1 to skip, or fix issues"
+    }
+  fi
+fi
+
+# Run fast tests (unit tests, skip slow ones) - using uv
+echo "🧪 Running fast tests (pytest via uv)..."
+if command -v uv &> /dev/null; then
+  # Run unit tests, skip e2e and slow tests
+  uv run pytest tests/ -v -m "not e2e and not slow" --tb=short || {
+    echo "❌ Tests failed. Fix issues before pushing"
+    exit 1
+  }
+else
+  echo "⚠️  uv (Astral) not found, skipping tests"
+  exit 1
+fi
+
+echo "✅ Pre-push guards passed!"
+

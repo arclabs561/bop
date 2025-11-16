@@ -1,0 +1,41 @@
+name: Hookwise Checks
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  hookwise:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: |
+          npm install
+          npx husky install
+          npx hookwise install
+      
+      - name: Run Hookwise Garden
+        run: npx hookwise garden
+        env:
+          # Load API keys from secrets if available (for Q&A, LLM analysis)
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      
+      - name: Validate Configuration
+        run: npx hookwise validate-config
+      
+      - name: Check Metrics
+        run: npx hookwise metrics || true
+

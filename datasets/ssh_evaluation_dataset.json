@@ -1,0 +1,123 @@
+[
+  {
+    "query": "What is d-separation?",
+    "domain": "causal_inference",
+    "complexity": "moderate",
+    "query_type": "factual",
+    "requires_research": true,
+    "expected_concepts": ["d-separation", "conditional independence", "DAG", "graphical criterion"],
+    "expected_depth": 3,
+    "expected_ib_compression": 0.3,
+    "expected_early_stop": false,
+    "notes": "Should benefit from IB filtering, moderate depth required"
+  },
+  {
+    "query": "What is trust?",
+    "domain": "general",
+    "complexity": "simple",
+    "query_type": "factual",
+    "requires_research": false,
+    "expected_concepts": ["trust", "reliability", "confidence"],
+    "expected_depth": 2,
+    "expected_ib_compression": 0.5,
+    "expected_early_stop": true,
+    "notes": "Simple query, should stop early after learning"
+  },
+  {
+    "query": "How does d-separation relate to causal inference and information geometry?",
+    "domain": "causal_inference",
+    "complexity": "complex",
+    "query_type": "analytical",
+    "requires_research": true,
+    "expected_concepts": ["d-separation", "causal inference", "information geometry", "Fisher Information"],
+    "expected_depth": 5,
+    "expected_ib_compression": 0.2,
+    "expected_early_stop": false,
+    "notes": "Complex query requiring deep reasoning, multiple concepts"
+  },
+  {
+    "query": "Explain the Serial Scaling Hypothesis and its implications for reasoning systems",
+    "domain": "computational_theory",
+    "complexity": "complex",
+    "query_type": "analytical",
+    "requires_research": true,
+    "expected_concepts": ["Serial Scaling Hypothesis", "reasoning depth", "computational complexity", "chain-of-thought"],
+    "expected_depth": 4,
+    "expected_ib_compression": 0.25,
+    "expected_early_stop": false,
+    "notes": "Complex theoretical query, should use deep reasoning"
+  },
+  {
+    "query": "What is the weather today?",
+    "domain": "general",
+    "complexity": "simple",
+    "query_type": "factual",
+    "requires_research": false,
+    "expected_concepts": ["weather"],
+    "expected_depth": 1,
+    "expected_ib_compression": 0.8,
+    "expected_early_stop": true,
+    "notes": "Very simple query, should stop early"
+  },
+  {
+    "query": "Compare d-separation and conditional independence in the context of causal inference",
+    "domain": "causal_inference",
+    "complexity": "moderate",
+    "query_type": "comparative",
+    "requires_research": true,
+    "expected_concepts": ["d-separation", "conditional independence", "causal inference", "comparison"],
+    "expected_depth": 3,
+    "expected_ib_compression": 0.3,
+    "expected_early_stop": false,
+    "notes": "Comparative query, moderate depth"
+  },
+  {
+    "query": "What is Information Bottleneck and how is it used in machine learning?",
+    "domain": "machine_learning",
+    "complexity": "moderate",
+    "query_type": "analytical",
+    "requires_research": true,
+    "expected_concepts": ["Information Bottleneck", "mutual information", "compression", "machine learning"],
+    "expected_depth": 3,
+    "expected_ib_compression": 0.3,
+    "expected_early_stop": false,
+    "notes": "Should benefit from IB filtering (meta-test)"
+  },
+  {
+    "query": "Explain Bennett's logical depth and its relationship to algorithmic information theory",
+    "domain": "computational_theory",
+    "complexity": "complex",
+    "query_type": "analytical",
+    "requires_research": true,
+    "expected_concepts": ["logical depth", "Bennett", "algorithmic information theory", "Kolmogorov complexity"],
+    "expected_depth": 4,
+    "expected_ib_compression": 0.25,
+    "expected_early_stop": false,
+    "notes": "Complex query testing logical depth computation"
+  },
+  {
+    "query": "What are the resource tradeoffs in computational systems?",
+    "domain": "computational_theory",
+    "complexity": "moderate",
+    "query_type": "analytical",
+    "requires_research": true,
+    "expected_concepts": ["resource tradeoffs", "depth", "width", "coordination", "computational complexity"],
+    "expected_depth": 3,
+    "expected_ib_compression": 0.3,
+    "expected_early_stop": false,
+    "notes": "Should track resource triple metrics"
+  },
+  {
+    "query": "How does noise affect information transmission in communication systems?",
+    "domain": "information_theory",
+    "complexity": "moderate",
+    "query_type": "analytical",
+    "requires_research": true,
+    "expected_concepts": ["noise", "information transmission", "communication", "degradation"],
+    "expected_depth": 3,
+    "expected_ib_compression": 0.3,
+    "expected_early_stop": false,
+    "notes": "Should track degradation triple (noise component)"
+  }
+]
+

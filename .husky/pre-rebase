@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+# Pre-rebase guard: Optional check (git rebase.autoStash handles uncommitted changes by default)
+# This guard is optional - git already prevents rebasing with uncommitted changes
+# unless rebase.autoStash is enabled
+
+set -e
+
+# Check if autoStash is enabled
+AUTOSTASH=$(git config --get rebase.autoStash 2>/dev/null || echo "false")
+
+if [ "$AUTOSTASH" != "true" ]; then
+  echo "ℹ️  rebase.autoStash is not enabled"
+  echo "   Git will prevent rebasing with uncommitted changes"
+  echo "   To enable auto-stash: git config rebase.autoStash true"
+fi
+
+# Optional: Check for uncommitted changes (non-blocking, just informational)
+if ! git diff-index --quiet HEAD -- 2>/dev/null; then
+  echo "ℹ️  You have uncommitted changes"
+  if [ "$AUTOSTASH" != "true" ]; then
+    echo "   Git will prevent rebase. Stash or commit changes first."
+  else
+    echo "   Git will auto-stash before rebase and reapply after."
+  fi
+fi
+
+echo "✅ Pre-rebase check complete"
+

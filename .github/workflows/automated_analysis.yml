@@ -1,0 +1,89 @@
+name: Automated Real Data Analysis
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:  # Allow manual triggering
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/run_automated_analysis.py'
+      - 'src/bop/**'
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      
+      - name: Install dependencies
+        run: |
+          uv sync
+      
+      - name: Run automated analysis
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          uv run python scripts/run_automated_analysis.py --format markdown
+      
+      - name: Upload analysis reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: analysis-reports
+          path: analysis_output/*.json
+          retention-days: 30
+      
+      - name: Upload markdown reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: analysis-reports-md
+          path: analysis_output/*.md
+          retention-days: 30
+      
+      - name: Comment PR with analysis summary
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Find latest markdown report
+            const reportsDir = 'analysis_output';
+            if (fs.existsSync(reportsDir)) {
+              const files = fs.readdirSync(reportsDir)
+                .filter(f => f.endsWith('.md'))
+                .sort()
+                .reverse();
+              
+              if (files.length > 0) {
+                const reportPath = path.join(reportsDir, files[0]);
+                const reportContent = fs.readFileSync(reportPath, 'utf8');
+                
+                github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: `## 📊 Automated Analysis Results\n\n\`\`\`\n${reportContent}\n\`\`\``
+                });
+              }
+            }
+
