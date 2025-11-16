@@ -11,7 +11,8 @@ export default {
     // Note: python-quality requires custom integration in hookwise
   },
   prePush: {
-    enabled: false,  // Can enable for comprehensive pre-push checks
-    // Would include: secret scanning, full linting, type checking
+    enabled: true,  // Enable for comprehensive pre-push checks
+    checks: ['secrets', 'lint', 'tests']  // Secret scanning, linting, tests
+    // Note: Pre-push hook script handles these via .husky/pre-push
   }
 };

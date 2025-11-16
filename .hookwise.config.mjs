@@ -11,9 +11,13 @@ export default {
     enabled: true,
     blocking: false,  // Start non-blocking to avoid friction
     tier: 'advanced', // Use advanced tier for better analysis
-    minScore: 5,      // Reasonable threshold for research work
+    minScore: 6,      // Raised from 5 - higher quality threshold
     timeout: 30000,   // 30s timeout for agentic mode
     agentic: true,    // Enable agentic loop with tool calling for thorough analysis
+    // Enhanced checks
+    requireScope: true,  // Require scope for feat/fix/refactor commits
+    maxSubjectLength: 72, // Enforce conventional commit subject length
+    checkCoherence: true, // Check if commit message matches changed files
   },
   documentation: {
     enabled: true,  // Re-enabled - helps steer toward clean documentation structure
