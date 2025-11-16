@@ -103,10 +103,16 @@ async def lifespan(app: FastAPI):
     
     # Initialize agent with constraint solver if enabled
     use_constraints = os.getenv("BOP_USE_CONSTRAINTS", "true").lower() == "true"
-    logger.info(f"Initializing BOP server (constraints: {use_constraints})")
+    enable_skills = os.getenv("BOP_ENABLE_SKILLS", "false").lower() == "true"
+    enable_reminders = os.getenv("BOP_ENABLE_SYSTEM_REMINDERS", "false").lower() == "true"
+    logger.info(f"Initializing BOP server (constraints: {use_constraints}, skills: {enable_skills}, reminders: {enable_reminders})")
     
     try:
-        agent = KnowledgeAgent(enable_quality_feedback=True)
+        agent = KnowledgeAgent(
+            enable_quality_feedback=True,
+            enable_skills=enable_skills,
+            enable_system_reminders=enable_reminders,
+        )
         
         # Enable constraint solver on orchestrator
         if use_constraints and PYSAT_AVAILABLE:
