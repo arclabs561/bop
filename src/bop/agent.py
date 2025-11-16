@@ -687,21 +687,24 @@ class KnowledgeAgent:
         context: Dict[str, Any],
         schema: Optional[Any] = None,
         expected_length: Optional[int] = None,
-        system_reminders: Optional[List[str]] = None,
     ) -> str:
         """
         Generate response based on message and context.
         
         Args:
-            message: User message
+            message: User message (may already include system reminders, skills, experience context)
             context: Context dictionary
             schema: Optional reasoning schema
             expected_length: Optional target response length (for adaptation)
-            system_reminders: Optional system reminders to keep agent on track
+        
+        Note: System reminders, skills, and experience context are injected in chat()
+        before calling this method, following BOP's context injection priority order.
         """
         if self.llm_service:
             try:
                 # Pass target_length to LLM service for better control
+                # Note: message already contains system reminders, skills, experience context
+                # in the correct priority order (injected in chat() method)
                 response_text = await self.llm_service.generate_response(
                     message, 
                     context, 
