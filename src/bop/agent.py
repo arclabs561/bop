@@ -412,6 +412,13 @@ class KnowledgeAgent:
             if self.meta_learner:
                 try:
                     tools_used_for_reflection = []
+                    # Track skills usage if enabled
+                    if self.enable_skills and self.skills_manager and skills_context:
+                        # Extract skill names from skills_context
+                        relevant_skills = self.skills_manager.find_relevant_skills(message, limit=5)
+                        for skill in relevant_skills:
+                            tools_used_for_reflection.append(f"skill:{skill.name}")
+                    
                     if use_research and response.get("research"):
                         research_data = response.get("research", {})
                         if isinstance(research_data, dict):

@@ -115,6 +115,11 @@ async def lifespan(app: FastAPI):
         else:
             logger.warning("Constraint solver not available or disabled")
         
+        if enable_skills:
+            logger.info("Skills pattern enabled")
+        if enable_reminders:
+            logger.info("System reminders enabled")
+        
         orchestrator = agent.orchestrator
     except Exception as e:
         logger.error(f"Failed to initialize agent: {e}", exc_info=True)
