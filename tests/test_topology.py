@@ -1,8 +1,7 @@
 """Tests for context topology analysis."""
 
-import pytest
 
-from bop.context_topology import ContextTopology, ContextNode, CliqueStructure
+from bop.context_topology import ContextNode, ContextTopology
 
 
 def test_add_node():
@@ -10,7 +9,7 @@ def test_add_node():
     topology = ContextTopology()
     node = ContextNode(id="node1", content="test", source="test")
     topology.add_node(node)
-    
+
     # Verify node was added correctly
     assert "node1" in topology.nodes
     assert topology.nodes["node1"] == node
@@ -41,7 +40,7 @@ def test_compute_cliques():
     topology.add_edge("node0", "node2")
 
     cliques = topology.compute_cliques()
-    
+
     # Should find exactly one clique of size 3 (triangle)
     assert len(cliques) > 0
     clique_sizes = [len(c.nodes) for c in cliques]

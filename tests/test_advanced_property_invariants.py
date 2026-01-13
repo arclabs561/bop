@@ -3,9 +3,8 @@
 Includes: triangle inequality, subadditivity, compositionality, order invariance, etc.
 """
 
-import pytest
-from hypothesis import given, strategies as st, settings, assume
-from typing import List, Dict, Any
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from bop.semantic_eval import SemanticEvaluator
 from tests.test_annotations import annotate_test
@@ -21,7 +20,7 @@ from tests.test_annotations import annotate_test
 def test_property_triangle_inequality_similarity(text1: str, text2: str, text3: str):
     """
     PROPERTY: Semantic similarity should satisfy triangle inequality.
-    
+
     Pattern: property_based_advanced
     Opinion: similarity_satisfies_triangle_inequality
     Category: semantic_property
@@ -34,18 +33,18 @@ def test_property_triangle_inequality_similarity(text1: str, text2: str, text3: 
         category="semantic_property",
         hypothesis="Semantic similarity should satisfy triangle inequality.",
     )
-    
+
     evaluator = SemanticEvaluator()
-    
+
     sim12 = evaluator._calculate_semantic_similarity(text1, text2)
     sim23 = evaluator._calculate_semantic_similarity(text2, text3)
     sim13 = evaluator._calculate_semantic_similarity(text1, text3)
-    
+
     # Convert similarity to distance: distance = 1 - similarity
     dist12 = 1.0 - sim12
     dist23 = 1.0 - sim23
     dist13 = 1.0 - sim13
-    
+
     # Triangle inequality: dist(A, C) <= dist(A, B) + dist(B, C)
     # Allow some tolerance for approximation
     assert dist13 <= dist12 + dist23 + 0.1, (
@@ -63,7 +62,7 @@ def test_property_triangle_inequality_similarity(text1: str, text2: str, text3: 
 def test_property_compositionality_responses(query_part1: str, query_part2: str):
     """
     PROPERTY: Response to composed query should incorporate answers to parts.
-    
+
     Pattern: property_based_advanced
     Opinion: responses_are_compositional
     Category: semantic_property
@@ -76,17 +75,17 @@ def test_property_compositionality_responses(query_part1: str, query_part2: str)
         category="semantic_property",
         hypothesis="Response to composed query should incorporate answers to parts.",
     )
-    
+
     evaluator = SemanticEvaluator()
-    
+
     # Simulate responses to parts and composed query
     # (In real test, would call agent, but for property test we check evaluator behavior)
     composed_query = f"{query_part1} and {query_part2}"
-    
+
     # Check that evaluator can handle composed queries
     # This is a structural property: evaluator should process composed queries
     judgment = evaluator.evaluate_relevance(query=composed_query, response="test response")
-    
+
     # Should produce valid judgment
     assert 0.0 <= judgment.score <= 1.0
     # Query characteristics should detect multi-part
@@ -102,7 +101,7 @@ def test_property_compositionality_responses(query_part1: str, query_part2: str)
 def test_property_order_invariance_topics(topic1: str, topic2: str):
     """
     PROPERTY: Order of topics shouldn't change core answer (when order shouldn't matter).
-    
+
     Pattern: property_based_advanced
     Opinion: responses_are_order_invariant
     Category: semantic_property
@@ -115,16 +114,16 @@ def test_property_order_invariance_topics(topic1: str, topic2: str):
         category="semantic_property",
         hypothesis="Order of topics shouldn't change core answer (when order shouldn't matter).",
     )
-    
+
     evaluator = SemanticEvaluator()
-    
+
     query1 = f"Tell me about {topic1} and {topic2}"
     query2 = f"Tell me about {topic2} and {topic1}"
-    
+
     # Both queries should be processable
     judgment1 = evaluator.evaluate_relevance(query=query1, response="test response")
     judgment2 = evaluator.evaluate_relevance(query=query2, response="test response")
-    
+
     # Both should produce valid judgments
     assert 0.0 <= judgment1.score <= 1.0
     assert 0.0 <= judgment2.score <= 1.0
@@ -142,7 +141,7 @@ def test_property_order_invariance_topics(topic1: str, topic2: str):
 def test_property_subadditivity_relevance(query1: str, query2: str, response: str):
     """
     PROPERTY: Relevance to combined query shouldn't be less than minimum of parts.
-    
+
     Pattern: property_based_advanced
     Opinion: relevance_is_subadditive
     Category: quality_property
@@ -155,14 +154,14 @@ def test_property_subadditivity_relevance(query1: str, query2: str, response: st
         category="quality_property",
         hypothesis="Relevance to combined query shouldn't be less than minimum of parts.",
     )
-    
+
     evaluator = SemanticEvaluator()
-    
+
     judgment1 = evaluator.evaluate_relevance(query=query1, response=response)
     judgment2 = evaluator.evaluate_relevance(query=query2, response=response)
     combined_query = f"{query1} and {query2}"
     combined_judgment = evaluator.evaluate_relevance(query=combined_query, response=response)
-    
+
     # Combined relevance should be at least the minimum of parts
     # (Response relevant to both parts should be relevant to combined)
     min_relevance = min(judgment1.score, judgment2.score)
@@ -181,7 +180,7 @@ def test_property_subadditivity_relevance(query1: str, query2: str, response: st
 def test_property_evaluation_idempotent(query: str, response: str):
     """
     PROPERTY: Evaluating same query-response twice should give same result.
-    
+
     Pattern: property_based_advanced
     Opinion: evaluation_is_idempotent
     Category: quality_property
@@ -194,12 +193,12 @@ def test_property_evaluation_idempotent(query: str, response: str):
         category="quality_property",
         hypothesis="Evaluating same query-response twice should give same result.",
     )
-    
+
     evaluator = SemanticEvaluator()
-    
+
     judgment1 = evaluator.evaluate_relevance(query=query, response=response)
     judgment2 = evaluator.evaluate_relevance(query=query, response=response)
-    
+
     # Should be identical (deterministic)
     assert abs(judgment1.score - judgment2.score) < 0.001, (
         f"Evaluation not idempotent: {judgment1.score} vs {judgment2.score}"
@@ -216,7 +215,7 @@ def test_property_evaluation_idempotent(query: str, response: str):
 def test_property_consistency_under_paraphrase(base_query: str, response: str):
     """
     PROPERTY: Paraphrased queries should get similar relevance scores.
-    
+
     Pattern: property_based_advanced
     Opinion: scores_consistent_under_paraphrase
     Category: quality_property
@@ -229,17 +228,17 @@ def test_property_consistency_under_paraphrase(base_query: str, response: str):
         category="quality_property",
         hypothesis="Paraphrased queries should get similar relevance scores.",
     )
-    
+
     evaluator = SemanticEvaluator()
-    
+
     # Create simple paraphrase by adding/removing words
     # (In real test, would use actual paraphrasing, but this tests structure)
     query1 = base_query
     query2 = f"What about {base_query}?"  # Simple paraphrase
-    
+
     judgment1 = evaluator.evaluate_relevance(query=query1, response=response)
     judgment2 = evaluator.evaluate_relevance(query=query2, response=response)
-    
+
     # Scores should be similar (within reasonable tolerance)
     # Note: This is a structural property - actual semantic equivalence would need LLM
     score_diff = abs(judgment1.score - judgment2.score)
@@ -258,7 +257,7 @@ def test_property_consistency_under_paraphrase(base_query: str, response: str):
 def test_property_conservativity_no_hallucination(query: str, response_with_disclaimer: str):
     """
     PROPERTY: Responses with disclaimers should be flagged appropriately.
-    
+
     Pattern: property_based_advanced
     Opinion: system_respects_conservativity
     Category: quality_property
@@ -271,13 +270,13 @@ def test_property_conservativity_no_hallucination(query: str, response_with_disc
         category="quality_property",
         hypothesis="Responses with uncertainty disclaimers should be handled appropriately.",
     )
-    
+
     evaluator = SemanticEvaluator()
-    
+
     # Response with uncertainty disclaimer
     response = f"I'm not certain, but {response_with_disclaimer}"
     judgment = evaluator.evaluate_relevance(query=query, response=response)
-    
+
     # Should produce valid judgment
     assert 0.0 <= judgment.score <= 1.0
     # System should process responses with disclaimers

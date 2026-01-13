@@ -4,14 +4,12 @@ Beyond Grice's maxims: response appropriateness, context coherence, factual grou
 engagement, empathy, trust/transparency, naturalness, diversity.
 """
 
-import pytest
-import asyncio
-from pathlib import Path
 import tempfile
+
+import pytest
 
 from bop.agent import KnowledgeAgent
 from bop.llm import LLMService
-from bop.quality_feedback import QualityFeedbackLoop
 from tests.test_annotations import annotate_test
 
 
@@ -19,7 +17,7 @@ from tests.test_annotations import annotate_test
 async def test_quality_response_appropriateness():
     """
     Test response appropriateness: Does response align with user intent?
-    
+
     Pattern: quality_properties
     Opinion: responses_should_be_appropriate
     Category: quality_additional
@@ -32,19 +30,19 @@ async def test_quality_response_appropriateness():
         category="quality_additional",
         hypothesis="Responses should align with user intent and task requirements.",
     )
-    
+
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
+
+    with tempfile.TemporaryDirectory():
         agent = KnowledgeAgent(enable_quality_feedback=True)
-        
+
         query = "I need help understanding knowledge structure"
         response_data = await agent.chat(query, use_research=False)
         response = response_data.get("response", "")
-        
+
         # Use LLM judge to evaluate appropriateness
         judge_prompt = f"""
 Evaluate response appropriateness.
@@ -66,7 +64,7 @@ Respond with JSON: {{
     "reasoning": "..."
 }}
 """
-        
+
         try:
             result = await llm.generate_response(judge_prompt)
             assert len(result) > 0
@@ -78,7 +76,7 @@ Respond with JSON: {{
 async def test_quality_context_coherence():
     """
     Test context coherence: Does response maintain dialogue history?
-    
+
     Pattern: quality_properties
     Opinion: responses_should_maintain_context
     Category: quality_additional
@@ -91,21 +89,21 @@ async def test_quality_context_coherence():
         category="quality_additional",
         hypothesis="Responses should be consistent and relevant to ongoing conversation.",
     )
-    
+
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
+
+    with tempfile.TemporaryDirectory():
         agent = KnowledgeAgent(enable_quality_feedback=True)
-        
+
         # Multi-turn conversation
         conversation = [
             ("What is knowledge structure?", "initial"),
             ("How does it relate to trust?", "follow-up"),
         ]
-        
+
         responses = []
         for query, turn_type in conversation:
             response_data = await agent.chat(query, use_research=False)
@@ -114,7 +112,7 @@ async def test_quality_context_coherence():
                 "turn_type": turn_type,
                 "response": response_data.get("response", "")[:300],
             })
-        
+
         # Use LLM judge to evaluate context coherence
         judge_prompt = f"""
 Evaluate context coherence.
@@ -137,7 +135,7 @@ Respond with JSON: {{
     "reasoning": "..."
 }}
 """
-        
+
         try:
             result = await llm.generate_response(judge_prompt)
             assert len(result) > 0
@@ -149,7 +147,7 @@ Respond with JSON: {{
 async def test_quality_factual_grounding():
     """
     Test factual grounding: Are statements accurate and supported?
-    
+
     Pattern: quality_properties
     Opinion: responses_should_be_factually_grounded
     Category: quality_additional
@@ -162,19 +160,19 @@ async def test_quality_factual_grounding():
         category="quality_additional",
         hypothesis="Statements should be accurate and supported by reliable knowledge.",
     )
-    
+
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
+
+    with tempfile.TemporaryDirectory():
         agent = KnowledgeAgent(enable_quality_feedback=True)
-        
+
         query = "What are the key concepts in knowledge structure theory?"
         response_data = await agent.chat(query, use_research=False)
         response = response_data.get("response", "")
-        
+
         # Use LLM judge to evaluate factual grounding
         judge_prompt = f"""
 Evaluate factual grounding.
@@ -197,7 +195,7 @@ Respond with JSON: {{
     "reasoning": "..."
 }}
 """
-        
+
         try:
             result = await llm.generate_response(judge_prompt)
             assert len(result) > 0
@@ -209,7 +207,7 @@ Respond with JSON: {{
 async def test_quality_engagement():
     """
     Test engagement: Does response prompt continued interaction?
-    
+
     Pattern: quality_properties
     Opinion: responses_should_be_engaging
     Category: quality_additional
@@ -222,19 +220,19 @@ async def test_quality_engagement():
         category="quality_additional",
         hypothesis="Responses should prompt continued interaction and demonstrate interest.",
     )
-    
+
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
+
+    with tempfile.TemporaryDirectory():
         agent = KnowledgeAgent(enable_quality_feedback=True)
-        
+
         query = "Tell me about knowledge structure"
         response_data = await agent.chat(query, use_research=False)
         response = response_data.get("response", "")
-        
+
         # Use LLM judge to evaluate engagement
         judge_prompt = f"""
 Evaluate engagement.
@@ -256,7 +254,7 @@ Respond with JSON: {{
     "reasoning": "..."
 }}
 """
-        
+
         try:
             result = await llm.generate_response(judge_prompt)
             assert len(result) > 0
@@ -268,7 +266,7 @@ Respond with JSON: {{
 async def test_quality_naturalness():
     """
     Test naturalness: Does response mimic human conversational flow?
-    
+
     Pattern: quality_properties
     Opinion: responses_should_be_natural
     Category: quality_additional
@@ -281,19 +279,19 @@ async def test_quality_naturalness():
         category="quality_additional",
         hypothesis="Responses should mimic human conversational flow with proper grammar, fluency, and tone.",
     )
-    
+
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
+
+    with tempfile.TemporaryDirectory():
         agent = KnowledgeAgent(enable_quality_feedback=True)
-        
+
         query = "Explain knowledge structure"
         response_data = await agent.chat(query, use_research=False)
         response = response_data.get("response", "")
-        
+
         # Use LLM judge to evaluate naturalness
         judge_prompt = f"""
 Evaluate naturalness.
@@ -316,7 +314,7 @@ Respond with JSON: {{
     "reasoning": "..."
 }}
 """
-        
+
         try:
             result = await llm.generate_response(judge_prompt)
             assert len(result) > 0
@@ -328,7 +326,7 @@ Respond with JSON: {{
 async def test_quality_diversity():
     """
     Test diversity: Does response avoid repetitive or formulaic patterns?
-    
+
     Pattern: quality_properties
     Opinion: responses_should_be_diverse
     Category: quality_additional
@@ -341,22 +339,22 @@ async def test_quality_diversity():
         category="quality_additional",
         hypothesis="Responses should avoid repetitive or formulaic patterns and offer varied, creative replies.",
     )
-    
+
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
+
+    with tempfile.TemporaryDirectory():
         agent = KnowledgeAgent(enable_quality_feedback=True)
-        
+
         # Multiple similar queries to test diversity
         queries = [
             "What is knowledge structure?",
             "Tell me about knowledge structure",
             "Explain knowledge structure",
         ]
-        
+
         responses = []
         for query in queries:
             response_data = await agent.chat(query, use_research=False)
@@ -364,7 +362,7 @@ async def test_quality_diversity():
                 "query": query,
                 "response": response_data.get("response", "")[:300],
             })
-        
+
         # Use LLM judge to evaluate diversity
         judge_prompt = f"""
 Evaluate diversity across responses.
@@ -387,7 +385,7 @@ Respond with JSON: {{
     "reasoning": "..."
 }}
 """
-        
+
         try:
             result = await llm.generate_response(judge_prompt)
             assert len(result) > 0

@@ -1,12 +1,11 @@
 """Tests for token-level provenance tracking."""
 
-import pytest
 from bop.provenance import (
-    extract_sentences,
-    compute_token_matches,
-    match_claim_to_sources,
-    extract_claims_from_response,
     build_provenance_map,
+    compute_token_matches,
+    extract_claims_from_response,
+    extract_sentences,
+    match_claim_to_sources,
 )
 
 
@@ -24,9 +23,9 @@ def test_compute_token_matches():
     """Test token matching between query and document."""
     query = "What is d-separation in causal inference?"
     document = "D-separation is a concept in causal inference that determines conditional independence."
-    
+
     matches = compute_token_matches(query, document)
-    
+
     # Should find matches for key terms
     assert "separation" in matches or "d-separation" in matches.lower()
     assert "causal" in matches or "inference" in matches
@@ -35,7 +34,7 @@ def test_compute_token_matches():
 def test_match_claim_to_sources():
     """Test matching a claim to source results."""
     claim = "D-separation determines conditional independence in causal graphs."
-    
+
     results = [
         {
             "tool": "perplexity_deep_research",
@@ -46,9 +45,9 @@ def test_match_claim_to_sources():
             "result": "Causal graphs use d-separation to test independence.",
         },
     ]
-    
+
     matches = match_claim_to_sources(claim, results)
-    
+
     assert len(matches) > 0
     assert matches[0]["source"] in ["perplexity_deep_research", "firecrawl_search"]
     assert matches[0]["overlap_ratio"] > 0.3
@@ -59,13 +58,13 @@ def test_match_claim_to_sources():
 def test_extract_claims_from_response():
     """Test extracting claims from response text."""
     response = """
-    D-separation is a fundamental concept in causal inference. 
+    D-separation is a fundamental concept in causal inference.
     It determines conditional independence in directed acyclic graphs.
     This is important for understanding causal relationships.
     """
-    
+
     claims = extract_claims_from_response(response, max_claims=5)
-    
+
     assert len(claims) >= 2
     assert all("text" in claim for claim in claims)
     assert all("position" in claim for claim in claims)
@@ -75,7 +74,7 @@ def test_build_provenance_map():
     """Test building comprehensive provenance map."""
     # Use longer response text to ensure claims are extracted
     response_text = "D-separation is a fundamental concept in causal inference that determines conditional independence in directed acyclic graphs. Causal graphs use this concept extensively for reasoning about independence relationships."
-    
+
     research = {
         "subsolutions": [
             {
@@ -90,9 +89,9 @@ def test_build_provenance_map():
             },
         ],
     }
-    
+
     provenance_map = build_provenance_map(response_text, research)
-    
+
     # Should have at least one claim matched (if overlap threshold is met)
     # Note: This may be 0 if the overlap ratio is below 0.3 threshold
     # Check structure if we have matches
@@ -110,9 +109,9 @@ def test_build_provenance_map_empty():
     """Test provenance map with empty research."""
     response_text = "Some response text."
     research = {}
-    
+
     provenance_map = build_provenance_map(response_text, research)
-    
+
     assert provenance_map == {}
 
 
@@ -128,9 +127,9 @@ def test_build_provenance_map_no_results():
             },
         ],
     }
-    
+
     provenance_map = build_provenance_map(response_text, research)
-    
+
     # Should handle gracefully
     assert isinstance(provenance_map, dict)
 

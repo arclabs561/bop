@@ -7,10 +7,10 @@ This module provides utilities for annotating tests with:
 - Metadata: Additional context about the test
 """
 
-from typing import Dict, List, Optional, Any
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
-import json
+from typing import Any, Dict, List, Optional
 
 # Note: This is a utility module, not a test file
 # Tests should import from here to annotate themselves
@@ -44,7 +44,7 @@ def annotate_test(
 ) -> TestAnnotation:
     """
     Annotate a test with pattern, opinion, and category.
-    
+
     Usage:
         annotation = annotate_test(
             "test_multi_turn_conversation",
@@ -118,14 +118,14 @@ def load_annotations(input_path: Path) -> None:
 def generate_annotation_report() -> str:
     """Generate a report of all annotations."""
     lines = ["# Test Annotations Report\n"]
-    
+
     # Group by category
     categories = {}
     for name, ann in TEST_ANNOTATIONS_REGISTRY.items():
         if ann.category not in categories:
             categories[ann.category] = []
         categories[ann.category].append((name, ann))
-    
+
     for category, tests in sorted(categories.items()):
         lines.append(f"## {category}\n")
         for name, ann in tests:
@@ -137,7 +137,7 @@ def generate_annotation_report() -> str:
             if ann.description:
                 lines.append(f"- **Description**: {ann.description}")
             lines.append("")
-    
+
     return "\n".join(lines)
 
 

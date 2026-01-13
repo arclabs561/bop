@@ -5,9 +5,7 @@ This module provides a wrapper interface that attempts to call them,
 with graceful fallback if they're not available.
 """
 
-import os
-from typing import Any, Dict, List, Optional
-
+from typing import Any, Dict
 
 # Map tool names to their expected parameters
 TOOL_PARAM_MAP = {
@@ -67,7 +65,7 @@ async def call_mcp_tool(tool_name: str, **kwargs) -> Dict[str, Any]:
         }
 
     param_spec = TOOL_PARAM_MAP[tool_name]
-    
+
     # Validate required parameters
     missing = [p for p in param_spec["required"] if p not in kwargs]
     if missing:
@@ -89,16 +87,15 @@ async def call_mcp_tool(tool_name: str, **kwargs) -> Dict[str, Any]:
     try:
         # Try to get the MCP tool function from globals
         # MCP tools are registered in the environment
-        import sys
-        
+
         # Check if we can access MCP tools via the tool calling interface
         # In Cursor, MCP tools are available through the tool calling mechanism
         # We'll try to call them directly if available
-        
+
         # For now, return a structure that indicates we need to make the call
         # The actual call will be made by the orchestrator using the tool calling interface
         # This allows the system to work both with and without direct MCP access
-        
+
         # Return structure that can be used by the caller
         return {
             "tool": tool_name,

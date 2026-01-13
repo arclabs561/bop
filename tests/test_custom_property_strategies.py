@@ -3,14 +3,13 @@
 Uses Hypothesis custom strategies to generate realistic conversational inputs.
 """
 
-import pytest
-from hypothesis import given, strategies as st, settings, assume, HealthCheck
-from typing import List, Dict, Any
+from typing import List
+
+from hypothesis import HealthCheck, given, settings
+from hypothesis import strategies as st
 
 from bop.semantic_eval import SemanticEvaluator
-from bop.quality_feedback import QualityFeedbackLoop
 from tests.test_annotations import annotate_test
-
 
 # Custom strategy for realistic queries
 realistic_query = st.one_of(
@@ -47,7 +46,7 @@ realistic_response = st.one_of(
 def test_property_realistic_queries_relevance(query: str, response: str):
     """
     PROPERTY: Realistic queries should get valid relevance scores.
-    
+
     Pattern: property_based_custom
     Opinion: realistic_queries_work
     Category: quality_property
@@ -60,10 +59,10 @@ def test_property_realistic_queries_relevance(query: str, response: str):
         category="quality_property",
         hypothesis="Realistic conversational queries should produce valid relevance evaluations.",
     )
-    
+
     evaluator = SemanticEvaluator()
     judgment = evaluator.evaluate_relevance(query=query, response=response)
-    
+
     # Should produce valid score
     assert 0.0 <= judgment.score <= 1.0
     # Should have reasoning
@@ -88,7 +87,7 @@ multi_turn_conversation = st.lists(
 def test_property_multi_turn_consistency(conversation: List[tuple]):
     """
     PROPERTY: Multi-turn conversations should maintain consistency.
-    
+
     Pattern: property_based_custom
     Opinion: multi_turn_maintains_consistency
     Category: behavioral_property
@@ -101,19 +100,19 @@ def test_property_multi_turn_consistency(conversation: List[tuple]):
         category="behavioral_property",
         hypothesis="Responses in multi-turn conversations should be consistent.",
     )
-    
+
     evaluator = SemanticEvaluator()
-    
+
     queries = [q for q, r in conversation]
     responses = [r for q, r in conversation]
-    
+
     # Check consistency across responses
     if len(responses) >= 2:
         judgment = evaluator.evaluate_consistency(
             query=queries[0],  # Use first query as context
             responses=responses,
         )
-        
+
         # Should produce valid consistency score
         assert 0.0 <= judgment.score <= 1.0
 
@@ -137,7 +136,7 @@ query_type = st.sampled_from([
 def test_property_query_type_handling(query_type: str, topic: str, response: str):
     """
     PROPERTY: Different query types should be handled appropriately.
-    
+
     Pattern: property_based_custom
     Opinion: query_types_handled_appropriately
     Category: quality_property
@@ -150,9 +149,9 @@ def test_property_query_type_handling(query_type: str, topic: str, response: str
         category="quality_property",
         hypothesis="System should handle different query types appropriately.",
     )
-    
+
     evaluator = SemanticEvaluator()
-    
+
     # Construct query based on type
     query_templates = {
         "factual": f"What is {topic}?",
@@ -161,10 +160,10 @@ def test_property_query_type_handling(query_type: str, topic: str, response: str
         "compare": f"Compare {topic} and related concepts",
         "explain": f"Explain {topic}",
     }
-    
+
     query = query_templates[query_type]
     judgment = evaluator.evaluate_relevance(query=query, response=response)
-    
+
     # Should produce valid evaluation
     assert 0.0 <= judgment.score <= 1.0
     # Query characteristics should detect type

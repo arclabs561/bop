@@ -265,6 +265,72 @@ through ages" - deep knowledge that has been refined and validated over time.
 
 ## System Architecture
 
+### HOP Integration Layer
+
+BOP builds on HOP (Rust-native retrieval layer) for document access. This separation ensures:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         BOP (Python)                            │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │  • Structured Reasoning Schemas                           │  │
+│  │  • MCP Tool Orchestration (Perplexity, Firecrawl, etc.)  │  │
+│  │  • Trust & Uncertainty Modeling                          │  │
+│  │  • Information Bottleneck Filtering                       │  │
+│  │  • Context Topology Analysis                              │  │
+│  │  • Adaptive Quality Management                            │  │
+│  └──────────────────────────────┬───────────────────────────┘  │
+│                                 │                               │
+├─────────────────────────────────▼───────────────────────────────┤
+│                         HOP (Rust)                              │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │  • Document Parsing & Chunking                            │  │
+│  │  • Embedding (FastEmbed/ONNX, 384-dim)                   │  │
+│  │  • Hybrid Search (Dense + BM25 with RRF fusion)          │  │
+│  │  • HITS Authority/Hub Scoring                            │  │
+│  │  • GARDENER (Corpus Maintenance with learned actions)    │  │
+│  │  • BANDITS (Thompson Sampling for config optimization)   │  │
+│  │  • Hierarchical Retrieval (RAPTOR-style)                 │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Key Insight**: HOP handles what goes INTO the context, BOP handles what happens WITH the context.
+
+#### HOP Features Available to BOP
+
+| HOP Capability | BOP Usage | API |
+|----------------|-----------|-----|
+| Hybrid Search | Context retrieval | `hop.search(query, top_k=10, hybrid=True)` |
+| HITS Scores | Source authority weighting | `result.metadata.authority_score` |
+| Gardener | Corpus expansion triggers | `hop.gardener.observe_search(query, scores)` |
+| Bandits | Learned optimal fusion weights | Automatic via HOP CLI/API |
+| Grow Mode | Search history as corpus | `hop.record_search(query, results)` |
+
+#### Feedback Loop
+
+```
+User Query → BOP Reasoning → HOP Retrieval
+                                    │
+                                    ▼
+         ┌──────────────────────────────────────────┐
+         │  Implicit Feedback Detection             │
+         │  • Re-query → negative signal            │
+         │  • Query refinement → partial negative   │
+         │  • Session end → positive for unrequeried│
+         └──────────────────────────────────────────┘
+                                    │
+         ┌──────────────────────────┴──────────────────────┐
+         │                                                  │
+         ▼                                                  ▼
+    HOP Bandits                                       BOP Meta-Learning
+    • Fusion weights                                  • Reasoning depth
+    • Reranker selection                              • Schema selection
+    • Query routing                                   • Tool selection
+```
+
+See `../hop/docs/HOP_BOP_ARCHITECTURE.md` for the full integration specification.
+
 ### Core Components
 
 1. **KnowledgeAgent** (`agent.py`): Main agent orchestrating chat, research, and reasoning

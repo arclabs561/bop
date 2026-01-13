@@ -1,18 +1,17 @@
 """LLM integration using pydantic-ai with multi-backend support."""
 
-import os
 import logging
-from typing import Any, Dict, List, Optional, Union
+import os
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
 from pydantic_ai import Agent
 
-from .schemas import ReasoningSchema
 from .llm_capabilities import (
-    LLMProviderCapabilities,
     BaseCapabilityAdapter,
     create_capability_adapter,
 )
+from .schemas import ReasoningSchema
 
 logger = logging.getLogger(__name__)
 
@@ -36,9 +35,9 @@ except ImportError:
     GOOGLE_AVAILABLE = False
 
 try:
-    from pydantic_ai.providers.openai import OpenAIProvider
     from pydantic_ai.providers.anthropic import AnthropicProvider
     from pydantic_ai.providers.google import GoogleProvider
+    from pydantic_ai.providers.openai import OpenAIProvider
     PROVIDERS_AVAILABLE = True
 except ImportError:
     PROVIDERS_AVAILABLE = False
@@ -108,7 +107,7 @@ class LLMService:
         self.backend = backend
         self.model = self._create_model(backend, model_name)
         self.agent = Agent(self.model, result_type=str)
-        
+
         # Initialize capability adapter
         self.capabilities: BaseCapabilityAdapter = create_capability_adapter(
             self.model, backend
@@ -245,7 +244,7 @@ class LLMService:
                 for key, desc in schema.schema_def.items():
                     if isinstance(desc, str):
                         prompt_parts.append(f"- {key}: {desc}")
-        
+
         # Add length guidance if provided
         if target_length:
             if target_length < 200:
@@ -254,7 +253,7 @@ class LLMService:
                 prompt_parts.append(f"\n\nProvide a detailed answer (approximately {target_length} characters).")
             else:
                 prompt_parts.append(f"\n\nProvide a comprehensive answer (approximately {target_length} characters).")
-        
+
         # Add storytelling guidance for better narrative structure
         # Use connective phrases and problem-solution structure
         prompt_parts.append(
@@ -270,7 +269,7 @@ class LLMService:
 
         # Check cache first
         try:
-            from .cache import get_cached_llm_response, cache_llm_response
+            from .cache import cache_llm_response, get_cached_llm_response
             cache_key = f"{prompt}|{self.backend}|{self.model.model_name if hasattr(self.model, 'model_name') else 'default'}"
             cached = get_cached_llm_response(cache_key, self.backend)
             if cached is not None:
@@ -281,7 +280,7 @@ class LLMService:
 
         result = await self.agent.run(prompt)
         response_text = result.data
-        
+
         # Cache successful response
         try:
             from .cache import cache_llm_response
@@ -289,7 +288,7 @@ class LLMService:
             cache_llm_response(cache_key, self.backend, response_text, ttl_hours=24 * 3)
         except Exception as e:
             logger.debug(f"Cache write failed: {e}")
-        
+
         return response_text
 
     async def hydrate_schema(
@@ -404,12 +403,12 @@ Return a JSON array of subproblem strings.
             return f"No valid results found for: {subproblem}"
 
         # Apply IB filtering before synthesis if enabled and we have multiple results
-        # 
+        #
         # Why IB Filtering: Research (arXiv 2406.01549) shows that most retrieved content
         # is noise. IB filtering removes irrelevant passages before synthesis, reducing
         # token usage by 20-30% while maintaining or improving quality. This addresses the
         # "waste" component of the degradation triple.
-        # 
+        #
         # We only filter when we have multiple results (>2) to avoid over-filtering.
         # The min_mi=0.3 threshold filters out low-relevance results while preserving
         # high-relevance ones. The max_results=5 limit prevents token overflow while
@@ -522,7 +521,7 @@ Provide a final synthesized answer that:
         return "\n".join(lines)
 
     # Capability methods (delegate to capability adapter)
-    
+
     @property
     def supports_embeddings(self) -> bool:
         """Whether this LLM service supports embeddings."""
@@ -545,13 +544,13 @@ Provide a final synthesized answer that:
 
     async def generate_embedding(self, text: str) -> List[float]:
         """Generate embedding vector for text.
-        
+
         Args:
             text: Input text to embed
-            
+
         Returns:
             Embedding vector as list of floats
-            
+
         Raises:
             NotImplementedError: If embeddings not supported
         """
@@ -559,10 +558,10 @@ Provide a final synthesized answer that:
 
     async def generate_embeddings(self, texts: List[str]) -> List[List[float]]:
         """Generate embedding vectors for multiple texts.
-        
+
         Args:
             texts: List of input texts to embed
-            
+
         Returns:
             List of embedding vectors
         """
@@ -572,14 +571,14 @@ Provide a final synthesized answer that:
         self, text1: str, text2: str, use_embedding: bool = True
     ) -> float:
         """Compute semantic similarity between two texts.
-        
+
         This method is referenced by orchestrator.py for belief alignment.
-        
+
         Args:
             text1: First text
             text2: Second text
             use_embedding: Whether to use embeddings (if available) or fallback method
-            
+
         Returns:
             Similarity score between 0.0 and 1.0
         """
@@ -587,7 +586,7 @@ Provide a final synthesized answer that:
 
     def get_vision_input_types(self) -> List[str]:
         """Get supported vision input types.
-        
+
         Returns:
             List of supported MIME types (e.g., ['image/jpeg', 'image/png'])
         """
@@ -595,7 +594,7 @@ Provide a final synthesized answer that:
 
     def get_logprob_params(self) -> Dict[str, Any]:
         """Get parameters needed for logprob requests.
-        
+
         Returns:
             Dictionary of parameter names and their types/requirements
         """
@@ -603,7 +602,7 @@ Provide a final synthesized answer that:
 
     def get_custom_input_params(self) -> Dict[str, Any]:
         """Get custom input parameters supported by the provider.
-        
+
         Returns:
             Dictionary of parameter names and their types/requirements
         """
@@ -611,7 +610,7 @@ Provide a final synthesized answer that:
 
     def get_capability_info(self) -> Dict[str, Any]:
         """Get comprehensive capability information for debugging/inspection.
-        
+
         Returns:
             Dictionary with capability flags, backend info, and parameter details
         """

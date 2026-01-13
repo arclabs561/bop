@@ -1,8 +1,8 @@
 """Constraint-based tool selection using SAT solvers."""
 
-from typing import Any, Dict, List, Optional, Set, Tuple
-from enum import Enum
 import logging
+from enum import Enum
+from typing import Dict, List, Optional, Set
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ class ToolType(str, Enum):
 
 class ToolConstraint:
     """Represents constraints on tool selection."""
-    
+
     def __init__(
         self,
         tool: ToolType,
@@ -50,7 +50,7 @@ class ToolConstraint:
     ):
         """
         Initialize tool constraint.
-        
+
         Args:
             tool: Tool type
             cost: API cost (normalized 0-1)
@@ -72,7 +72,7 @@ class ToolConstraint:
 class ConstraintSolver:
     """
     Solves tool selection as a constraint satisfaction problem.
-    
+
     Encodes tool selection as SAT constraints:
     - Tool availability
     - Dependencies (tool A before tool B)
@@ -80,7 +80,7 @@ class ConstraintSolver:
     - Budget constraints (total cost <= budget)
     - Information requirements (total gain >= threshold)
     """
-    
+
     def __init__(self):
         """Initialize the constraint solver."""
         if not PYSAT_AVAILABLE:
@@ -91,14 +91,14 @@ class ConstraintSolver:
         self.tool_vars: Dict[ToolType, int] = {}
         self.var_counter = 1
         self.cnf = CNF()
-        
+
     def _get_var(self, tool: ToolType) -> int:
         """Get or create variable for a tool."""
         if tool not in self.tool_vars:
             self.tool_vars[tool] = self.var_counter
             self.var_counter += 1
         return self.tool_vars[tool]
-    
+
     def add_tool_constraints(
         self,
         constraints: List[ToolConstraint],
@@ -106,30 +106,30 @@ class ConstraintSolver:
     ) -> None:
         """
         Add constraints for tool selection.
-        
+
         Args:
             constraints: List of tool constraints
             available_tools: Set of available tools (None = all tools)
         """
         if available_tools is None:
             available_tools = {c.tool for c in constraints}
-        
+
         # Add variables for all tools
         for constraint in constraints:
             if constraint.tool in available_tools:
                 self._get_var(constraint.tool)
-        
+
         # Add constraints
         for constraint in constraints:
             if constraint.tool not in available_tools:
                 continue
-                
+
             tool_var = self._get_var(constraint.tool)
-            
+
             # Required tools must be selected
             if constraint.required:
                 self.cnf.append([tool_var])
-            
+
             # Dependencies: if tool is selected, dependencies must be selected
             for dep in constraint.dependencies:
                 if dep in available_tools:
@@ -137,7 +137,7 @@ class ConstraintSolver:
                     # tool_var -> dep_var (if tool selected, dep must be selected)
                     # Equivalent to: -tool_var OR dep_var
                     self.cnf.append([-tool_var, dep_var])
-            
+
             # Conflicts: if tool is selected, conflicting tools cannot be selected
             for conflict in constraint.conflicts:
                 if conflict in available_tools and conflict != constraint.tool:
@@ -145,7 +145,7 @@ class ConstraintSolver:
                     # tool_var -> -conflict_var (if tool selected, conflict not selected)
                     # Equivalent to: -tool_var OR -conflict_var
                     self.cnf.append([-tool_var, -conflict_var])
-    
+
     def solve(
         self,
         constraints: List[ToolConstraint],
@@ -156,28 +156,28 @@ class ConstraintSolver:
     ) -> Optional[List[ToolType]]:
         """
         Solve tool selection problem.
-        
+
         Args:
             constraints: List of tool constraints
             budget: Maximum total cost (None = no budget constraint)
             min_information: Minimum total information gain (None = no requirement)
             max_tools: Maximum number of tools to select (None = no limit)
             available_tools: Set of available tools (None = all tools)
-        
+
         Returns:
             List of selected tools, or None if no solution found
         """
         if not PYSAT_AVAILABLE:
             return None
-        
+
         # Reset
         self.tool_vars = {}
         self.var_counter = 1
         self.cnf = CNF()
-        
+
         # Add tool constraints
         self.add_tool_constraints(constraints, available_tools)
-        
+
         # Add max tools constraint (if specified) - cardinality constraint
         if max_tools is not None:
             tool_vars_list = list(self.tool_vars.values())
@@ -199,7 +199,7 @@ class ConstraintSolver:
                         for combo in combinations(tool_vars_list, max_tools + 1):
                             # At least one must be false: -x1 OR -x2 OR ... OR -xk+1
                             self.cnf.append([-var for var in combo])
-        
+
         # If min_information > 0, require at least one tool (at-least-1 constraint)
         # This prevents the trivial solution of selecting no tools
         if min_information is not None and min_information > 0:
@@ -207,7 +207,7 @@ class ConstraintSolver:
             if tool_vars_list:
                 # At least one must be true: x1 OR x2 OR ... OR xn
                 self.cnf.append(tool_vars_list)
-        
+
         # Add budget constraint (if specified) - pseudo-boolean constraint
         # Encode: sum(selected_tools * cost) <= budget
         if budget is not None:
@@ -215,19 +215,19 @@ class ConstraintSolver:
             # This is more efficient than full pseudo-boolean encoding
             # We'll solve and filter solutions that exceed budget
             pass  # Will be handled in solve loop
-        
+
         # Add information requirement (if specified) - pseudo-boolean constraint
         # Encode: sum(selected_tools * information_gain) >= min_information
         if min_information is not None:
             # Use iterative solving with filtering for information constraint
             # We'll solve and filter solutions that don't meet information requirement
             pass  # Will be handled in solve loop
-        
+
         # Solve with budget and information filtering
         with Solver(bootstrap_with=self.cnf) as solver:
             max_iterations = 100  # Limit iterations to prevent infinite loops
             iteration = 0
-            
+
             while solver.solve() and iteration < max_iterations:
                 iteration += 1
                 model = solver.get_model()
@@ -237,7 +237,7 @@ class ConstraintSolver:
                     # Positive value = variable is true, negative = false
                     if var in model:
                         selected.append(tool)
-                
+
                 # Check budget constraint
                 if budget is not None:
                     total_cost = sum(
@@ -251,7 +251,7 @@ class ConstraintSolver:
                         if blocking_clause:
                             solver.add_clause(blocking_clause)
                         continue
-                
+
                 # Check information requirement
                 if min_information is not None:
                     total_info = sum(
@@ -265,12 +265,12 @@ class ConstraintSolver:
                         if blocking_clause:
                             solver.add_clause(blocking_clause)
                         continue
-                
+
                 # Solution satisfies all constraints
                 return selected
-        
+
         return None
-    
+
     def solve_optimal(
         self,
         constraints: List[ToolConstraint],
@@ -282,10 +282,10 @@ class ConstraintSolver:
     ) -> Optional[List[ToolType]]:
         """
         Solve tool selection with optimization objective.
-        
+
         Uses iterative approach: find all solutions, then select best.
         For production, would use MaxSAT or pseudo-boolean optimization.
-        
+
         Args:
             constraints: List of tool constraints
             objective: Optimization objective
@@ -293,21 +293,21 @@ class ConstraintSolver:
             min_information: Minimum total information gain
             max_tools: Maximum number of tools
             available_tools: Set of available tools
-        
+
         Returns:
             Optimal list of selected tools, or None if no solution
         """
         if not PYSAT_AVAILABLE:
             return None
-        
+
         # Reset and build CNF
         self.tool_vars = {}
         self.var_counter = 1
         self.cnf = CNF()
-        
+
         # Add tool constraints
         self.add_tool_constraints(constraints, available_tools)
-        
+
         # Add max_tools constraint if specified (cardinality constraint)
         if max_tools is not None:
             # At-most-k: at most max_tools can be selected
@@ -319,7 +319,7 @@ class ConstraintSolver:
                 for combo in combinations(selected_vars, max_tools + 1):
                     # At least one must be false: -x1 OR -x2 OR ... OR -xk+1
                     self.cnf.append([-var for var in combo])
-        
+
         # If min_information > 0, require at least one tool (at-least-1 constraint)
         # This prevents the trivial solution of selecting no tools
         if min_information is not None and min_information > 0:
@@ -327,27 +327,27 @@ class ConstraintSolver:
             if selected_vars:
                 # At least one must be true: x1 OR x2 OR ... OR xn
                 self.cnf.append(selected_vars)
-        
+
         # For now, use simple heuristic-based optimization
         # In production, would use MaxSAT solver or pseudo-boolean optimization
-        
+
         # Get all valid solutions (with timeout protection)
         solutions = []
         max_solutions = 50  # Reduced limit to prevent explosion
         max_time_seconds = 2.0  # Timeout after 2 seconds
-        
+
         import time
         start_time = time.time()
-        
+
         with Solver(bootstrap_with=self.cnf) as solver:
             # Enumerate all solutions (with limit and timeout)
             solution_count = 0
-            
+
             while solver.solve() and solution_count < max_solutions:
                 # Check timeout
                 if time.time() - start_time > max_time_seconds:
                     break
-                
+
                 model = solver.get_model()
                 selected = []
                 for tool, var in self.tool_vars.items():
@@ -355,7 +355,7 @@ class ConstraintSolver:
                     # Positive value = variable is true, negative = false
                     if var in model:
                         selected.append(tool)
-                
+
                 # Evaluate solution
                 total_cost = sum(
                     next((c.cost for c in constraints if c.tool == t), 1.0)
@@ -369,10 +369,10 @@ class ConstraintSolver:
                     next((c.latency for c in constraints if c.tool == t), 1.0)
                     for t in selected
                 )
-                
+
                 # Check constraints
                 selected_vars = [var for var in self.tool_vars.values() if var in model]
-                
+
                 if budget is not None and total_cost > budget:
                     # Block this specific assignment
                     if selected_vars:
@@ -394,14 +394,14 @@ class ConstraintSolver:
                         solver.add_clause(blocking_clause)
                     solution_count += 1
                     continue
-                
+
                 solutions.append({
                     "tools": selected,
                     "cost": total_cost,
                     "information": total_info,
                     "latency": total_latency,
                 })
-                
+
                 # Block this solution and continue
                 # Block by saying: at least one selected variable must be false
                 # This prevents finding the exact same solution again
@@ -411,10 +411,10 @@ class ConstraintSolver:
                     blocking_clause = [-var for var in selected_vars]
                     solver.add_clause(blocking_clause)
                 solution_count += 1
-        
+
         if not solutions:
             return None
-        
+
         # Select best solution based on objective
         if objective == "min_cost":
             best = min(solutions, key=lambda s: s["cost"])
@@ -425,14 +425,14 @@ class ConstraintSolver:
         else:
             # Default: minimize cost
             best = min(solutions, key=lambda s: s["cost"])
-        
+
         return best["tools"]
 
 
 def create_default_constraints() -> List[ToolConstraint]:
     """
     Create default tool constraints based on heuristics.
-    
+
     Returns:
         List of tool constraints with default values
     """

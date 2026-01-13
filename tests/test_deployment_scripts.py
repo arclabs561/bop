@@ -1,12 +1,9 @@
 """Property-based and behavioral tests for deployment scripts."""
 
 import os
-import subprocess
-import pytest
 from pathlib import Path
-from unittest.mock import patch, MagicMock, Mock
-import tempfile
-import shutil
+
+import pytest
 
 
 class TestDeploymentScriptsStructure:
@@ -26,7 +23,7 @@ class TestDeploymentScriptsStructure:
             "make_private.sh",
             "tailscale-start.sh",
         ]
-        
+
         for script in required:
             script_path = scripts_dir / script
             assert script_path.exists(), f"{script} should exist"
@@ -36,7 +33,7 @@ class TestDeploymentScriptsStructure:
         """Test scripts are executable (Unix)."""
         if os.name == "nt":
             pytest.skip("Windows doesn't use executable bits")
-        
+
         scripts = [
             "deploy_fly.sh",
             "verify_deployment.sh",
@@ -44,7 +41,7 @@ class TestDeploymentScriptsStructure:
             "make_private.sh",
             "tailscale-start.sh",
         ]
-        
+
         for script in scripts:
             script_path = scripts_dir / script
             if script_path.exists():
@@ -59,7 +56,7 @@ class TestDeploymentScriptsStructure:
             "make_private.sh",
             "tailscale-start.sh",
         ]
-        
+
         for script in scripts:
             script_path = scripts_dir / script
             if script_path.exists():
@@ -74,7 +71,7 @@ class TestDeploymentScriptsStructure:
             "validate_secrets.sh",
             "make_private.sh",
         ]
-        
+
         for script in scripts:
             script_path = scripts_dir / script
             if script_path.exists():
@@ -248,14 +245,14 @@ class TestDeploymentScriptProperties:
         """Test all scripts use consistent app name."""
         scripts_dir = Path(__file__).parent.parent.parent / "scripts"
         app_name = "bop-wispy-voice-3017"
-        
+
         scripts = [
             "deploy_fly.sh",
             "verify_deployment.sh",
             "validate_secrets.sh",
             "make_private.sh",
         ]
-        
+
         for script in scripts:
             script_path = scripts_dir / script
             if script_path.exists():
@@ -266,13 +263,13 @@ class TestDeploymentScriptProperties:
     def test_scripts_handle_errors(self):
         """Test scripts have error handling."""
         scripts_dir = Path(__file__).parent.parent.parent / "scripts"
-        
+
         scripts = [
             "deploy_fly.sh",
             "verify_deployment.sh",
             "validate_secrets.sh",
         ]
-        
+
         for script in scripts:
             script_path = scripts_dir / script
             if script_path.exists():
@@ -283,13 +280,13 @@ class TestDeploymentScriptProperties:
     def test_scripts_provide_helpful_messages(self):
         """Test scripts provide helpful error messages."""
         scripts_dir = Path(__file__).parent.parent.parent / "scripts"
-        
+
         scripts = [
             "deploy_fly.sh",
             "verify_deployment.sh",
             "validate_secrets.sh",
         ]
-        
+
         for script in scripts:
             script_path = scripts_dir / script
             if script_path.exists():

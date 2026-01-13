@@ -1,8 +1,7 @@
 """Unified storage where sessions are primary, history is derived."""
 
-from typing import List, Dict, Any, Optional
-from pathlib import Path
 import logging
+from typing import Any, Dict, List, Optional
 
 from .session_manager import HierarchicalSessionManager
 
@@ -12,14 +11,14 @@ logger = logging.getLogger(__name__)
 class UnifiedSessionStorage:
     """
     Storage where sessions are primary, history is derived.
-    
+
     Eliminates data duplication by making sessions the single source of truth
     and deriving flat history views on demand.
     """
-    
+
     def __init__(self, session_manager: HierarchicalSessionManager):
         self.session_manager = session_manager
-    
+
     def get_history_view(
         self,
         limit: int = 1000,
@@ -29,13 +28,13 @@ class UnifiedSessionStorage:
     ) -> List[Dict[str, Any]]:
         """
         Derive flat history from sessions.
-        
+
         Args:
             limit: Maximum number of entries to return
             session_ids: Optional list of session IDs to include
             date_from: Optional start date (ISO format)
             date_to: Optional end date (ISO format)
-            
+
         Returns:
             List of history entries (flat format)
         """
@@ -48,7 +47,7 @@ class UnifiedSessionStorage:
                 for sid in session_ids
             ]
             sessions = [s for s in sessions if s is not None]
-        
+
         # Flatten evaluations from sessions
         history = []
         for session in sessions:
@@ -61,7 +60,7 @@ class UnifiedSessionStorage:
                 session_date = session.created_at
                 if session_date > date_to:
                     continue
-            
+
             for eval_entry in session.evaluations:
                 history.append({
                     "query": eval_entry.query,
@@ -79,25 +78,25 @@ class UnifiedSessionStorage:
                     },
                     "timestamp": eval_entry.timestamp,
                 })
-        
+
         # Sort by timestamp, limit
         history.sort(key=lambda x: x["timestamp"], reverse=True)
         return history[:limit]
-    
+
     def get_history_summary(self) -> Dict[str, Any]:
         """Get summary statistics from history view."""
         history = self.get_history_view(limit=10000)  # Get larger sample
-        
+
         if not history:
             return {
                 "total_entries": 0,
                 "mean_score": 0.0,
                 "sessions_represented": 0,
             }
-        
+
         scores = [e["score"] for e in history]
         session_ids = set(e["metadata"].get("session_id") for e in history)
-        
+
         return {
             "total_entries": len(history),
             "mean_score": sum(scores) / len(scores) if scores else 0.0,

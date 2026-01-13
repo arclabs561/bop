@@ -1,10 +1,10 @@
 """Tests for server improvements."""
 
+
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import Mock, patch
-from bop.server import app, agent, verify_api_key
-from fastapi import HTTPException
+
+from bop.server import app
 
 
 @pytest.fixture
@@ -29,7 +29,7 @@ def test_rate_limiting(client):
             json={"message": "test"},
             headers={"X-API-Key": "test-key"} if os.getenv("BOP_API_KEY") else {},
         )
-        
+
         if i >= 30:
             # Should be rate limited
             assert response.status_code == 429

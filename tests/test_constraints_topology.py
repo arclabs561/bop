@@ -1,9 +1,10 @@
 """Topology integration tests for constraint solver."""
 
 import pytest
-from bop.orchestrator import StructuredOrchestrator
-from bop.context_topology import ContextNode
+
 from bop.constraints import PYSAT_AVAILABLE
+from bop.context_topology import ContextNode
+from bop.orchestrator import StructuredOrchestrator
 
 
 @pytest.mark.skipif(not PYSAT_AVAILABLE, reason="PySAT not available")
@@ -11,7 +12,7 @@ from bop.constraints import PYSAT_AVAILABLE
 async def test_constraint_solver_with_topology():
     """Test that constraint solver works with existing topology."""
     orchestrator = StructuredOrchestrator(use_constraints=True)
-    
+
     # Add some context nodes to topology
     node1 = ContextNode(
         id="n1",
@@ -21,7 +22,7 @@ async def test_constraint_solver_with_topology():
         confidence=0.7,
     )
     orchestrator.topology.add_node(node1)
-    
+
     node2 = ContextNode(
         id="n2",
         content="Related context about uncertainty",
@@ -32,7 +33,7 @@ async def test_constraint_solver_with_topology():
     orchestrator.topology.add_node(node2)
     orchestrator.topology.add_edge("n1", "n2", weight=0.8)
     orchestrator.topology.compute_cliques()
-    
+
     # Test tool selection with constraints and topology
     result = await orchestrator.research_with_schema(
         "How do trust and uncertainty relate?",
@@ -40,14 +41,14 @@ async def test_constraint_solver_with_topology():
         preserve_d_separation=True,
         max_tools_per_subproblem=2,
     )
-    
+
     # Should use constraints
     assert orchestrator.use_constraints is True
-    
+
     # Topology should be considered
     assert "topology" in result
     assert len(orchestrator.topology.nodes) >= 2  # At least the initial nodes
-    
+
     # Should have subsolutions
     assert "subsolutions" in result
 
@@ -60,7 +61,7 @@ async def test_constraint_solver_topology_aware_selection():
         use_constraints=True,
         reset_topology_per_query=False
     )
-    
+
     # Add high-trust context
     node = ContextNode(
         id="n1",
@@ -71,7 +72,7 @@ async def test_constraint_solver_topology_aware_selection():
     )
     orchestrator.topology.add_node(node)
     orchestrator.topology.compute_cliques()
-    
+
     # Run research with both constraints and topology
     result = await orchestrator.research_with_schema(
         "Test query",
@@ -79,7 +80,7 @@ async def test_constraint_solver_topology_aware_selection():
         preserve_d_separation=True,
         max_tools_per_subproblem=2,
     )
-    
+
     # Both should be active
     assert orchestrator.use_constraints is True
     assert "topology" in result
@@ -94,25 +95,25 @@ async def test_constraint_solver_topology_accumulation():
         use_constraints=True,
         reset_topology_per_query=False
     )
-    
+
     queries = [
         "What is trust?",
         "What is uncertainty?",
         "How do they relate?",
     ]
-    
+
     initial_nodes = len(orchestrator.topology.nodes)
-    
+
     for query in queries:
         result = await orchestrator.research_with_schema(
             query,
             schema_name="chain_of_thought",
             max_tools_per_subproblem=2,
         )
-        
+
         assert orchestrator.use_constraints is True
         assert "topology" in result
-    
+
     # Topology should have grown
     final_nodes = len(orchestrator.topology.nodes)
     assert final_nodes > initial_nodes
@@ -123,20 +124,20 @@ async def test_constraint_solver_topology_accumulation():
 async def test_constraint_solver_topology_metrics():
     """Test that topology metrics are computed with constraint solver."""
     orchestrator = StructuredOrchestrator(use_constraints=True)
-    
+
     # Add some context
     node1 = ContextNode(id="n1", content="test1", source="test", credibility=0.8)
     node2 = ContextNode(id="n2", content="test2", source="test", credibility=0.7)
     orchestrator.topology.add_node(node1)
     orchestrator.topology.add_node(node2)
     orchestrator.topology.add_edge("n1", "n2")
-    
+
     result = await orchestrator.research_with_schema(
         "Test query",
         schema_name="chain_of_thought",
         max_tools_per_subproblem=2,
     )
-    
+
     # Verify topology metrics
     assert "topology" in result
     topology = result["topology"]
@@ -154,27 +155,27 @@ async def test_constraint_solver_topology_reset():
         use_constraints=True,
         reset_topology_per_query=True
     )
-    
+
     # Add nodes in first query
     node1 = ContextNode(id="n1", content="test1", source="test")
     orchestrator.topology.add_node(node1)
-    
+
     # Run query
     result1 = await orchestrator.research_with_schema(
         "Query 1",
         schema_name="chain_of_thought",
         max_tools_per_subproblem=2,
     )
-    
+
     # Topology should be reset for next query
-    initial_node_count = len(orchestrator.topology.nodes)
-    
+    len(orchestrator.topology.nodes)
+
     result2 = await orchestrator.research_with_schema(
         "Query 2",
         schema_name="chain_of_thought",
         max_tools_per_subproblem=2,
     )
-    
+
     # Both should use constraints
     assert orchestrator.use_constraints is True
     assert orchestrator.reset_topology_per_query is True

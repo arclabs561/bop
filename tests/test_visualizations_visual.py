@@ -9,10 +9,10 @@ Tests the visual rendering of:
 Uses Playwright + ai-visual-test for semantic visual validation.
 """
 
-import pytest
 import subprocess
-import sys
 from pathlib import Path
+
+import pytest
 
 
 def check_visual_testing_available():
@@ -26,7 +26,7 @@ def check_visual_testing_available():
         )
         if result.returncode != 0:
             return False
-        
+
         result = subprocess.run(
             ["npx", "playwright", "--version"],
             capture_output=True,
@@ -46,7 +46,7 @@ def test_visualization_tests_exist():
     """Verify that visualization visual test file exists."""
     test_file = Path(__file__).parent / "test_visualizations_visual.mjs"
     assert test_file.exists(), "test_visualizations_visual.mjs should exist"
-    
+
     result = subprocess.run(
         ["node", "--check", str(test_file)],
         capture_output=True,

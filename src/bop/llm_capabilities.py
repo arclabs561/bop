@@ -5,8 +5,8 @@ and provides capability detection and provider-specific implementations.
 """
 
 import logging
-from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Protocol, Union
+from abc import ABC
+from typing import Any, Dict, List, Protocol
 
 try:
     from typing_extensions import runtime_checkable
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 @runtime_checkable
 class LLMProviderCapabilities(Protocol):
     """Protocol defining LLM provider capabilities.
-    
+
     This protocol allows checking and using provider-specific features
     in a provider-agnostic way.
     """
@@ -47,13 +47,13 @@ class LLMProviderCapabilities(Protocol):
 
     async def generate_embedding(self, text: str) -> List[float]:
         """Generate embedding vector for text.
-        
+
         Args:
             text: Input text to embed
-            
+
         Returns:
             Embedding vector as list of floats
-            
+
         Raises:
             NotImplementedError: If embeddings not supported
         """
@@ -61,13 +61,13 @@ class LLMProviderCapabilities(Protocol):
 
     async def generate_embeddings(self, texts: List[str]) -> List[List[float]]:
         """Generate embedding vectors for multiple texts.
-        
+
         Args:
             texts: List of input texts to embed
-            
+
         Returns:
             List of embedding vectors
-            
+
         Raises:
             NotImplementedError: If embeddings not supported
         """
@@ -77,12 +77,12 @@ class LLMProviderCapabilities(Protocol):
         self, text1: str, text2: str, use_embedding: bool = True
     ) -> float:
         """Compute semantic similarity between two texts.
-        
+
         Args:
             text1: First text
             text2: Second text
             use_embedding: Whether to use embeddings (if available) or fallback method
-            
+
         Returns:
             Similarity score between 0.0 and 1.0
         """
@@ -90,7 +90,7 @@ class LLMProviderCapabilities(Protocol):
 
     def get_vision_input_types(self) -> List[str]:
         """Get supported vision input types (e.g., 'image/jpeg', 'image/png').
-        
+
         Returns:
             List of supported MIME types
         """
@@ -98,7 +98,7 @@ class LLMProviderCapabilities(Protocol):
 
     def get_logprob_params(self) -> Dict[str, Any]:
         """Get parameters needed for logprob requests.
-        
+
         Returns:
             Dictionary of parameter names and their types/requirements
         """
@@ -106,7 +106,7 @@ class LLMProviderCapabilities(Protocol):
 
     def get_custom_input_params(self) -> Dict[str, Any]:
         """Get custom input parameters supported by the provider.
-        
+
         Returns:
             Dictionary of parameter names and their types/requirements
         """
@@ -115,13 +115,13 @@ class LLMProviderCapabilities(Protocol):
 
 class BaseCapabilityAdapter(ABC):
     """Base adapter for LLM provider capabilities.
-    
+
     Provides default implementations and fallback behavior.
     """
 
     def __init__(self, model: Any, backend: str):
         """Initialize capability adapter.
-        
+
         Args:
             model: The underlying model instance
             backend: Backend name (e.g., 'openai', 'anthropic', 'google')
@@ -219,7 +219,7 @@ class BaseCapabilityAdapter(ABC):
 
     def get_capability_info(self) -> Dict[str, Any]:
         """Get comprehensive capability information for debugging/inspection.
-        
+
         Returns:
             Dictionary with capability flags and details
         """
@@ -377,11 +377,11 @@ class GroqCapabilityAdapter(BaseCapabilityAdapter):
 
 def create_capability_adapter(model: Any, backend: str) -> BaseCapabilityAdapter:
     """Create appropriate capability adapter for backend.
-    
+
     Args:
         model: The model instance
         backend: Backend name ('openai', 'anthropic', 'google', 'groq')
-        
+
     Returns:
         Capability adapter instance
     """

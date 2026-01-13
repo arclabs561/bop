@@ -1,16 +1,16 @@
 """Context topology analysis using clique complexes and information geometry."""
 
-from typing import Any, Dict, List, Optional, Set, Tuple
 from collections import defaultdict
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import numpy as np
 
 # Import uncertainty functions (avoid circular import by importing here)
 try:
     from .uncertainty import (
-        compute_epistemic_uncertainty_jsd,
         compute_aleatoric_uncertainty_entropy,
+        compute_epistemic_uncertainty_jsd,
         compute_total_uncertainty,
     )
     UNCERTAINTY_AVAILABLE = True
@@ -284,19 +284,19 @@ class ContextTopology:
             "trust_score": float(trust_score),
             "adversarial_risk": float(adversarial_risk),
         }
-    
+
     def compute_clique_uncertainty(self, nodes: Set[str]) -> Dict[str, float]:
         """
         Compute uncertainty metrics for a clique using JSD and entropy.
-        
+
         Uses information-theoretic approach:
         - Epistemic uncertainty: JSD-based (measures disagreement)
         - Aleatoric uncertainty: Entropy-based (measures inherent randomness)
         - Total uncertainty: Weighted combination
-        
+
         Args:
             nodes: Set of node IDs in the clique
-        
+
         Returns:
             Dictionary with epistemic, aleatoric, and total uncertainty
         """
@@ -316,7 +316,7 @@ class ContextTopology:
                 "aleatoric": 0.3,
                 "total": 0.5,
             }
-        
+
         # Extract predictions from nodes
         predictions = []
         for node_id in nodes:
@@ -328,12 +328,12 @@ class ContextTopology:
                 node.epistemic_uncertainty  # Epistemic uncertainty
             ])
             predictions.append(pred)
-        
+
         # Compute uncertainties using JSD and entropy
         epistemic = compute_epistemic_uncertainty_jsd(predictions)
         aleatoric = compute_aleatoric_uncertainty_entropy(predictions)
         total = compute_total_uncertainty(epistemic, aleatoric, beta=0.5)
-        
+
         return {
             "epistemic": float(epistemic),
             "aleatoric": float(aleatoric),
@@ -590,7 +590,7 @@ class ContextTopology:
         Trust-aware: high trust = more information = higher Fisher Information.
 
         NOTE: This is a heuristic estimate, not true Fisher Information Matrix.
-        
+
         True Fisher Information requires:
         - Probability model P(x|θ) with parameters θ
         - Computing I_kl = -E[∂²/∂θ_k ∂θ_l log P(x|θ)]
@@ -600,12 +600,12 @@ class ContextTopology:
         - Clique coherence ≈ local curvature (high coherence = high information)
         - Betti numbers ≈ manifold complexity (low cycles = more structure)
         - Trust scores ≈ reliability of information (affects information quality)
-        
+
         Rationale:
         - High coherence cliques indicate strong statistical dependencies
         - Low β₁ (few cycles) indicates tree-like structure = more compressible
         - Trust-weighted coherence reflects information quality
-        
+
         This gives a 0-1 normalized estimate suitable for:
         - Comparing different context configurations
         - Guiding tool selection (prefer high-Fisher contexts)
@@ -639,7 +639,7 @@ class ContextTopology:
         # Trust-weighted: high trust = more reliable information = higher Fisher Info
         # Combine: coherence × trust × structure
         return min(1.0, avg_coherence * avg_trust * structure_measure)
-    
+
     def compute_logical_depth_estimate(
         self,
         node_id: str,
@@ -647,77 +647,77 @@ class ContextTopology:
     ) -> float:
         """
         Estimate Bennett's logical depth for a context node.
-        
+
         ## Theoretical Foundation: Bennett's Logical Depth
-        
+
         Charles Bennett's logical depth formalizes the concept of "valuable, hard-earned
         knowledge" - information that requires significant computational effort to produce
         from a compressed description. This contrasts with:
         - **Kolmogorov complexity**: Measures compressibility (short description = low complexity)
         - **Logical depth**: Measures computational effort (hard to produce = high depth)
-        
+
         Example: A random string has high Kolmogorov complexity (hard to compress) but low
         logical depth (easy to produce). A proof of Fermat's Last Theorem has both high
         complexity and high depth (hard to compress AND hard to produce).
-        
+
         ## Why This Matters for BOP
-        
+
         BOP's knowledge structure research aims to understand the "shape of ideas" - which
         knowledge structures are valuable, deep, and meaningful. Logical depth provides a
         formal measure of knowledge value beyond just information content:
         - High depth = knowledge that required significant effort to develop
         - Low depth = easily produced or trivial knowledge
-        
+
         This connects to the SSH document's discussion of "wisdom passed through ages" - deep
         knowledge that has been refined and validated over time.
-        
+
         ## Implementation Approach
-        
+
         We use a heuristic approximation based on:
         - **Trust**: High trust = valuable knowledge (validated, reliable)
         - **Coherence**: High coherence = structured knowledge (well-organized, meaningful)
         - **Verification**: More verification = more effort (multiple sources confirm)
-        
+
         The compression ratio parameter reflects that more compressed descriptions require
         more computational effort to decompress (higher depth).
-        
+
         Note: True logical depth requires computing the minimum time to produce a string from
         its shortest description using a universal Turing machine. Our heuristic captures
         the intuition: valuable, structured, verified knowledge has higher logical depth.
-        
+
         Logical depth = computational effort to produce string from compressed description.
-        
+
         Args:
             node_id: Node identifier
             compression_ratio: Assumed compression ratio for description (0-1)
-        
+
         Returns:
             Estimated logical depth (0-1 normalized)
         """
         if node_id not in self.nodes:
             return 0.0
-        
+
         node = self.nodes[node_id]
-        
+
         # Logical depth correlates with:
         # 1. Trust (high trust = valuable knowledge)
         # 2. Coherence (high coherence = structured knowledge)
         # 3. Verification count (more verification = more effort)
-        
+
         trust_component = node.trust_score
         coherence_component = getattr(node, 'coherence_score', 0.5)
         verification_component = min(1.0, node.verification_count / 5.0)  # Normalize
-        
+
         # Weighted combination
         logical_depth = (
             0.4 * trust_component +
             0.3 * coherence_component +
             0.3 * verification_component
         )
-        
+
         # Apply compression ratio (more compression = more depth required)
         logical_depth *= (1.0 + compression_ratio)
-        
+
         return min(1.0, logical_depth)
 
     def analyze_context_injection_impact(
@@ -876,7 +876,6 @@ class ContextTopology:
 
         # Compute calibration error if we have predictions
         calibration_error = None
-        calibration_improvement = None
         if self.confidence_predictions:
             # Expected Calibration Error (ECE) - standard metric
             bins = 10
@@ -898,12 +897,12 @@ class ContextTopology:
                         accuracy_in_bin - avg_confidence_in_bin
                     )
             calibration_error = float(ece)
-            
+
             # Try to improve calibration using uncertainty metrics
             if UNCERTAINTY_AVAILABLE and len(self.nodes) > 1:
                 try:
                     from .calibration_improvement import improve_calibration_with_uncertainty
-                    
+
                     # Extract predictions and uncertainties from nodes
                     predictions = []
                     confidence_scores = []
@@ -912,10 +911,10 @@ class ContextTopology:
                         pred = np.array([node.confidence, 1.0 - node.confidence])
                         predictions.append(pred)
                         confidence_scores.append(node.confidence)
-                    
+
                     # Get actual outcomes from confidence_predictions if available
                     actual_outcomes = [actual for _, actual in self.confidence_predictions]
-                    
+
                     if len(actual_outcomes) == len(confidence_scores):
                         improvement_result = improve_calibration_with_uncertainty(
                             predictions,
@@ -923,12 +922,12 @@ class ContextTopology:
                             actual_outcomes,
                             use_aleatoric_weighting=True,
                         )
-                        calibration_improvement = improvement_result.get("calibration_improvement")
+                        improvement_result.get("calibration_improvement")
                 except Exception:
                     # If calibration improvement fails, continue without it
                     pass
 
-        result = {
+        {
             "avg_trust": float(np.mean(trusts)) if trusts else 0.5,
             "high_trust_edges": sum(1 for t in trusts if t > 0.7),
             "low_trust_edges": sum(1 for t in trusts if t < 0.3),
@@ -951,7 +950,7 @@ class ContextTopology:
         violations = []
 
         # Example validations (would be domain-specific in practice)
-        content_lower = node.content.lower()
+        node.content.lower()
 
         # Check for obvious contradictions (would be expanded)
         # This is a placeholder - real schemas would be more sophisticated

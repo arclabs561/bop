@@ -1,0 +1,110 @@
+---
+title: "BOP Rules"
+id: bop-rules
+description: "Rules for BOP - Rust agentic research system"
+priority: 100
+alwaysApply: true
+---
+
+# BOP Rules
+
+## Vision: CLI-First, Rust-Native
+
+BOP is a Rust research agent. CLI is the primary interface; TUI is optional.
+
+## Etymology
+
+**bop**: From bebop jazz - improvisational, responsive, complex patterns emerging
+from interaction. Agents "bop around" exploring topics, riffing on ideas.
+
+## Design Principles
+
+- Silent success by default (like hop-cli)
+- Errors to stderr with helpful hints
+- JSON output for scripting (`--json`)
+- Fast startup and execution
+- TUI as optional feature (`--features tui`)
+
+## Architecture
+
+```
+bop/
+├── bop-core/           # Core agent logic
+│   └── src/
+│       ├── agent.rs        # KnowledgeAgent
+│       ├── llm.rs          # LLM abstraction (Anthropic/OpenAI/Local)
+│       ├── mcp.rs          # MCP client
+│       ├── orchestrator.rs # Multi-agent coordination
+│       ├── research.rs     # ResearchAgent
+│       ├── session.rs      # Session persistence (sled)
+│       └── storage.rs      # Knowledge store
+├── bop-cli/            # CLI binary (primary interface)
+│   └── src/
+│       ├── main.rs         # Commands: query, research, chat, session
+│       ├── output.rs       # Output formatting
+│       └── tui.rs          # Optional TUI (--features tui)
+├── bop-serve/          # TODO: axum server
+└── bop-py/             # TODO: pyo3 bindings
+```
+
+## CLI Commands
+
+```bash
+bop query "question"              # Single question
+bop research "topic" -o notes.md  # Multi-step research
+bop chat                          # Interactive REPL
+bop session list                  # Manage sessions
+bop tui                           # TUI (requires --features tui)
+```
+
+## Key Dependencies
+
+| Purpose | Crate |
+|---------|-------|
+| TUI | ratatui, crossterm |
+| HTTP server | axum, tower |
+| LLM | rig, reqwest (raw API) |
+| MCP | rmcp (or custom impl) |
+| Async | tokio |
+| Serialization | serde, serde_json |
+| CLI | clap |
+| Constraints | varisat |
+| Storage | sled, redb |
+
+## Integration with Scholar Stack
+
+- Use `hop-core` for ingestion/retrieval
+- Use `anno` for NLP preprocessing
+- Use `ordino-fuse/ordino-rerank` for retrieval quality
+- Use `grafene` for knowledge graph reasoning
+
+## TUI Patterns (ratatui)
+
+- Stateful widgets with clear separation
+- Event-driven updates
+- Async message passing (tokio channels)
+- Responsive layout with constraints
+
+## LLM Integration
+
+- Abstract over providers (OpenAI, Anthropic, local)
+- Streaming responses
+- Tool/function calling support
+- Token counting and budget management
+
+## MCP Client
+
+- JSON-RPC over stdio or HTTP
+- Tool discovery and invocation
+- Resource management
+- Session handling
+
+## Testing
+
+- Mock LLM responses for unit tests
+- Property tests for agent state machines
+- Integration tests with real hop-core
+
+## Rust Standards
+
+See scholar-stack-base.mdc for shared Rust standards.

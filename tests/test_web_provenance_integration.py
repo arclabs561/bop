@@ -1,6 +1,7 @@
 """Test web UI integration with provenance features."""
 
 import pytest
+
 from bop.provenance_viz import format_clickable_source
 
 
@@ -20,9 +21,9 @@ def test_format_clickable_source_returns_tuple():
             }
         ],
     }
-    
+
     formatted_text, tooltip_data = format_clickable_source(claim, provenance_info)
-    
+
     assert isinstance(formatted_text, str)
     assert isinstance(tooltip_data, dict)
     assert "source" in tooltip_data
@@ -35,9 +36,9 @@ def test_format_clickable_source_without_sources():
     """Test format_clickable_source when no sources are available."""
     claim = "This is a claim without sources."
     provenance_info = {"sources": []}
-    
+
     formatted_text, tooltip_data = format_clickable_source(claim, provenance_info)
-    
+
     assert formatted_text == claim
     assert tooltip_data == {}
 
@@ -55,9 +56,9 @@ def test_format_clickable_source_includes_source_name():
             }
         ],
     }
-    
+
     formatted_text, tooltip_data = format_clickable_source(claim, provenance_info)
-    
+
     # The formatted text should include a reference to the source
     assert "test_source" in formatted_text or "source" in formatted_text.lower()
     assert tooltip_data["source"] == "test_source"
@@ -69,7 +70,7 @@ async def test_web_ui_stores_provenance_data():
     # This is a conceptual test - actual implementation would require
     # setting up the marimo UI state which is complex
     # Instead, we verify the provenance_viz functions work correctly
-    
+
     provenance_data = {
         "Claim 1": {
             "sources": [
@@ -83,7 +84,7 @@ async def test_web_ui_stores_provenance_data():
             "num_sources": 1,
         }
     }
-    
+
     # Verify provenance data structure is correct
     assert "Claim 1" in provenance_data
     assert provenance_data["Claim 1"]["num_sources"] == 1
@@ -106,15 +107,15 @@ def test_clickable_source_tooltip_structure():
             }
         ],
     }
-    
+
     formatted_text, tooltip_data = format_clickable_source(claim, provenance_info)
-    
+
     # Verify tooltip structure
     assert "source" in tooltip_data
     assert "passage" in tooltip_data
     assert "overlap" in tooltip_data
     assert "token_matches" in tooltip_data
-    
+
     # Verify passage is truncated (max 200 chars)
     assert len(tooltip_data["passage"]) <= 200
     assert isinstance(tooltip_data["overlap"], (int, float))

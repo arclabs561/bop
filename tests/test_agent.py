@@ -1,7 +1,7 @@
 """Tests for knowledge agent."""
 
+
 import pytest
-from pathlib import Path
 
 from bop.agent import KnowledgeAgent
 

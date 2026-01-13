@@ -1,25 +1,25 @@
 """Structured tool orchestration using reasoning schemas and information geometry."""
 
-from typing import Any, Dict, List, Optional, Set, Tuple
-from enum import Enum
-from dataclasses import dataclass, field
 import logging
+from dataclasses import dataclass
 from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional, Set
 
 import numpy as np
 
-from .schemas import get_schema, ReasoningSchema
-from .research import ResearchAgent
-from .context_topology import ContextTopology, ContextNode
+from .context_topology import ContextNode, ContextTopology
 from .llm import LLMService
 from .mcp_tools import call_mcp_tool
+from .research import ResearchAgent
+from .schemas import ReasoningSchema, get_schema
 from .token_importance import compute_token_importance_for_results
 
 # Optional MUSE-based tool selection
 try:
     from .uncertainty_tool_selection import (
-        select_tools_with_muse,
         aggregate_results_with_aleatoric_weighting,
+        select_tools_with_muse,
     )
     MUSE_SELECTION_AVAILABLE = True
 except ImportError:
@@ -33,10 +33,10 @@ logger = logging.getLogger(__name__)
 @dataclass
 class PipelineUncertainty:
     """Track uncertainty at each pipeline stage.
-    
+
     Distinguishes operational uncertainty (pre-training to inference)
     from output uncertainty (quality of generated content).
-    
+
     Based on "Rethinking the Uncertainty" (2410.20199v1).
     """
     # Operational uncertainty (model and data processing)
@@ -44,11 +44,11 @@ class PipelineUncertainty:
     tool_selection: float = 0.5  # Operational: uncertainty in tool choice
     tool_execution: float = 0.5  # Operational: uncertainty in tool results
     result_aggregation: float = 0.5  # Operational: uncertainty in aggregation
-    
+
     # Output uncertainty (quality of generated content)
     synthesis: float = 0.5  # Output: uncertainty in synthesis quality
     final_response: float = 0.5  # Output: uncertainty in final response
-    
+
     def to_dict(self) -> Dict[str, float]:
         """Convert to dictionary for serialization."""
         return {
@@ -63,10 +63,10 @@ class PipelineUncertainty:
 # Optional constraint solver integration
 try:
     from .constraints import (
+        PYSAT_AVAILABLE,
         ConstraintSolver,
         ToolConstraint,
         create_default_constraints,
-        PYSAT_AVAILABLE,
     )
     CONSTRAINTS_AVAILABLE = PYSAT_AVAILABLE
 except ImportError:
@@ -263,7 +263,7 @@ class StructuredOrchestrator:
         # This implements lazy evaluation - only load context when needed
         subsolutions = []
         conditioning_set = set()  # Track what we've conditioned on
-        
+
         # NEW: Get adaptive reasoning depth estimate
         estimated_depth = None
         query_type = None
@@ -281,7 +281,7 @@ class StructuredOrchestrator:
                 try:
                     # Estimate current quality (heuristic: based on subsolution quality)
                     current_quality = self._estimate_current_quality(subsolutions)
-                    
+
                     if adaptive_manager.should_early_stop(
                         current_quality, query_type, len(subsolutions)
                     ):
@@ -308,7 +308,7 @@ class StructuredOrchestrator:
             else:
                 # Use topology to influence selection (avoid breaking coherence, maximize information gain)
                 candidate_tools = self.tool_selector.select_tools(subproblem)
-                
+
                 # Apply MUSE-based uncertainty-aware selection if enabled
                 if self.use_muse_selection and MUSE_SELECTION_AVAILABLE and select_tools_with_muse:
                     try:
@@ -325,7 +325,7 @@ class StructuredOrchestrator:
                                 "epistemic_uncertainty": epistemic_unc,
                                 "aleatoric_uncertainty": 0.3,
                             })
-                        
+
                         # Apply MUSE selection
                         selected_tool_ids, selection_metadata = select_tools_with_muse(
                             [t.value for t in candidate_tools],
@@ -334,11 +334,11 @@ class StructuredOrchestrator:
                             max_tools=max_tools_per_subproblem,
                             strategy="greedy",  # Maximize diversity
                         )
-                        
+
                         # Map back to ToolType enums
                         tool_map = {t.value: t for t in candidate_tools}
                         tools = [tool_map[tid] for tid in selected_tool_ids if tid in tool_map]
-                        
+
                         logger.debug(f"MUSE selected {len(tools)} tools: {[t.value for t in tools]}")
                         logger.debug(f"MUSE metadata: {selection_metadata}")
                     except Exception as e:
@@ -359,9 +359,9 @@ class StructuredOrchestrator:
                         )
                     else:
                         tools = candidate_tools
-                    
+
                     tools = tools[:max_tools_per_subproblem]
-            
+
             # Estimate tool selection uncertainty (operational) - update per subproblem
             if tools:
                 # Fewer tools = potentially more uncertainty (less diversity)
@@ -389,7 +389,7 @@ class StructuredOrchestrator:
                         # Create context node for topology analysis (trust-aware)
                         # Use query_id to ensure uniqueness across queries
                         node_id = f"q{query_id}_{tool.value}_{i}_{len(new_nodes)}"
-                        
+
                         # Initialize trust/uncertainty based on source
                         # In production, would use learned source trust models
                         source_credibility = self._get_source_credibility(tool.value)
@@ -397,13 +397,13 @@ class StructuredOrchestrator:
                         epistemic_uncertainty = self._estimate_epistemic_uncertainty(
                             result, tool.value
                         )
-                        
+
                         # Compute belief alignment with prior beliefs
                         belief_alignment = await self._compute_belief_alignment(
                             result.get("result", ""),
                             prior_beliefs or []
                         )
-                        
+
                         node = ContextNode(
                             id=node_id,
                             content=result.get("result", ""),
@@ -423,7 +423,7 @@ class StructuredOrchestrator:
                             pass
 
                         new_nodes.append(node)
-                except Exception as e:
+                except Exception:
                     # Log error but continue with other tools
                     # In production, would use proper logging
                     continue
@@ -447,16 +447,16 @@ class StructuredOrchestrator:
                             if node.source in str(result_source) or str(result_source) in node.source:
                                 matching_result = result
                                 break
-                        
+
                         # If no match found, use empty dict (will use node metadata)
                         if matching_result is None and idx < len(tool_results):
                             matching_result = tool_results[idx]
                         elif matching_result is None:
                             matching_result = {}
-                        
+
                         pred = extract_prediction_from_result(matching_result, node)
                         predictions.append(pred)
-                    
+
                     # Compute JSD-based epistemic uncertainty
                     if predictions:
                         jsd_epistemic = compute_epistemic_uncertainty_jsd(predictions)
@@ -464,7 +464,7 @@ class StructuredOrchestrator:
                         for node in new_nodes:
                             # Blend heuristic estimate with JSD-based estimate (weighted average)
                             node.epistemic_uncertainty = 0.5 * node.epistemic_uncertainty + 0.5 * jsd_epistemic
-                        
+
                         # Track result aggregation uncertainty (operational)
                         # Average across subproblems
                         current_aggregation_uncertainty = jsd_epistemic
@@ -477,7 +477,7 @@ class StructuredOrchestrator:
                 except Exception as e:
                     # If JSD computation fails, continue with heuristic estimates
                     logger.debug(f"JSD-based uncertainty refinement failed: {e}", exc_info=True)
-            
+
             # Estimate tool execution uncertainty (operational) - update per subproblem
             if tool_results:
                 # Average epistemic uncertainty across results
@@ -515,7 +515,7 @@ class StructuredOrchestrator:
                 except Exception as e:
                     logger.debug(f"Aleatoric weighting failed: {e}, using standard synthesis")
                     aggregated_results = None
-            
+
             # Synthesize results for this subproblem
             if self.llm_service:
                 # Use aggregated results if available, otherwise use raw tool_results
@@ -542,7 +542,7 @@ class StructuredOrchestrator:
                     "aleatoric_uncertainties": aggregated_results.get("aleatoric_uncertainties", []),
                     "weighted_prediction": aggregated_results.get("weighted_prediction"),
                 }
-            
+
             subsolutions.append({
                 "subproblem": subproblem,
                 "tools_used": [tool.value for tool in tools],
@@ -585,7 +585,7 @@ class StructuredOrchestrator:
 
         # Get source credibility mapping
         source_credibility = self.topology.source_trust.copy()
-        
+
         # Get verification counts and source diversity
         verification_info = {}
         for node_id, node in self.topology.nodes.items():
@@ -597,14 +597,14 @@ class StructuredOrchestrator:
                 }
             verification_info[source]["verification_count"] += node.verification_count
             verification_info[source]["nodes"] += 1
-        
+
         # Compute token importance across all results
         all_results = []
         for subsolution in subsolutions:
             all_results.extend(subsolution.get("results", []))
-        
+
         token_importance_data = compute_token_importance_for_results(query, all_results)
-        
+
         # NEW: Compute logical depth for all nodes
         logical_depths = {}
         try:
@@ -613,13 +613,13 @@ class StructuredOrchestrator:
         except Exception as e:
             logger.debug(f"Failed to compute logical depths: {e}", exc_info=True)
             logical_depths = {}
-        
+
         # Get clique details for visualization
         clique_details = []
         for clique in self.topology.cliques[:10]:  # Top 10 cliques
             node_sources = [
                 self.topology.nodes[nid].source
-                for nid in clique.nodes 
+                for nid in clique.nodes
                 if nid in self.topology.nodes
             ]
             # Get verification counts for nodes in this clique
@@ -629,7 +629,7 @@ class StructuredOrchestrator:
                 if nid in self.topology.nodes
             )
             unique_sources = list(set(node_sources))
-            
+
             # Compute JSD-based uncertainty for this clique
             clique_uncertainty = {}
             try:
@@ -637,7 +637,7 @@ class StructuredOrchestrator:
             except Exception as e:
                 logger.debug(f"Failed to compute clique uncertainty: {e}", exc_info=True)
                 clique_uncertainty = {"epistemic": 0.5, "aleatoric": 0.3, "total": 0.5}
-            
+
             clique_details.append({
                 "node_ids": list(clique.nodes),
                 "node_sources": node_sources,
@@ -650,10 +650,10 @@ class StructuredOrchestrator:
                 "size": len(clique.nodes),
                 "uncertainty": clique_uncertainty,  # NEW: JSD-based uncertainty metrics
             })
-        
+
         # Build source relationship matrix (agreement/disagreement)
         source_matrix = self._build_source_matrix(subsolutions)
-        
+
         # Estimate final response uncertainty (output uncertainty)
         # Based on synthesis quality and topology coherence
         try:
@@ -666,20 +666,20 @@ class StructuredOrchestrator:
             pipeline_uncertainty.final_response = 0.5
 
         # NEW: Resource triple metrics (depth-width-coordination)
-        # 
+        #
         # Theoretical Foundation: The "Triple Principle" from SSH research
-        # 
+        #
         # The resource triple formalizes fundamental computational constraints:
         # - Depth: Sequential reasoning steps (cannot be parallelized, SSH constraint)
         # - Width: Parallel operations (tools, parallelism)
         # - Coordination: Cost of coordinating parallel operations
-        # 
+        #
         # These are non-interchangeable resources. Attempts to "beat" constraints by pushing
         # on one dimension reintroduce costs in the others. For example:
         # - More depth → better quality but slower (serial constraint)
         # - More width → faster but higher coordination cost
         # - Less coordination → simpler but may miss dependencies
-        # 
+        #
         # Why Track This: Explicit metrics enable understanding of resource tradeoffs and
         # guide optimization decisions. Without metrics, these tradeoffs are implicit and
         # harder to reason about.
@@ -687,41 +687,41 @@ class StructuredOrchestrator:
             "depth": len(subsolutions),  # Reasoning depth (subproblems) - SSH serial constraint
             "width": sum(len(s.get("tools_used", [])) for s in subsolutions),  # Parallelism (total tools)
             "coordination": len(set(
-                tool for s in subsolutions 
+                tool for s in subsolutions
                 for tool in s.get("tools_used", [])
             )),  # Unique tools (coordination cost - managing different tools)
             "total_tokens": sum(len(s.get("synthesis", "")) for s in subsolutions),  # Total compute
         }
-        
+
         # NEW: Degradation triple metrics (corruption-loss-waste)
-        # 
+        #
         # Theoretical Foundation: The "Degradation Triple" from information flow analysis
-        # 
+        #
         # Information flow through systems suffers from three failure modes:
         # - Noise (corruption): Information is corrupted during transmission/processing
         # - Loss (death/forgetting): Information is lost entirely
         # - Waste (irrelevance): Information capacity is wasted on irrelevant content
-        # 
+        #
         # These are analogous to the resource triple but for information rather than computation.
         # Just as we can't "beat" resource constraints, we can't eliminate all degradation.
-        # 
+        #
         # Why Track This: Understanding degradation helps identify where information quality
         # is lost and guides improvements (e.g., IB filtering reduces waste, better synthesis
         # reduces loss, higher Fisher Information reduces noise).
-        # 
+        #
         # Noise: inverse of Fisher Information (higher Fisher = lower noise)
         # Fisher Information measures structure quality - high structure = less corruption
         noise_estimate = 1.0 - (fisher_info if fisher_info > 0 else 0.5)
-        
+
         # Loss: synthesis uncertainty (information lost in synthesis)
         # Synthesis uncertainty measures how much information is lost when combining results
         loss_estimate = pipeline_uncertainty.synthesis
-        
+
         # Waste: compression waste (if IB filtering was used, track waste)
         # Low coherence indicates wasted capacity on irrelevant or disconnected information
         # For now, estimate based on topology coherence (low coherence = waste)
         waste_estimate = 1.0 - (np.mean([c.coherence_score for c in self.topology.cliques[:5]]) if self.topology.cliques else 0.5)
-        
+
         degradation_metrics = {
             "noise": float(noise_estimate),  # Corruption (inverse of Fisher Information)
             "loss": float(loss_estimate),  # Information loss (synthesis uncertainty)
@@ -774,7 +774,7 @@ class StructuredOrchestrator:
                     return subproblems
             except Exception as e:
                 logger.warning(f"LLM decomposition failed: {e}, using fallback")
-        
+
         # Fallback to simple heuristics
         if schema.name == "decompose_and_synthesize":
             return [
@@ -821,7 +821,7 @@ class StructuredOrchestrator:
 
         # Check cache first
         try:
-            from .cache import get_cached_tool_result, cache_tool_result
+            from .cache import cache_tool_result, get_cached_tool_result
             cached = get_cached_tool_result(mcp_tool_name, query, mcp_kwargs)
             if cached is not None:
                 logger.info(f"Cache hit for tool {tool.value} with query: {query[:50]}...")
@@ -855,14 +855,14 @@ class StructuredOrchestrator:
                     "raw": mcp_result,
                     "timestamp": datetime.utcnow().isoformat(),
                 }
-                
+
                 # Cache successful results
                 try:
                     from .cache import cache_tool_result
                     cache_tool_result(mcp_tool_name, query, mcp_kwargs, result, ttl_hours=24 * 7)
                 except Exception as e:
                     logger.debug(f"Cache write failed: {e}")
-                
+
                 return result
 
             # MCP tool structure ready but not actually called
@@ -936,17 +936,17 @@ class StructuredOrchestrator:
 
         # Score each tool based on topology impact
         tool_scores = []
-        
+
         for tool in candidate_tools:
             score = 1.0  # Base score
-            
+
             # Check if tool would add information to existing cliques
             # (simulate adding a node from this tool)
             source_credibility = self._get_source_credibility(tool.value)
-            
+
             # Prefer tools with higher credibility (trust-aware)
             score *= (0.5 + source_credibility)
-            
+
             # Check if tool would connect to existing high-trust cliques
             if self.topology.cliques:
                 # Find cliques that might benefit from this tool's information
@@ -957,25 +957,25 @@ class StructuredOrchestrator:
                 if relevant_cliques:
                     # Prefer tools that could extend high-trust cliques
                     score *= 1.2
-            
+
             # Penalize tools that would create too many new disconnected components
             # (prefer tools that connect to existing context)
             if len(conditioning_set) > 0:
                 # Tools that can connect to existing context are preferred
                 score *= 1.1
-            
+
             # Prefer tools that preserve d-separation structure
             # (avoid tools that would create collider bias)
             if len(conditioning_set) > 1:
                 # Multiple conditioning variables - be careful about colliders
                 # For now, simple heuristic: prefer tools that don't create too many dependencies
                 score *= 0.95  # Slight penalty for complex dependencies
-            
+
             tool_scores.append((tool, score))
-        
+
         # Sort by score (highest first)
         tool_scores.sort(key=lambda x: x[1], reverse=True)
-        
+
         return [tool for tool, _ in tool_scores]
 
     def _synthesize_subsolutions(
@@ -1053,9 +1053,9 @@ class StructuredOrchestrator:
     ) -> float:
         """
         Compute belief-evidence alignment using semantic similarity.
-        
+
         Uses embedding-based similarity if available, falls back to keyword matching.
-        
+
         Returns:
             0.0 to 1.0 where:
             - 0.0-0.3: Strong contradiction
@@ -1065,15 +1065,15 @@ class StructuredOrchestrator:
         """
         if not prior_beliefs or not evidence_text:
             return 0.5  # Neutral if no prior beliefs
-        
+
         evidence_lower = evidence_text.lower()
         alignments = []
-        
+
         for belief in prior_beliefs:
             belief_text = belief.get("text", "").lower()
             if not belief_text:
                 continue
-            
+
             try:
                 # Try semantic alignment first (if LLM service available)
                 alignment = await self._compute_semantic_alignment(belief_text, evidence_lower)
@@ -1082,22 +1082,22 @@ class StructuredOrchestrator:
                 logger.debug(f"Failed to compute alignment for belief: {e}")
                 # Fallback to neutral
                 alignments.append(0.5)
-        
+
         if not alignments:
             return 0.5
-        
+
         # Return average alignment
         return float(sum(alignments) / len(alignments))
-    
+
     async def _compute_semantic_alignment(self, belief_text: str, evidence_text: str) -> float:
         """
         Compute alignment using semantic similarity (embedding-based).
-        
+
         Falls back to keyword matching if embeddings unavailable or LLM service unavailable.
         """
         if not self.llm_service:
             return self._compute_keyword_alignment(belief_text, evidence_text)
-        
+
         try:
             # Use LLM service for semantic similarity (uses embeddings if available, keyword fallback otherwise)
             similarity = await self.llm_service.compute_similarity(belief_text, evidence_text)
@@ -1106,76 +1106,76 @@ class StructuredOrchestrator:
         except Exception as e:
             logger.debug(f"Semantic alignment failed, using keyword fallback: {e}")
             return self._compute_keyword_alignment(belief_text, evidence_text)
-    
+
     def _compute_keyword_alignment(self, belief_text: str, evidence_text: str) -> float:
         """Compute alignment using keyword matching (original method)."""
         # Simple keyword overlap check
         belief_words = set(belief_text.split())
         evidence_words = set(evidence_text.split())
-        
+
         # Remove common stop words
         stop_words = {"the", "a", "an", "is", "are", "was", "were", "be", "been", "being",
                      "have", "has", "had", "do", "does", "did", "will", "would", "could",
                      "should", "may", "might", "must", "can", "this", "that", "these", "those"}
         belief_words = belief_words - stop_words
         evidence_words = evidence_words - stop_words
-        
+
         if not belief_words:
             return 0.5
-        
+
         # Check for contradiction indicators
         contradiction_words = {"but", "however", "contrary", "opposite", "disagree", "contradict",
                              "conflict", "different", "wrong", "incorrect", "false", "not"}
         has_contradiction = any(word in evidence_text for word in contradiction_words)
-        
+
         # Compute overlap
         overlap = len(belief_words & evidence_words)
         total_belief_words = len(belief_words)
-        
+
         if total_belief_words == 0:
             alignment = 0.5
         else:
             overlap_ratio = overlap / total_belief_words
-            
+
             if has_contradiction:
                 # Contradiction: invert alignment
                 alignment = 1.0 - overlap_ratio
             else:
                 # Alignment: direct ratio
                 alignment = 0.5 + (overlap_ratio * 0.5)  # Scale to 0.5-1.0
-        
+
         return alignment
-    
+
     def _build_source_matrix(
         self,
         subsolutions: List[Dict[str, Any]],
     ) -> Dict[str, Dict[str, Any]]:
         """
         Build source relationship matrix showing agreement/disagreement patterns.
-        
+
         Gracefully handles errors and returns empty dict on failure.
-        
+
         Returns:
             Dictionary mapping claims/themes to source positions
         """
         if not subsolutions:
             return {}
-        
+
         try:
             # Extract key claims from each subsolution
             matrix = {}
-            
+
             for subsolution in subsolutions:
                 try:
-                    subproblem = subsolution.get("subproblem", "")
+                    subsolution.get("subproblem", "")
                     synthesis = subsolution.get("synthesis", "")
-                    tools_used = subsolution.get("tools_used", [])
+                    subsolution.get("tools_used", [])
                     results = subsolution.get("results", [])
-                    
+
                     # Extract key phrases from synthesis (simple approach)
                     # In production, would use NLP to extract claims
                     key_phrases = self._extract_key_phrases(synthesis)
-                    
+
                     for phrase in key_phrases:
                         if phrase not in matrix:
                             matrix[phrase] = {
@@ -1183,7 +1183,7 @@ class StructuredOrchestrator:
                                 "consensus": None,
                                 "conflict": False,
                             }
-                        
+
                         # Map each source to its position on this claim
                         for result in results:
                             try:
@@ -1192,7 +1192,7 @@ class StructuredOrchestrator:
                                     # Simple: check if result text contains the phrase
                                     result_text = result.get("result", "").lower()
                                     phrase_lower = phrase.lower()
-                                    
+
                                     if phrase_lower in result_text:
                                         matrix[phrase]["sources"][source] = "supports"
                                     else:
@@ -1208,18 +1208,18 @@ class StructuredOrchestrator:
                 except Exception as e:
                     logger.warning(f"Failed to process subsolution for source matrix: {e}", exc_info=True)
                     continue
-            
+
             # Determine consensus for each claim
             for phrase, data in matrix.items():
                 try:
                     sources = data["sources"]
                     if not sources:
                         continue
-                    
+
                     supports = sum(1 for pos in sources.values() if pos == "supports")
                     contradicts = sum(1 for pos in sources.values() if pos == "contradicts")
                     total = len(sources)
-                    
+
                     if contradicts > 0:
                         data["conflict"] = True
                         data["consensus"] = "disagreement"
@@ -1232,29 +1232,29 @@ class StructuredOrchestrator:
                 except Exception as e:
                     logger.warning(f"Failed to determine consensus for phrase '{phrase}': {e}", exc_info=True)
                     data["consensus"] = "unknown"
-            
+
             return matrix
         except Exception as e:
             logger.error(f"Failed to build source matrix: {e}", exc_info=True)
             # Graceful degradation: return empty matrix
             return {}
-    
+
     def _extract_key_phrases(self, text: str, max_phrases: int = 5) -> List[str]:
         """
         Extract key phrases/claims from text.
-        
+
         Uses LLM-based extraction if available, falls back to improved heuristics.
-        
+
         Args:
             text: Text to extract phrases from
             max_phrases: Maximum number of phrases to extract
-        
+
         Returns:
             List of key phrases/claims
         """
         if not text or len(text.strip()) < 20:
             return []
-        
+
         # Try LLM-based extraction first (if available)
         if self.llm_service:
             try:
@@ -1263,14 +1263,14 @@ class StructuredOrchestrator:
                     return phrases
             except Exception as e:
                 logger.debug(f"LLM claim extraction failed, using heuristic: {e}")
-        
+
         # Fallback to improved heuristic extraction
         return self._extract_phrases_heuristic(text, max_phrases)
-    
+
     def _extract_claims_with_llm(self, text: str, max_phrases: int) -> List[str]:
         """
         Extract claims using LLM (production-ready approach).
-        
+
         Based on Claimify-like pipeline: extract verifiable, atomic claims.
         """
         try:
@@ -1281,21 +1281,21 @@ class StructuredOrchestrator:
         except Exception as e:
             logger.debug(f"LLM claim extraction error: {e}")
             return []
-    
+
     def _extract_phrases_heuristic(self, text: str, max_phrases: int) -> List[str]:
         """
         Extract key phrases using improved heuristics.
-        
+
         Better than simple regex: uses sentence structure, capitalization, quotes.
         """
         phrases = []
-        
+
         try:
             import re
             # Method 1: Extract quoted phrases (often claims)
             quoted = re.findall(r'"([^"]+)"', text)
             phrases.extend(quoted[:max_phrases])
-            
+
             # Method 2: Extract capitalized phrases (proper nouns, important concepts)
             # Find sequences of capitalized words
             capitalized = re.findall(r'\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b', text)
@@ -1303,9 +1303,9 @@ class StructuredOrchestrator:
             common_words = {"The", "This", "That", "These", "Those", "There", "Here"}
             capitalized = [c for c in capitalized if c not in common_words]
             phrases.extend(capitalized[:max_phrases])
-            
+
             # Method 3: Extract sentences with claim indicators
-            claim_indicators = ["shows", "demonstrates", "indicates", "suggests", "proves", 
+            claim_indicators = ["shows", "demonstrates", "indicates", "suggests", "proves",
                               "confirms", "reveals", "finds", "concludes"]
             sentences = text.split('.')
             for sentence in sentences:
@@ -1321,12 +1321,12 @@ class StructuredOrchestrator:
                                 break
                 if len(phrases) >= max_phrases:
                     break
-            
+
             # Method 4: Extract noun phrases (simple pattern)
             # Find "adjective noun" or "noun of noun" patterns
             noun_phrases = re.findall(r'\b\w+\s+(?:of|in|on|for|with|to|from)\s+\w+\b', text)
             phrases.extend(noun_phrases[:max_phrases])
-            
+
             # Deduplicate and limit
             seen = set()
             unique_phrases = []
@@ -1337,14 +1337,14 @@ class StructuredOrchestrator:
                     unique_phrases.append(phrase)
                 if len(unique_phrases) >= max_phrases:
                     break
-            
+
             return unique_phrases[:max_phrases]
         except Exception as e:
             logger.warning(f"Failed to extract phrases heuristically: {e}", exc_info=True)
             # Fallback: return first sentence
             first_sentence = text.split('.')[0].strip()
             return [first_sentence] if first_sentence else []
-    
+
     def _estimate_epistemic_uncertainty(
         self,
         result: Dict[str, Any],
@@ -1381,7 +1381,7 @@ class StructuredOrchestrator:
         # Combined: epistemic uncertainty
         epistemic = (source_uncertainty * source_factor * completeness_factor)
         return min(1.0, max(0.0, epistemic))
-    
+
     def _select_tools_with_constraints(
         self,
         subproblem: str,
@@ -1391,30 +1391,30 @@ class StructuredOrchestrator:
     ) -> List[ToolType]:
         """
         Select tools using constraint solver.
-        
+
         Args:
             subproblem: The subproblem to solve
             max_tools: Maximum number of tools to select
             budget: Maximum total cost (None = no budget)
             min_information: Minimum information gain required
-        
+
         Returns:
             List of selected tools
         """
         if not self.constraint_solver:
             return []
-        
+
         # Get default constraints
         constraints = create_default_constraints()
-        
+
         # Adjust constraints based on subproblem characteristics
         # (This is a simple heuristic - could be improved with LLM)
         subproblem_lower = subproblem.lower()
-        
+
         # Adjust information gain expectations based on query type
         if any(word in subproblem_lower for word in ["comprehensive", "deep", "thorough"]):
             min_information = 0.7  # Higher requirement for deep queries
-        
+
         # Try to solve
         try:
             logger.debug(
@@ -1428,7 +1428,7 @@ class StructuredOrchestrator:
                 min_information=min_information,
                 max_tools=max_tools,
             )
-            
+
             if selected:
                 logger.info(
                     f"Constraint solver selected {len(selected)} tools: "
@@ -1439,36 +1439,36 @@ class StructuredOrchestrator:
                 logger.debug("Constraint solver found no solution, falling back to heuristics")
         except Exception as e:
             logger.error(f"Constraint solver error: {e}", exc_info=True)
-        
+
         return []
-    
+
     def _estimate_current_quality(self, subsolutions: List[Dict[str, Any]]) -> float:
         """
         Estimate current quality based on subsolutions.
-        
+
         Heuristic: Based on subsolution length, completeness, and number.
-        
+
         Args:
             subsolutions: List of subsolutions completed so far
-        
+
         Returns:
             Estimated quality score (0-1)
         """
         if not subsolutions:
             return 0.0
-        
+
         # Heuristic: longer, more complete subsolutions = higher quality
         total_length = sum(len(s.get("synthesis", "")) for s in subsolutions)
         avg_length = total_length / len(subsolutions) if subsolutions else 0
-        
+
         # Normalize: 500 chars = decent quality (0.6), 1000+ = high quality (0.9)
         length_score = min(0.9, 0.3 + (avg_length / 1000.0) * 0.6)
-        
+
         # Bonus for having multiple subsolutions (more thorough)
         completeness_score = min(1.0, len(subsolutions) / 5.0)  # 5 subproblems = complete
-        
+
         # Weighted combination
         quality = 0.6 * length_score + 0.4 * completeness_score
-        
+
         return min(1.0, max(0.0, quality))
 

@@ -1,6 +1,7 @@
 """Tests for storytelling and narrative features in responses."""
 
 import pytest
+
 from bop.llm import LLMService
 
 
@@ -11,7 +12,7 @@ async def test_storytelling_prompt_includes_narrative_guidance():
     # without mocking, but we can verify the method exists and works
     try:
         llm_service = LLMService()
-        
+
         # The generate_response method should include narrative guidance
         # We can't easily test the exact prompt content without mocking,
         # but we can verify the method signature and that it doesn't crash
@@ -39,11 +40,12 @@ def test_connective_phrases_guidance():
     # - "To understand why..."
     # - "Building on this..."
     # - "In contrast..."
-    
+
     # We verify this by checking the code exists
     import inspect
+
     from bop.llm import LLMService
-    
+
     source = inspect.getsource(LLMService.generate_response)
     # Check that narrative guidance is mentioned in the code
     assert "narrative" in source.lower() or "connective" in source.lower() or "story" in source.lower()

@@ -1,11 +1,10 @@
 """Tests for visualization helpers."""
 
-import pytest
 from bop.visualizations import (
-    create_source_matrix_heatmap,
-    create_trust_metrics_chart,
     create_document_relationship_graph,
+    create_source_matrix_heatmap,
     create_token_importance_chart,
+    create_trust_metrics_chart,
 )
 
 
@@ -27,9 +26,9 @@ def test_create_source_matrix_heatmap_basic():
             "consensus": "disagreement",
         },
     }
-    
+
     table = create_source_matrix_heatmap(source_matrix)
-    
+
     assert table is not None
     # Table should have columns for claims and sources
     assert len(table.columns) > 0
@@ -51,7 +50,7 @@ def test_create_source_matrix_heatmap_respects_max_claims():
         }
         for i in range(20)
     }
-    
+
     table = create_source_matrix_heatmap(source_matrix, max_claims=5)
     # Should only show top 5 claims
     assert len(table.rows) <= 5
@@ -65,14 +64,14 @@ def test_create_trust_metrics_chart():
         "avg_confidence": 0.80,
         "calibration_error": 0.12,
     }
-    
+
     source_credibility = {
         "perplexity": 0.75,
         "tavily": 0.65,
     }
-    
+
     panel = create_trust_metrics_chart(trust_summary, source_credibility)
-    
+
     assert panel is not None
     assert "Trust Metrics" in panel.title
 
@@ -100,9 +99,9 @@ def test_create_document_relationship_graph():
             "size": 2,
         },
     ]
-    
+
     table = create_document_relationship_graph(cliques)
-    
+
     assert table is not None
     assert len(table.rows) > 0
 
@@ -130,7 +129,7 @@ def test_create_document_relationship_graph_filters_low_trust():
             "size": 1,
         },
     ]
-    
+
     table = create_document_relationship_graph(cliques)
     # Should only show high-trust clique
     assert len(table.rows) == 1
@@ -146,9 +145,9 @@ def test_create_token_importance_chart():
         },
         "top_terms": ["machine", "learning", "algorithm"],
     }
-    
+
     table = create_token_importance_chart(importance_data)
-    
+
     assert table is not None
     assert len(table.rows) == 3
 
@@ -166,7 +165,7 @@ def test_create_token_importance_chart_respects_max_terms():
         "term_importance": {f"term{i}": 0.5 for i in range(20)},
         "top_terms": [f"term{i}" for i in range(20)],
     }
-    
+
     table = create_token_importance_chart(importance_data, max_terms=5)
     assert len(table.rows) <= 5
 

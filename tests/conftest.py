@@ -1,9 +1,10 @@
 """Pytest configuration and fixtures for test annotations."""
 
-import pytest
 from pathlib import Path
+
+import pytest
+
 from tests.test_annotations import (
-    annotate_test,
     TEST_ANNOTATIONS_REGISTRY,
     export_annotations,
     generate_annotation_report,
@@ -14,11 +15,11 @@ from tests.test_annotations import (
 def export_test_annotations():
     """Export test annotations after all tests run."""
     yield
-    
+
     # Export annotations
     annotations_file = Path(__file__).parent / "test_annotations.json"
     export_annotations(annotations_file)
-    
+
     # Generate report
     report_file = Path(__file__).parent / "TEST_ANNOTATIONS_REPORT.md"
     report_file.write_text(generate_annotation_report())

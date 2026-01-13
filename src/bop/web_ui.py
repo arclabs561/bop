@@ -1,8 +1,6 @@
 """Modern web UI for mobile-friendly chat interface."""
 
-import os
 from pathlib import Path
-from typing import Optional
 
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse

@@ -1,6 +1,5 @@
 """Tests for real evaluation framework (not placeholders)."""
 
-import pytest
 
 from bop.eval import EvaluationFramework, EvaluationResult
 

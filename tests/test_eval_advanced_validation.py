@@ -2,18 +2,18 @@
 
 import pytest
 
-from bop.eval import EvaluationFramework, EvaluationResult
+from bop.eval import EvaluationFramework
 
 
 def test_evaluate_schema_usage_type_validation():
     """Test that schema evaluation validates field types."""
     framework = EvaluationFramework()
-    
+
     from bop.schemas import get_schema
     schema = get_schema("chain_of_thought")
     if not schema:
         pytest.skip("chain_of_thought schema not found")
-    
+
     # Test case with wrong types
     test_cases = [
         {
@@ -30,9 +30,9 @@ def test_evaluate_schema_usage_type_validation():
             },
         }
     ]
-    
+
     result = framework.evaluate_schema_usage("chain_of_thought", test_cases)
-    
+
     # Should have lower score due to type mismatches
     assert result.score < 1.0
     # Type mismatches should reduce the score
@@ -42,12 +42,12 @@ def test_evaluate_schema_usage_type_validation():
 def test_evaluate_schema_usage_correct_types():
     """Test that schema evaluation rewards correct types."""
     framework = EvaluationFramework()
-    
+
     from bop.schemas import get_schema
     schema = get_schema("chain_of_thought")
     if not schema:
         pytest.skip("chain_of_thought schema not found")
-    
+
     # Test case with correct types
     test_cases = [
         {
@@ -64,9 +64,9 @@ def test_evaluate_schema_usage_correct_types():
             },
         }
     ]
-    
+
     result = framework.evaluate_schema_usage("chain_of_thought", test_cases)
-    
+
     # Should have high score with correct types
     assert result.score > 0.7
     assert result.passed is True
@@ -75,21 +75,21 @@ def test_evaluate_schema_usage_correct_types():
 def test_evaluate_reasoning_coherence_semantic_similarity():
     """Test that coherence evaluation uses semantic similarity."""
     framework = EvaluationFramework()
-    
+
     # Responses that are semantically similar but use different words
     semantically_similar = [
         "I need to understand the problem first, then break it down.",
         "First, I must comprehend the issue, then decompose it.",
         "Understanding comes first, followed by decomposition.",
     ]
-    
+
     result = framework.evaluate_reasoning_coherence(semantically_similar)
-    
+
     # Should have good semantic score even if word overlap is lower
     assert "semantic_score" in result.details
     semantic_score = result.details["semantic_score"]
     assert semantic_score > 0.2  # Should detect some similarity
-    
+
     # Overall score might be lower due to structure_score, but semantic similarity is working
     assert result.score >= 0.3  # Should have some score
     # Verify semantic_score is higher than word overlap (proving semantic similarity works)
@@ -99,16 +99,16 @@ def test_evaluate_reasoning_coherence_semantic_similarity():
 def test_evaluate_reasoning_coherence_detects_semantic_differences():
     """Test that coherence evaluation detects semantically different responses."""
     framework = EvaluationFramework()
-    
+
     # Responses that are semantically different
     semantically_different = [
         "The answer is 42.",
         "I need to understand the problem first, then break it down into steps.",
         "Weather is nice today.",
     ]
-    
+
     result = framework.evaluate_reasoning_coherence(semantically_different)
-    
+
     # Should have low semantic score
     assert "semantic_score" in result.details
     assert result.details["semantic_score"] < 0.5  # Should detect differences
@@ -118,7 +118,7 @@ def test_evaluate_reasoning_coherence_detects_semantic_differences():
 def test_evaluate_dependency_gap_step_relevance():
     """Test that dependency gap evaluation validates step relevance."""
     framework = EvaluationFramework()
-    
+
     # Test case with relevant steps
     test_cases = [
         {
@@ -129,9 +129,9 @@ def test_evaluate_dependency_gap_step_relevance():
             "actual_answer": "A relates to C through intermediate B",
         }
     ]
-    
+
     result = framework.evaluate_dependency_gap_handling(test_cases)
-    
+
     # Should have good step relevance
     assert "avg_step_relevance" in result.details
     assert result.details["avg_step_relevance"] > 0.4  # Steps should be relevant
@@ -141,7 +141,7 @@ def test_evaluate_dependency_gap_step_relevance():
 def test_evaluate_dependency_gap_irrelevant_steps():
     """Test that dependency gap evaluation detects irrelevant steps."""
     framework = EvaluationFramework()
-    
+
     # Test case with irrelevant steps
     test_cases = [
         {
@@ -152,9 +152,9 @@ def test_evaluate_dependency_gap_irrelevant_steps():
             "actual_answer": "A relates to C through B",
         }
     ]
-    
+
     result = framework.evaluate_dependency_gap_handling(test_cases)
-    
+
     # Should have lower step relevance
     assert "avg_step_relevance" in result.details
     # Generic steps should have lower relevance
@@ -166,7 +166,7 @@ def test_evaluate_dependency_gap_irrelevant_steps():
 def test_evaluate_dependency_gap_query_relevance():
     """Test that dependency gap evaluation checks if steps relate to query."""
     framework = EvaluationFramework()
-    
+
     # Test case where steps don't relate to query
     test_cases = [
         {
@@ -177,9 +177,9 @@ def test_evaluate_dependency_gap_query_relevance():
             "actual_answer": "Trust and uncertainty are related concepts",
         }
     ]
-    
+
     result = framework.evaluate_dependency_gap_handling(test_cases)
-    
+
     # Should have low relevance (but SequenceMatcher might find some similarity)
     assert "avg_step_relevance" in result.details
     # Even irrelevant steps might have some similarity due to common words
@@ -191,17 +191,17 @@ def test_evaluate_dependency_gap_query_relevance():
 def test_evaluate_schema_usage_type_validation_mixed():
     """Test type validation with mixed correct and incorrect types."""
     framework = EvaluationFramework()
-    
+
     from bop.schemas import get_schema
     schema = get_schema("chain_of_thought")
     if not schema:
         pytest.skip("chain_of_thought schema not found")
-    
+
     # Use actual schema fields
     schema_fields = list(schema.schema_def.keys())
     if len(schema_fields) < 3:
         pytest.skip("Schema has too few fields")
-    
+
     # Create expected dict with types
     expected_dict = {}
     for field in schema_fields:
@@ -211,7 +211,7 @@ def test_evaluate_schema_usage_type_validation_mixed():
             expected_dict[field] = list
         else:
             expected_dict[field] = str
-    
+
     # Create actual with mixed types
     actual_dict = {}
     for i, field in enumerate(schema_fields):
@@ -224,7 +224,7 @@ def test_evaluate_schema_usage_type_validation_mixed():
                 actual_dict[field] = ["item1", "item2"]  # Correct type
             else:
                 actual_dict[field] = f"Value for {field}"  # Correct type
-    
+
     test_cases = [
         {
             "input": "Test query",
@@ -232,9 +232,9 @@ def test_evaluate_schema_usage_type_validation_mixed():
             "actual": actual_dict,
         }
     ]
-    
+
     result = framework.evaluate_schema_usage("chain_of_thought", test_cases)
-    
+
     # Should score based on type correctness
     # Most fields should have correct types
     assert result.score < 1.0
@@ -245,16 +245,16 @@ def test_evaluate_schema_usage_type_validation_mixed():
 def test_evaluate_reasoning_coherence_semantic_vs_word_overlap():
     """Test that semantic similarity provides better measure than word overlap."""
     framework = EvaluationFramework()
-    
+
     # Responses with low word overlap but high semantic similarity
     low_overlap_high_semantic = [
         "I need to understand the problem first.",
         "Comprehending the issue is the initial step.",
         "Understanding comes before solving.",
     ]
-    
+
     result = framework.evaluate_reasoning_coherence(low_overlap_high_semantic)
-    
+
     # Semantic score should be higher than word overlap
     assert "semantic_score" in result.details
     assert "overlap_score" in result.details
@@ -265,7 +265,7 @@ def test_evaluate_reasoning_coherence_semantic_vs_word_overlap():
 def test_evaluate_dependency_gap_step_relevance_weighting():
     """Test that step relevance is properly weighted in scoring."""
     framework = EvaluationFramework()
-    
+
     # Test case with many steps but low relevance
     test_cases = [
         {
@@ -276,9 +276,9 @@ def test_evaluate_dependency_gap_step_relevance_weighting():
             "actual_answer": "A relates to C through B",
         }
     ]
-    
+
     result = framework.evaluate_dependency_gap_handling(test_cases)
-    
+
     # Should score lower due to low relevance, even with many steps
     assert result.score < 0.7  # Low relevance should reduce score
     assert "avg_step_relevance" in result.details

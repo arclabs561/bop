@@ -11,19 +11,17 @@ These tests validate:
 Uses LLM judges where semantic/behavioral validation is needed.
 """
 
-import pytest
 import tempfile
-import asyncio
+from datetime import datetime, timezone
 from pathlib import Path
-from datetime import datetime, timezone, timedelta
 
-from bop.agent import KnowledgeAgent
-from bop.session_manager import HierarchicalSessionManager
-from bop.quality_feedback import QualityFeedbackLoop
+import pytest
+
 from bop.adaptive_quality import AdaptiveQualityManager
-from bop.unified_storage import UnifiedSessionStorage
+from bop.quality_feedback import QualityFeedbackLoop
+from bop.session_manager import HierarchicalSessionManager
 from bop.session_replay import SessionReplayManager
-from bop.llm import LLMService
+from bop.unified_storage import UnifiedSessionStorage
 from tests.test_annotations import annotate_test
 
 
@@ -31,7 +29,7 @@ from tests.test_annotations import annotate_test
 async def test_hierarchical_quality_feedback_integration():
     """
     Test nuanced interaction between hierarchical sessions and quality feedback.
-    
+
     Nuance: Quality feedback should learn from hierarchical session structure,
     not just flat evaluations.
     """
@@ -42,7 +40,7 @@ async def test_hierarchical_quality_feedback_integration():
         category="system_interplay",
         hypothesis="Quality feedback learns from hierarchical session structure",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         quality_feedback = QualityFeedbackLoop(
@@ -50,12 +48,12 @@ async def test_hierarchical_quality_feedback_integration():
             use_sessions=True,
         )
         manager = quality_feedback.session_manager
-        
+
         # Create sessions in different groups (by day)
-        base_time = datetime.now(timezone.utc)
-        
+        datetime.now(timezone.utc)
+
         # Session 1: Day 1
-        session1 = manager.create_session(context="day1_session")
+        manager.create_session(context="day1_session")
         manager.add_evaluation(
             query="Query 1",
             response="Response 1",
@@ -66,9 +64,9 @@ async def test_hierarchical_quality_feedback_integration():
             reasoning="",
             metadata={"day": 1},
         )
-        
+
         # Session 2: Day 2 (different group)
-        session2 = manager.create_session(context="day2_session")
+        manager.create_session(context="day2_session")
         manager.add_evaluation(
             query="Query 2",
             response="Response 2",
@@ -79,18 +77,18 @@ async def test_hierarchical_quality_feedback_integration():
             reasoning="",
             metadata={"day": 2},
         )
-        
+
         manager.flush_buffer()
-        
+
         # Quality feedback should see both sessions
         # and learn from the hierarchical structure
         history = quality_feedback.history
         assert len(history) >= 0  # May be empty initially, but should load
-        
+
         # Should have access to group information
         groups = manager.groups
         assert len(groups) > 0
-        
+
         # Quality feedback should be able to query by group
         # (if we add that capability)
         assert quality_feedback.session_manager is not None
@@ -100,7 +98,7 @@ async def test_hierarchical_quality_feedback_integration():
 async def test_cross_session_adaptive_learning_nuances():
     """
     Test nuanced cross-session learning patterns.
-    
+
     Nuance: Adaptive manager should recognize patterns across session groups,
     not just individual sessions.
     """
@@ -111,7 +109,7 @@ async def test_cross_session_adaptive_learning_nuances():
         category="system_interplay",
         hypothesis="Adaptive learning recognizes patterns across session groups",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         quality_feedback = QualityFeedbackLoop(
@@ -120,10 +118,10 @@ async def test_cross_session_adaptive_learning_nuances():
         )
         manager = quality_feedback.session_manager
         adaptive = AdaptiveQualityManager(quality_feedback)
-        
+
         # Create multiple sessions with similar patterns
         for i in range(5):
-            session_id = manager.create_session(context=f"pattern_session_{i}")
+            manager.create_session(context=f"pattern_session_{i}")
             manager.add_evaluation(
                 query=f"Similar query pattern {i}",
                 response=f"Response {i}",
@@ -134,14 +132,14 @@ async def test_cross_session_adaptive_learning_nuances():
                 reasoning="",
                 metadata={"pattern": "similar", "iteration": i},
             )
-        
+
         manager.flush_buffer()
-        
+
         # Adaptive manager should learn from cross-session patterns
         # Check if it recognizes the pattern
         insights = adaptive.get_performance_insights()
         assert insights is not None
-        
+
         # Should have learned from multiple sessions
         if insights.get("session_count"):
             assert insights["session_count"] >= 5
@@ -151,7 +149,7 @@ async def test_cross_session_adaptive_learning_nuances():
 async def test_unified_storage_deduplication_nuances():
     """
     Test nuanced deduplication between flat history and hierarchical sessions.
-    
+
     Nuance: Unified storage should prevent duplicate entries while preserving
     both flat and hierarchical views.
     """
@@ -162,11 +160,11 @@ async def test_unified_storage_deduplication_nuances():
         category="system_interplay",
         hypothesis="Unified storage prevents duplicates while preserving views",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         manager = HierarchicalSessionManager(sessions_dir=Path(tmpdir))
         unified = UnifiedSessionStorage(session_manager=manager)
-        
+
         # Add evaluation through session manager
         session_id = manager.create_session()
         manager.add_evaluation(
@@ -180,13 +178,13 @@ async def test_unified_storage_deduplication_nuances():
             metadata={},
         )
         manager.flush_buffer()
-        
+
         # Get unified view
         history = unified.get_history_view(limit=100)
-        
+
         # Should have exactly one entry (no duplicates)
         assert len(history) == 1
-        
+
         # Entry should have session context in metadata
         entry = history[0]
         assert entry.get("metadata", {}).get("session_id") == session_id
@@ -196,7 +194,7 @@ async def test_unified_storage_deduplication_nuances():
 async def test_hierarchical_replay_learning_nuances():
     """
     Test nuanced learning from hierarchical replay.
-    
+
     Nuance: Replay should respect hierarchical structure and learn from
     group-level patterns, not just individual session sequences.
     """
@@ -207,11 +205,11 @@ async def test_hierarchical_replay_learning_nuances():
         category="system_interplay",
         hypothesis="Replay respects hierarchical structure for learning",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         manager = HierarchicalSessionManager(sessions_dir=Path(tmpdir))
         replay = SessionReplayManager(manager)
-        
+
         # Create sessions in different groups
         session1 = manager.create_session(context="group1")
         manager.add_evaluation(
@@ -224,8 +222,8 @@ async def test_hierarchical_replay_learning_nuances():
             reasoning="",
             metadata={"group": 1},
         )
-        
-        session2 = manager.create_session(context="group2")
+
+        manager.create_session(context="group2")
         manager.add_evaluation(
             query="Query 2",
             response="Response 2",
@@ -236,18 +234,18 @@ async def test_hierarchical_replay_learning_nuances():
             reasoning="",
             metadata={"group": 2},
         )
-        
+
         manager.flush_buffer()
-        
+
         # Replay should work with hierarchical structure
         replayed = []
         def collect(e):
             replayed.append(e.query)
-        
+
         replay.forward_replay(session1, collect)
         assert len(replayed) == 1
         assert replayed[0] == "Query 1"
-        
+
         # Should be able to replay by group
         groups = manager.groups
         assert len(groups) > 0
@@ -257,7 +255,7 @@ async def test_hierarchical_replay_learning_nuances():
 async def test_session_group_statistics_nuances():
     """
     Test nuanced statistics aggregation across session groups.
-    
+
     Nuance: Group-level statistics should reflect patterns that individual
     session statistics might miss.
     """
@@ -268,16 +266,16 @@ async def test_session_group_statistics_nuances():
         category="system_interplay",
         hypothesis="Group-level statistics reveal patterns missed by individual sessions",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         manager = HierarchicalSessionManager(
             sessions_dir=Path(tmpdir),
             auto_group_by="day",
         )
-        
+
         # Create multiple sessions in same day group
         for i in range(3):
-            session_id = manager.create_session()
+            manager.create_session()
             manager.add_evaluation(
                 query=f"Query {i}",
                 response=f"Response {i}",
@@ -288,13 +286,13 @@ async def test_session_group_statistics_nuances():
                 reasoning="",
                 metadata={},
             )
-        
+
         manager.flush_buffer()
-        
+
         # Group statistics should aggregate across sessions
         groups = manager.groups
         assert len(groups) > 0
-        
+
         # Each group should have aggregate stats
         for group in groups.values():
             assert len(group.session_ids) > 0
@@ -304,7 +302,7 @@ async def test_session_group_statistics_nuances():
 async def test_quality_feedback_session_context_nuances():
     """
     Test nuanced use of session context in quality feedback.
-    
+
     Nuance: Quality feedback should use session context (groups, metadata)
     to make better quality judgments.
     """
@@ -315,7 +313,7 @@ async def test_quality_feedback_session_context_nuances():
         category="system_interplay",
         hypothesis="Quality feedback uses session context for better judgments",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         quality_feedback = QualityFeedbackLoop(
@@ -323,7 +321,7 @@ async def test_quality_feedback_session_context_nuances():
             use_sessions=True,
         )
         manager = quality_feedback.session_manager
-        
+
         # Create session with rich context
         session_id = manager.create_session(
             context="research_session",
@@ -332,20 +330,20 @@ async def test_quality_feedback_session_context_nuances():
                 "complexity": "high",
             },
         )
-        
+
         # Add evaluation
-        result = quality_feedback.evaluate_and_learn(
+        quality_feedback.evaluate_and_learn(
             query="Complex research query",
             response="Detailed research response",
             schema="decompose_and_synthesize",
         )
-        
+
         # Quality feedback should have access to session context
         session = manager.get_session(session_id)
         assert session is not None
         assert session.context == "research_session"
         assert session.metadata.get("domain") == "knowledge_structure"
-        
+
         # Evaluation should be in session
         assert len(session.evaluations) > 0
 
@@ -354,7 +352,7 @@ async def test_quality_feedback_session_context_nuances():
 async def test_adaptive_strategy_session_awareness():
     """
     Test nuanced adaptive strategy selection based on session context.
-    
+
     Nuance: Adaptive manager should select strategies based on session
     group patterns, not just individual session history.
     """
@@ -365,7 +363,7 @@ async def test_adaptive_strategy_session_awareness():
         category="system_interplay",
         hypothesis="Adaptive strategies use session context for selection",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         quality_feedback = QualityFeedbackLoop(
@@ -374,11 +372,11 @@ async def test_adaptive_strategy_session_awareness():
         )
         manager = quality_feedback.session_manager
         adaptive = AdaptiveQualityManager(quality_feedback)
-        
+
         # Create sessions with different contexts
         contexts = ["research", "analysis", "synthesis"]
         for context in contexts:
-            session_id = manager.create_session(context=context)
+            manager.create_session(context=context)
             manager.add_evaluation(
                 query=f"Query for {context}",
                 response=f"Response for {context}",
@@ -389,14 +387,14 @@ async def test_adaptive_strategy_session_awareness():
                 reasoning="",
                 metadata={"context": context},
             )
-        
+
         manager.flush_buffer()
-        
+
         # Adaptive manager should be aware of session contexts
         # and potentially select different strategies
         strategy = adaptive.get_adaptive_strategy("test query")
         assert strategy is not None
-        
+
         # Strategy might vary based on session context
         # (if we implement context-aware strategy selection)
 
@@ -405,7 +403,7 @@ async def test_adaptive_strategy_session_awareness():
 async def test_hierarchical_learning_consolidation():
     """
     Test nuanced learning consolidation across hierarchical levels.
-    
+
     Nuance: Learning should consolidate at multiple levels:
     - Individual evaluation level
     - Session level
@@ -419,7 +417,7 @@ async def test_hierarchical_learning_consolidation():
         category="system_interplay",
         hypothesis="Learning consolidates at evaluation, session, group, and cross-group levels",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         quality_feedback = QualityFeedbackLoop(
@@ -428,11 +426,11 @@ async def test_hierarchical_learning_consolidation():
         )
         manager = quality_feedback.session_manager
         adaptive = AdaptiveQualityManager(quality_feedback)
-        
+
         # Create hierarchical structure: multiple groups, multiple sessions per group
         for group_idx in range(2):
             for session_idx in range(2):
-                session_id = manager.create_session(
+                manager.create_session(
                     context=f"group_{group_idx}_session_{session_idx}",
                 )
                 manager.add_evaluation(
@@ -445,22 +443,22 @@ async def test_hierarchical_learning_consolidation():
                     reasoning="",
                     metadata={"group": group_idx, "session": session_idx},
                 )
-        
+
         manager.flush_buffer()
-        
+
         # Learning should consolidate at multiple levels
         # 1. Individual evaluations (4 total)
         all_sessions = manager.list_sessions()
         total_evals = sum(len(s.evaluations) for s in all_sessions)
         assert total_evals >= 4
-        
+
         # 2. Session level (4 sessions)
         assert len(all_sessions) >= 4
-        
+
         # 3. Group level (should have groups)
         groups = manager.groups
         assert len(groups) > 0
-        
+
         # 4. Cross-group learning (adaptive manager)
         insights = adaptive.get_performance_insights()
         assert insights is not None
@@ -470,7 +468,7 @@ async def test_hierarchical_learning_consolidation():
 async def test_session_lifecycle_quality_interaction():
     """
     Test nuanced interaction between session lifecycle and quality tracking.
-    
+
     Nuance: Quality metrics should be preserved and accessible even after
     sessions are closed or archived.
     """
@@ -481,7 +479,7 @@ async def test_session_lifecycle_quality_interaction():
         category="system_interplay",
         hypothesis="Quality metrics persist through session lifecycle transitions",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         quality_feedback = QualityFeedbackLoop(
@@ -489,24 +487,24 @@ async def test_session_lifecycle_quality_interaction():
             use_sessions=True,
         )
         manager = quality_feedback.session_manager
-        
+
         # Create and use session
         session_id = manager.create_session()
-        result = quality_feedback.evaluate_and_learn(
+        quality_feedback.evaluate_and_learn(
             query="Test query",
             response="Test response",
             schema="chain_of_thought",
         )
-        
+
         # Close session
         manager.close_session(session_id, finalize=True)
-        
+
         # Quality metrics should still be accessible
         session = manager.get_session(session_id)
         assert session is not None
         assert session.status == "closed"
         assert session.final_statistics is not None
-        
+
         # Statistics should reflect quality
         stats = session.final_statistics
         assert stats["evaluation_count"] > 0
@@ -516,7 +514,7 @@ async def test_session_lifecycle_quality_interaction():
 async def test_buffer_flush_quality_persistence():
     """
     Test nuanced persistence of quality data through buffer flushes.
-    
+
     Nuance: Quality feedback data should persist correctly even when
     write buffering delays persistence.
     """
@@ -527,7 +525,7 @@ async def test_buffer_flush_quality_persistence():
         category="system_interplay",
         hypothesis="Quality data persists correctly through write buffering",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         quality_feedback = QualityFeedbackLoop(
@@ -535,7 +533,7 @@ async def test_buffer_flush_quality_persistence():
             use_sessions=True,
         )
         manager = quality_feedback.session_manager
-        
+
         # Add multiple evaluations (should buffer)
         for i in range(3):
             quality_feedback.evaluate_and_learn(
@@ -543,13 +541,13 @@ async def test_buffer_flush_quality_persistence():
                 response=f"Response {i}",
                 schema="chain_of_thought",
             )
-        
+
         # Before flush, data might be in buffer
         session = manager.get_session(manager.current_session_id)
         assert session is not None
         # Evaluations might be in buffer or persisted
         assert len(session.evaluations) >= 0
-        
+
         # After flush, should be persisted
         manager.flush_buffer()
         session = manager.get_session(manager.current_session_id)
@@ -560,7 +558,7 @@ async def test_buffer_flush_quality_persistence():
 async def test_cross_group_pattern_recognition():
     """
     Test nuanced pattern recognition across different session groups.
-    
+
     Nuance: System should recognize patterns that span multiple groups,
     not just patterns within a single group.
     """
@@ -571,7 +569,7 @@ async def test_cross_group_pattern_recognition():
         category="system_interplay",
         hypothesis="System recognizes patterns that span multiple session groups",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         quality_feedback = QualityFeedbackLoop(
@@ -580,10 +578,10 @@ async def test_cross_group_pattern_recognition():
         )
         manager = quality_feedback.session_manager
         adaptive = AdaptiveQualityManager(quality_feedback)
-        
+
         # Create sessions in different groups with similar patterns
         for day in range(3):
-            session_id = manager.create_session(context=f"day_{day}")
+            manager.create_session(context=f"day_{day}")
             manager.add_evaluation(
                 query="Similar pattern query",
                 response="Similar pattern response",
@@ -594,13 +592,13 @@ async def test_cross_group_pattern_recognition():
                 reasoning="",
                 metadata={"day": day, "pattern": "similar"},
             )
-        
+
         manager.flush_buffer()
-        
+
         # Adaptive manager should recognize cross-group patterns
         insights = adaptive.get_performance_insights()
         assert insights is not None
-        
+
         # Should have learned from multiple groups
         all_sessions = manager.list_sessions()
         assert len(all_sessions) >= 3

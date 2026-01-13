@@ -1,13 +1,13 @@
 """Tests for server deployment functionality, endpoints, and configuration."""
 
 import os
-import pytest
-from unittest.mock import AsyncMock, MagicMock, patch, Mock
-from fastapi.testclient import TestClient
-from fastapi import HTTPException
+from unittest.mock import AsyncMock, MagicMock, patch
 
-from bop.server import app, verify_api_key, REQUIRED_API_KEY
-from bop.constraints import PYSAT_AVAILABLE
+import pytest
+from fastapi import HTTPException
+from fastapi.testclient import TestClient
+
+from bop.server import app, verify_api_key
 
 
 class TestServerEndpoints:
@@ -155,13 +155,13 @@ class TestDeploymentConfiguration:
         """Test fly.toml exists and is readable."""
         import tomllib
         from pathlib import Path
-        
+
         fly_toml = Path(__file__).parent.parent.parent / "fly.toml"
         assert fly_toml.exists(), "fly.toml should exist"
-        
+
         with open(fly_toml, "rb") as f:
             config = tomllib.load(f)
-        
+
         assert "app" in config
         assert "http_service" in config
         assert "processes" in config
@@ -169,10 +169,10 @@ class TestDeploymentConfiguration:
     def test_dockerfile_exists(self):
         """Test Dockerfile exists."""
         from pathlib import Path
-        
+
         dockerfile = Path(__file__).parent.parent.parent / "Dockerfile"
         assert dockerfile.exists(), "Dockerfile should exist"
-        
+
         content = dockerfile.read_text()
         assert "FROM python" in content
         assert "WORKDIR /app" in content
@@ -181,10 +181,10 @@ class TestDeploymentConfiguration:
     def test_dockerfile_copies_required_files(self):
         """Test Dockerfile copies all required files."""
         from pathlib import Path
-        
+
         dockerfile = Path(__file__).parent.parent.parent / "Dockerfile"
         content = dockerfile.read_text()
-        
+
         # Check for required COPY commands
         assert "COPY pyproject.toml" in content or "COPY pyproject.toml" in content
         assert "COPY src/" in content
@@ -195,14 +195,14 @@ class TestDeploymentConfiguration:
         """Test fly.toml has health check configured."""
         import tomllib
         from pathlib import Path
-        
+
         fly_toml = Path(__file__).parent.parent.parent / "fly.toml"
         with open(fly_toml, "rb") as f:
             config = tomllib.load(f)
-        
+
         http_service = config.get("http_service", {})
         checks = http_service.get("checks", [])
-        
+
         assert len(checks) > 0, "Health check should be configured"
         assert any(check.get("path") == "/health" for check in checks)
 
@@ -210,24 +210,23 @@ class TestDeploymentConfiguration:
         """Test fly.toml has correct port configuration."""
         import tomllib
         from pathlib import Path
-        
+
         fly_toml = Path(__file__).parent.parent.parent / "fly.toml"
         with open(fly_toml, "rb") as f:
             config = tomllib.load(f)
-        
+
         http_service = config.get("http_service", {})
         assert http_service.get("internal_port") == 8080
-        
+
         env = config.get("env", {})
         assert env.get("PORT") == "8080"
 
     def test_deployment_scripts_exist(self):
         """Test deployment scripts exist and are executable."""
         from pathlib import Path
-        import stat
-        
+
         scripts_dir = Path(__file__).parent.parent.parent / "scripts"
-        
+
         required_scripts = [
             "deploy_fly.sh",
             "verify_deployment.sh",
@@ -235,7 +234,7 @@ class TestDeploymentConfiguration:
             "make_private.sh",
             "tailscale-start.sh",
         ]
-        
+
         for script in required_scripts:
             script_path = scripts_dir / script
             assert script_path.exists(), f"{script} should exist"
@@ -255,34 +254,34 @@ class TestSecretValidation:
             "OPENAI_API_KEY=sk-test",
             "PERPLEXITY_API_KEY=pplx-test",
         ]
-        
+
         has_llm = any(
-            "OPENAI_API_KEY" in s or 
-            "ANTHROPIC_API_KEY" in s or 
+            "OPENAI_API_KEY" in s or
+            "ANTHROPIC_API_KEY" in s or
             "GEMINI_API_KEY" in s
             for s in secrets_with_llm
         )
-        
+
         assert has_llm, "Should have at least one LLM backend"
 
     def test_mcp_tools_optional(self):
         """Test that MCP tools are optional."""
         secrets_no_mcp = ["OPENAI_API_KEY=sk-test"]
-        
+
         mcp_count = sum(
             1 for s in secrets_no_mcp
             if any(tool in s for tool in ["PERPLEXITY", "FIRECRAWL", "TAVILY"])
         )
-        
+
         # Should be 0, which is OK (optional)
         assert mcp_count == 0
 
     def test_api_key_optional(self):
         """Test that API key is optional."""
         secrets_no_api_key = ["OPENAI_API_KEY=sk-test"]
-        
+
         has_api_key = any("BOP_API_KEY" in s for s in secrets_no_api_key)
-        
+
         # Should be False, which is OK (optional)
         assert not has_api_key
 
@@ -294,10 +293,10 @@ class TestDeploymentVerification:
         """Test health endpoint returns correct format."""
         client = TestClient(app)
         response = client.get("/health")
-        
+
         assert response.status_code == 200
         data = response.json()
-        
+
         # Validate response structure
         assert "status" in data
         assert data["status"] == "healthy"
@@ -308,10 +307,10 @@ class TestDeploymentVerification:
         """Test root endpoint returns correct format."""
         client = TestClient(app)
         response = client.get("/")
-        
+
         assert response.status_code == 200
         data = response.json()
-        
+
         # Validate response structure
         assert "service" in data
         assert "version" in data
@@ -321,7 +320,7 @@ class TestDeploymentVerification:
     def test_chat_response_format(self):
         """Test chat endpoint returns correct format."""
         client = TestClient(app)
-        
+
         with patch("bop.server.REQUIRED_API_KEY", ""):
             with patch("bop.server.agent") as mock_agent:
                 agent = MagicMock()
@@ -333,12 +332,12 @@ class TestDeploymentVerification:
                     "prior_beliefs": None,
                 })
                 mock_agent.return_value = agent
-                
+
                 response = client.post(
                     "/chat",
                     json={"message": "test", "research": False}
                 )
-                
+
                 if response.status_code == 200:
                     data = response.json()
                     assert "response" in data
@@ -354,11 +353,10 @@ class TestDeploymentScripts:
     def test_deploy_script_checks_flyctl(self):
         """Test deploy script checks for flyctl."""
         from pathlib import Path
-        import subprocess
-        
+
         script = Path(__file__).parent.parent.parent / "scripts" / "deploy_fly.sh"
         assert script.exists()
-        
+
         # Check script contains flyctl check
         content = script.read_text()
         assert "flyctl" in content
@@ -367,10 +365,10 @@ class TestDeploymentScripts:
     def test_verify_script_checks_endpoints(self):
         """Test verify script checks endpoints."""
         from pathlib import Path
-        
+
         script = Path(__file__).parent.parent.parent / "scripts" / "verify_deployment.sh"
         assert script.exists()
-        
+
         content = script.read_text()
         assert "/health" in content
         assert "curl" in content or "http" in content
@@ -378,10 +376,10 @@ class TestDeploymentScripts:
     def test_validate_script_checks_secrets(self):
         """Test validate script checks secrets."""
         from pathlib import Path
-        
+
         script = Path(__file__).parent.parent.parent / "scripts" / "validate_secrets.sh"
         assert script.exists()
-        
+
         content = script.read_text()
         assert "OPENAI_API_KEY" in content or "LLM" in content
         assert "secrets" in content.lower()

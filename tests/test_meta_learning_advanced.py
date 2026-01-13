@@ -1,21 +1,18 @@
 """Advanced tests for meta-learning: sophisticated scenarios, stress tests, and deep validation."""
 
-import pytest
-import tempfile
 import asyncio
-import time
-import statistics
-from pathlib import Path
-from typing import Dict, Any, List
-from unittest.mock import AsyncMock, patch
 import json
 import re
+import statistics
+import tempfile
+import time
+from pathlib import Path
+from unittest.mock import AsyncMock
+
+import pytest
 
 from bop.agent import KnowledgeAgent
-from bop.meta_learning import MetaLearner, ExperienceStore
-from bop.quality_feedback import QualityFeedbackLoop
-from bop.adaptive_quality import AdaptiveQualityManager
-
+from bop.meta_learning import ExperienceStore, MetaLearner
 
 # ============================================================================
 # Stress Tests
@@ -26,7 +23,7 @@ async def test_stress_experience_store_rapid_writes():
     """Stress: Rapid sequential writes to experience store."""
     with tempfile.TemporaryDirectory() as tmpdir:
         store = ExperienceStore(storage_path=Path(tmpdir) / "experiences.json")
-        
+
         start_time = time.time()
         for i in range(200):
             store.add_experience(
@@ -38,10 +35,10 @@ async def test_stress_experience_store_rapid_writes():
                 tools_used=[],
             )
         elapsed = time.time() - start_time
-        
+
         # Should complete in reasonable time
         assert elapsed < 2.0, f"200 writes took {elapsed:.3f}s"
-        
+
         # Should still be functional
         experiences = store.get_relevant_experiences("factual", limit=10)
         assert len(experiences) == 10
@@ -53,25 +50,25 @@ async def test_stress_agent_meta_learning_rapid_queries():
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         queries = [f"What is concept {i}?" for i in range(20)]
-        
+
         start_time = time.time()
         responses = []
         for query in queries:
             response = await agent.chat(query, use_research=False)
             responses.append(response)
         elapsed = time.time() - start_time
-        
+
         # Should complete in reasonable time
         assert elapsed < 30.0, f"20 queries took {elapsed:.3f}s"
-        
+
         # All should succeed
         assert all("response" in r for r in responses)
 
@@ -81,7 +78,7 @@ async def test_stress_experience_retrieval_many_types():
     """Stress: Retrieve experiences across many query types."""
     with tempfile.TemporaryDirectory() as tmpdir:
         store = ExperienceStore(storage_path=Path(tmpdir) / "experiences.json")
-        
+
         # Add experiences for many query types
         query_types = [f"type_{i}" for i in range(50)]
         for q_type in query_types:
@@ -94,7 +91,7 @@ async def test_stress_experience_retrieval_many_types():
                     reflection_type="self",
                     tools_used=[],
                 )
-        
+
         # Retrieve from all types
         start_time = time.time()
         all_experiences = []
@@ -102,7 +99,7 @@ async def test_stress_experience_retrieval_many_types():
             exps = store.get_relevant_experiences(q_type, limit=5)
             all_experiences.extend(exps)
         elapsed = time.time() - start_time
-        
+
         assert elapsed < 1.0, f"Retrieval from 50 types took {elapsed:.3f}s"
         assert len(all_experiences) == 50 * 5
 
@@ -115,42 +112,42 @@ async def test_stress_experience_retrieval_many_types():
 async def test_multiturn_topic_evolution_judge():
     """
     Multi-turn: LLM judge evaluates if system adapts as conversation topic evolves.
-    
+
     Scenario: Conversation starts broad, narrows, then expands again.
     System should use relevant experiences at each stage.
     """
     from bop.llm import LLMService
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         try:
             llm = LLMService()
         except Exception:
             pytest.skip("LLM service not available")
-        
+
         # Turn 1: Broad question
         response1 = await agent.chat("What is causality?", use_research=False)
         await asyncio.sleep(0.2)
-        
+
         # Turn 2: Narrow to specific concept
         response2 = await agent.chat("What is d-separation in causality?", use_research=False)
         await asyncio.sleep(0.2)
-        
+
         # Turn 3: Expand to related concept
         response3 = await agent.chat("How does d-separation relate to information geometry?", use_research=False)
         await asyncio.sleep(0.2)
-        
+
         # Turn 4: Back to broader question
         response4 = await agent.chat("What are the key concepts in causal inference?", use_research=False)
-        
+
         # LLM Judge: Evaluate topic evolution adaptation
         judge_prompt = f"""Evaluate if the system adapts as conversation topic evolves:
 
@@ -174,9 +171,9 @@ Evaluate:
 
 Respond with JSON: {{"adapts_style": 0.0-1.0, "uses_experiences": 0.0-1.0, "shows_learning": 0.0-1.0, "adaptation": 0.0-1.0}}
 """
-        
+
         judge_response = await llm.generate_response(judge_prompt)
-        
+
         json_match = re.search(r'\{[^}]+\}', judge_response, re.DOTALL)
         if json_match:
             try:
@@ -191,30 +188,30 @@ Respond with JSON: {{"adapts_style": 0.0-1.0, "uses_experiences": 0.0-1.0, "show
 async def test_multiturn_error_recovery_judge():
     """
     Multi-turn: LLM judge evaluates if system learns from errors and recovers.
-    
+
     Scenario: First response has issues, system reflects, second response improves.
     """
     from bop.llm import LLMService
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         try:
             llm = LLMService()
         except Exception:
             pytest.skip("LLM service not available")
-        
+
         # Turn 1: Query that might have issues
         response1 = await agent.chat("What is d-separation?", use_research=False)
         await asyncio.sleep(0.2)
-        
+
         # Manually add a "bad" experience to simulate learning from error
         agent.meta_learner.experience_store.add_experience(
             query_type="factual",
@@ -225,10 +222,10 @@ async def test_multiturn_error_recovery_judge():
             tools_used=[],
             quality_score=0.6,  # Lower quality
         )
-        
+
         # Turn 2: Same query, should improve
         response2 = await agent.chat("What is d-separation?", use_research=False)
-        
+
         # LLM Judge: Evaluate error recovery
         judge_prompt = f"""Evaluate if the system learned from a previous error and improved:
 
@@ -249,9 +246,9 @@ Evaluate:
 
 Respond with JSON: {{"addresses_issues": 0.0-1.0, "more_complete": 0.0-1.0, "shows_learning": 0.0-1.0, "improvement": 0.0-1.0}}
 """
-        
+
         judge_response = await llm.generate_response(judge_prompt)
-        
+
         json_match = re.search(r'\{[^}]+\}', judge_response, re.DOTALL)
         if json_match:
             try:
@@ -268,22 +265,22 @@ async def test_multiturn_experience_relevance_judge():
     Multi-turn: LLM judge evaluates if experiences remain relevant as conversation evolves.
     """
     from bop.llm import LLMService
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         try:
             llm = LLMService()
         except Exception:
             pytest.skip("LLM service not available")
-        
+
         # Add experiences for different topics
         agent.meta_learner.experience_store.add_experience(
             query_type="factual",
@@ -293,7 +290,7 @@ async def test_multiturn_experience_relevance_judge():
             reflection_type="self",
             tools_used=["perplexity_search"],
         )
-        
+
         agent.meta_learner.experience_store.add_experience(
             query_type="analytical",
             query="Why is trust important?",
@@ -302,17 +299,17 @@ async def test_multiturn_experience_relevance_judge():
             reflection_type="self",
             tools_used=["firecrawl_search"],
         )
-        
+
         # Query that should match factual experiences
         response1 = await agent.chat("What is d-separation?", use_research=False)
-        
+
         # Query that should match analytical experiences
         response2 = await agent.chat("Why is d-separation important?", use_research=False)
-        
+
         # Get experiences that were used
         factual_exps = agent.meta_learner.experience_store.get_relevant_experiences("factual", limit=5)
         analytical_exps = agent.meta_learner.experience_store.get_relevant_experiences("analytical", limit=5)
-        
+
         # LLM Judge: Evaluate relevance
         judge_prompt = f"""Evaluate if experiences are relevant to queries:
 
@@ -331,9 +328,9 @@ Evaluate:
 
 Respond with JSON: {{"factual_relevant": 0.0-1.0, "analytical_relevant": 0.0-1.0, "appropriate_selection": 0.0-1.0, "overall": 0.0-1.0}}
 """
-        
+
         judge_response = await llm.generate_response(judge_prompt)
-        
+
         json_match = re.search(r'\{[^}]+\}', judge_response, re.DOTALL)
         if json_match:
             try:
@@ -350,8 +347,9 @@ Respond with JSON: {{"factual_relevant": 0.0-1.0, "analytical_relevant": 0.0-1.0
 
 def test_fuzz_experience_store_with_hypothesis():
     """Fuzz: Use Hypothesis to generate test cases for experience store."""
-    from hypothesis import given, strategies as st
-    
+    from hypothesis import given
+    from hypothesis import strategies as st
+
     @given(
         num_experiences=st.integers(min_value=1, max_value=200),
         query_type_length=st.integers(min_value=1, max_value=50),
@@ -360,12 +358,12 @@ def test_fuzz_experience_store_with_hypothesis():
     def test_with_params(num_experiences, query_type_length, reflection_length):
         with tempfile.TemporaryDirectory() as tmpdir:
             store = ExperienceStore(storage_path=Path(tmpdir) / "experiences.json")
-            
+
             # Generate experiences with varying parameters
             for i in range(num_experiences):
                 query_type = "a" * query_type_length
                 reflection = "b" * reflection_length
-                
+
                 store.add_experience(
                     query_type=query_type,
                     query=f"Query {i}",
@@ -374,12 +372,12 @@ def test_fuzz_experience_store_with_hypothesis():
                     reflection_type="self",
                     tools_used=[],
                 )
-            
+
             # Should still work
             experiences = store.get_relevant_experiences(query_type, limit=10)
             assert len(experiences) <= 10
             assert isinstance(experiences, list)
-    
+
     # Run the property-based test
     test_with_params()
 
@@ -387,13 +385,12 @@ def test_fuzz_experience_store_with_hypothesis():
 @pytest.mark.asyncio
 async def test_fuzz_meta_learner_with_various_quality_scores():
     """Fuzz: Test reflection with various quality score distributions."""
-    import random
-    
+
     learner = MetaLearner(enable_reflection=True)
-    
+
     mock_llm = AsyncMock()
     mock_llm.generate_response = AsyncMock(return_value="Reflection")
-    
+
     # Test with various quality score distributions
     quality_distributions = [
         [0.1, 0.2, 0.3],  # Low scores
@@ -402,7 +399,7 @@ async def test_fuzz_meta_learner_with_various_quality_scores():
         [None, None, None],  # All None
         [0.1, None, 0.9],  # Mixed with None
     ]
-    
+
     for quality_scores in quality_distributions:
         for quality in quality_scores:
             try:
@@ -426,13 +423,13 @@ async def test_fuzz_agent_with_various_schemas():
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         schemas = [
             None,
             "chain_of_thought",
@@ -441,9 +438,9 @@ async def test_fuzz_agent_with_various_schemas():
             "hypothesize_and_test",
             "scenario_analysis",
         ]
-        
+
         research_options = [True, False]
-        
+
         for schema in schemas:
             for use_research in research_options:
                 try:
@@ -466,7 +463,7 @@ def test_benchmark_experience_store_operations():
     """Benchmark: Measure performance of experience store operations."""
     with tempfile.TemporaryDirectory() as tmpdir:
         store = ExperienceStore(storage_path=Path(tmpdir) / "experiences.json")
-        
+
         # Benchmark: Add experiences
         times_add = []
         for i in range(100):
@@ -480,20 +477,20 @@ def test_benchmark_experience_store_operations():
                 tools_used=[],
             )
             times_add.append(time.time() - start)
-        
+
         avg_add = statistics.mean(times_add)
-        max_add = max(times_add)
-        
+        max(times_add)
+
         # Benchmark: Retrieve experiences
         times_retrieve = []
         for _ in range(100):
             start = time.time()
             store.get_relevant_experiences("factual", limit=10)
             times_retrieve.append(time.time() - start)
-        
+
         avg_retrieve = statistics.mean(times_retrieve)
-        max_retrieve = max(times_retrieve)
-        
+        max(times_retrieve)
+
         # Benchmark: Format context
         experiences = store.get_relevant_experiences("factual", limit=10)
         times_format = []
@@ -501,15 +498,15 @@ def test_benchmark_experience_store_operations():
             start = time.time()
             store.format_for_context(experiences)
             times_format.append(time.time() - start)
-        
+
         avg_format = statistics.mean(times_format)
-        max_format = max(times_format)
-        
+        max(times_format)
+
         # Performance assertions
         assert avg_add < 0.01, f"Average add time too slow: {avg_add:.4f}s"
         assert avg_retrieve < 0.005, f"Average retrieve time too slow: {avg_retrieve:.4f}s"
         assert avg_format < 0.001, f"Average format time too slow: {avg_format:.4f}s"
-        
+
         print(f"Performance: add={avg_add:.4f}s, retrieve={avg_retrieve:.4f}s, format={avg_format:.4f}s")
 
 
@@ -517,10 +514,10 @@ def test_benchmark_experience_store_operations():
 async def test_benchmark_reflection_latency():
     """Benchmark: Measure reflection latency."""
     learner = MetaLearner(enable_reflection=True)
-    
+
     mock_llm = AsyncMock()
     mock_llm.generate_response = AsyncMock(return_value="Reflection text")
-    
+
     latencies = []
     for i in range(10):
         start = time.time()
@@ -532,13 +529,13 @@ async def test_benchmark_reflection_latency():
             llm_service=mock_llm,
         )
         latencies.append(time.time() - start)
-    
+
     avg_latency = statistics.mean(latencies)
     max_latency = max(latencies)
-    
+
     # Reflection should be reasonably fast (mock LLM)
     assert avg_latency < 0.1, f"Average reflection latency too slow: {avg_latency:.4f}s"
-    
+
     print(f"Reflection latency: avg={avg_latency:.4f}s, max={max_latency:.4f}s")
 
 
@@ -550,7 +547,7 @@ async def test_benchmark_reflection_latency():
 async def test_deep_integration_adaptive_meta_learning():
     """
     Deep integration: Test how adaptive learning and meta-learning interact.
-    
+
     Adaptive learning learns which schemas/tools work best.
     Meta-learning learns from task completions.
     They should complement each other.
@@ -558,29 +555,29 @@ async def test_deep_integration_adaptive_meta_learning():
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         # Multiple queries to build up learning
         queries = [
             ("What is trust?", "factual"),
             ("How do you build trust?", "procedural"),
             ("Why is trust important?", "analytical"),
         ]
-        
+
         for query, expected_type in queries:
-            response = await agent.chat(query, use_research=False)
+            await agent.chat(query, use_research=False)
             await asyncio.sleep(0.1)
-            
+
             # Both systems should learn
             if agent.adaptive_manager:
                 strategy = agent.adaptive_manager.get_adaptive_strategy(query)
                 assert strategy is not None
-            
+
             # Meta-learner should have experiences
             experiences = agent.meta_learner.experience_store.get_relevant_experiences(expected_type, limit=1)
             # May be 0 if reflection didn't happen, but structure should work
@@ -591,20 +588,20 @@ async def test_deep_integration_adaptive_meta_learning():
 async def test_deep_integration_research_meta_learning():
     """
     Deep integration: Test how research and meta-learning interact.
-    
+
     Research uses experience context for tool selection.
     Meta-learning learns from research outcomes.
     """
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         # Add experience about tool effectiveness
         agent.meta_learner.experience_store.add_experience(
             query_type="factual",
@@ -615,16 +612,16 @@ async def test_deep_integration_research_meta_learning():
             tools_used=["perplexity_search"],
             quality_score=0.9,
         )
-        
+
         # Query with research (should use experience context)
         response = await agent.chat(
             "What is d-separation?",
             use_research=True,
             use_schema="decompose_and_synthesize",
         )
-        
+
         assert "response" in response
-        
+
         # Experience should be injected into research query
         # (Can't easily verify without mocking, but should not crash)
 
@@ -633,7 +630,7 @@ async def test_deep_integration_research_meta_learning():
 async def test_deep_integration_quality_meta_learning():
     """
     Deep integration: Test how quality feedback and meta-learning interact.
-    
+
     Quality feedback evaluates responses.
     Meta-learning reflects on quality scores.
     They should work together seamlessly.
@@ -641,26 +638,26 @@ async def test_deep_integration_quality_meta_learning():
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         # Query that should trigger quality evaluation and reflection
         response = await agent.chat(
             "What is d-separation?",
             use_research=False,
         )
-        
+
         await asyncio.sleep(0.2)  # Allow reflection
-        
+
         # Quality feedback should have evaluated
         if "quality" in response:
             quality_score = response["quality"].get("score")
             assert quality_score is not None or quality_score is None
-        
+
         # Meta-learner should have reflected (if enabled and LLM available)
         experiences = agent.meta_learner.experience_store.get_relevant_experiences("factual", limit=1)
         # May be 0 if reflection didn't happen, but structure should work
@@ -675,16 +672,16 @@ async def test_deep_integration_quality_meta_learning():
 async def test_llm_judge_reflection_depth():
     """LLM-as-judge: Evaluate if reflections show sufficient depth and insight."""
     from bop.llm import LLMService
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         store_path = Path(tmpdir) / "experiences.json"
         learner = MetaLearner(storage_path=store_path, enable_reflection=True)
-        
+
         try:
             llm = LLMService()
         except Exception:
             pytest.skip("LLM service not available")
-        
+
         # Perform reflection on complex task
         reflection_text = await learner.reflect_on_completion(
             query="What is d-separation and how does it relate to causality, information geometry, and Bayesian networks?",
@@ -694,10 +691,10 @@ async def test_llm_judge_reflection_depth():
             quality_score=0.85,
             llm_service=llm,
         )
-        
+
         if not reflection_text:
             pytest.skip("Reflection not performed")
-        
+
         # Judge: Evaluate depth
         judge_prompt = f"""Evaluate the depth and insight of this reflection:
 
@@ -712,9 +709,9 @@ Evaluate:
 
 Respond with JSON: {{"beyond_surface": 0.0-1.0, "identifies_patterns": 0.0-1.0, "actionable": 0.0-1.0, "depth": 0.0-1.0}}
 """
-        
+
         judge_response = await llm.generate_response(judge_prompt)
-        
+
         json_match = re.search(r'\{[^}]+\}', judge_response, re.DOTALL)
         if json_match:
             try:
@@ -730,11 +727,11 @@ Respond with JSON: {{"beyond_surface": 0.0-1.0, "identifies_patterns": 0.0-1.0, 
 async def test_llm_judge_experience_diversity():
     """LLM-as-judge: Evaluate if experiences capture diverse insights."""
     from bop.llm import LLMService
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         store_path = Path(tmpdir) / "experiences.json"
         learner = MetaLearner(storage_path=store_path)
-        
+
         # Add diverse experiences
         diverse_experiences = [
             ("Perplexity search works well for definitions", "tool_usage"),
@@ -742,7 +739,7 @@ async def test_llm_judge_experience_diversity():
             ("Break down complex concepts into steps", "explanation_strategy"),
             ("Use multiple sources to verify claims", "verification"),
         ]
-        
+
         for insight, category in diverse_experiences:
             learner.experience_store.add_experience(
                 query_type="factual",
@@ -752,14 +749,14 @@ async def test_llm_judge_experience_diversity():
                 reflection_type="self",
                 tools_used=[],
             )
-        
+
         experiences = learner.experience_store.get_relevant_experiences("factual", limit=10)
-        
+
         try:
             llm = LLMService()
         except Exception:
             pytest.skip("LLM service not available")
-        
+
         # Judge: Evaluate diversity
         judge_prompt = f"""Evaluate if these experiences capture diverse insights:
 
@@ -773,9 +770,9 @@ Evaluate:
 
 Respond with JSON: {{"covers_aspects": 0.0-1.0, "diverse": 0.0-1.0, "varied_perspectives": 0.0-1.0, "overall": 0.0-1.0}}
 """
-        
+
         judge_response = await llm.generate_response(judge_prompt)
-        
+
         json_match = re.search(r'\{[^}]+\}', judge_response, re.DOTALL)
         if json_match:
             try:

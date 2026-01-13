@@ -12,7 +12,7 @@ Usage:
 import subprocess
 import sys
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 # Test categories mapping
 TEST_CATEGORIES: Dict[str, List[str]] = {
@@ -149,9 +149,9 @@ def run_tests(
 ) -> int:
     """Run tests based on category, pattern, or specific files."""
     tests_dir = Path(__file__).parent
-    
+
     cmd = ["pytest"]
-    
+
     if files:
         # Run specific files
         test_files = [str(tests_dir / f) for f in files if (tests_dir / f).exists()]
@@ -181,16 +181,16 @@ def run_tests(
     else:
         # Run all tests
         cmd.append(str(tests_dir))
-    
+
     if verbose:
         cmd.append("-v")
-    
+
     if markers:
         cmd.extend(["-m", markers])
-    
+
     print(f"Running: {' '.join(cmd)}")
     print()
-    
+
     result = subprocess.run(cmd)
     return result.returncode
 
@@ -198,7 +198,7 @@ def run_tests(
 def main():
     """Main entry point."""
     import argparse
-    
+
     parser = argparse.ArgumentParser(
         description="Run tests by category, pattern, or specific files",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -211,7 +211,7 @@ Examples:
   python tests/run_all_tests.py --list
         """,
     )
-    
+
     parser.add_argument(
         "--category",
         choices=list(TEST_CATEGORIES.keys()),
@@ -241,13 +241,13 @@ Examples:
         "--markers",
         help="Run tests with specific markers (e.g., 'llm_judge', 'not slow')",
     )
-    
+
     args = parser.parse_args()
-    
+
     if args.list:
         list_categories()
         return 0
-    
+
     return run_tests(
         category=args.category,
         pattern=args.pattern,

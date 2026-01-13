@@ -1,7 +1,8 @@
 """Tests for LLM service integration."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 pytestmark = pytest.mark.asyncio
 
@@ -12,8 +13,8 @@ from bop.schemas import CHAIN_OF_THOUGHT
 async def test_llm_service_initialization():
     """Test LLM service initialization."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel") as mock_model:
-            with patch("bop.llm.Agent") as mock_agent:
+        with patch("bop.llm.OpenAIChatModel"):
+            with patch("bop.llm.Agent"):
                 service = LLMService(backend="openai")
                 assert service is not None
                 assert service.model is not None

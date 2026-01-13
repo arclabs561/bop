@@ -1,10 +1,10 @@
 """Integration tests for agent with all components."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
+
 from bop.agent import KnowledgeAgent
-from bop.schemas import CHAIN_OF_THOUGHT
 
 
 @pytest.mark.asyncio
@@ -47,12 +47,12 @@ async def test_agent_knowledge_base_integration():
         mock_llm_class.return_value = mock_llm
 
         agent = KnowledgeAgent()
-        
+
         # Add some knowledge base results
-        kb_results = agent.search_knowledge_base("reasoning")
-        
+        agent.search_knowledge_base("reasoning")
+
         response = await agent.chat("Tell me about reasoning")
-        
+
         # Response should be generated (may or may not use KB depending on implementation)
         assert "response" in response
 
@@ -68,7 +68,7 @@ async def test_agent_conversation_history_persistence():
     await agent.chat("Third message")
 
     history = agent.get_conversation_history()
-    
+
     # Should have 6 messages (3 user + 3 assistant)
     assert len(history) == 6
     assert history[0]["role"] == "user"
@@ -139,13 +139,13 @@ async def test_agent_multiple_schemas():
     agent.llm_service = None  # Use fallback
 
     schemas_to_test = ["chain_of_thought", "iterative_elaboration", "hypothesize_and_test"]
-    
+
     for schema_name in schemas_to_test:
         response = await agent.chat(
             f"Test with {schema_name}",
             use_schema=schema_name
         )
-        
+
         assert response["schema_used"] == schema_name
         assert "response" in response
 
@@ -195,7 +195,7 @@ async def test_agent_context_building():
         # Verify context was passed to LLM
         call_args = mock_llm.generate_response.call_args
         context = call_args[1].get("context", {})
-        
+
         # Context should include research if research was conducted
         if response.get("research_conducted"):
             assert "research" in context or "research" in str(call_args)

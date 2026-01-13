@@ -1,10 +1,7 @@
 """Property-based tests for Grice's maxims using Hypothesis."""
 
-import pytest
-from hypothesis import given, strategies as st, settings, assume, HealthCheck
-from typing import List, Dict, Any
-import tempfile
-from pathlib import Path
+from hypothesis import HealthCheck, given, settings
+from hypothesis import strategies as st
 
 from bop.semantic_eval import SemanticEvaluator
 from tests.test_annotations import annotate_test
@@ -21,7 +18,7 @@ def test_property_grice_relation_transitive_like(query: str, response1: str, res
     """
     PROPERTY: If response1 is relevant to query and response2 is similar to response1,
     then response2 should also be relevant (Relation maxim).
-    
+
     Pattern: property_based_grice
     Opinion: relevance_is_transitive_like
     Category: grice_property
@@ -34,16 +31,16 @@ def test_property_grice_relation_transitive_like(query: str, response1: str, res
         category="grice_property",
         hypothesis="Similar responses to same query should have similar relevance scores.",
     )
-    
+
     evaluator = SemanticEvaluator()
-    
+
     # Get relevance scores
     judgment1 = evaluator.evaluate_relevance(query=query, response=response1)
     judgment2 = evaluator.evaluate_relevance(query=query, response=response2)
-    
+
     # Calculate similarity between responses
     response_similarity = evaluator._calculate_semantic_similarity(response1, response2)
-    
+
     # If responses are very similar, relevance scores should be similar
     if response_similarity > 0.8:
         score_diff = abs(judgment1.score - judgment2.score)
@@ -64,7 +61,7 @@ def test_property_grice_relation_transitive_like(query: str, response1: str, res
 def test_property_grice_quantity_length_independent(query: str, short_response: str, long_response: str):
     """
     PROPERTY: Relevance shouldn't always favor longer responses (Quantity maxim).
-    
+
     Pattern: property_based_grice
     Opinion: relevance_not_always_favors_length
     Category: grice_property
@@ -77,12 +74,12 @@ def test_property_grice_quantity_length_independent(query: str, short_response: 
         category="grice_property",
         hypothesis="Longer responses shouldn't automatically score higher on relevance.",
     )
-    
+
     evaluator = SemanticEvaluator()
-    
+
     short_judgment = evaluator.evaluate_relevance(query=query, response=short_response)
     long_judgment = evaluator.evaluate_relevance(query=query, response=long_response)
-    
+
     # Length alone shouldn't determine relevance
     # We can't assert short is always better, but we can assert it's not always worse
     # This property is about ensuring length doesn't dominate relevance
@@ -103,7 +100,7 @@ def test_property_grice_quantity_length_independent(query: str, short_response: 
 def test_property_grice_manner_clear_responses(query: str, clear_response: str):
     """
     PROPERTY: Clear, well-formed responses should score reasonably (Manner maxim).
-    
+
     Pattern: property_based_grice
     Opinion: clear_responses_score_reasonably
     Category: grice_property
@@ -116,10 +113,10 @@ def test_property_grice_manner_clear_responses(query: str, clear_response: str):
         category="grice_property",
         hypothesis="Clear responses (with words, not just noise) should score reasonably.",
     )
-    
+
     evaluator = SemanticEvaluator()
     judgment = evaluator.evaluate_relevance(query=query, response=clear_response)
-    
+
     # Clear responses should score in valid range
     assert 0.0 <= judgment.score <= 1.0
     # And shouldn't be penalized just for being clear
@@ -134,7 +131,7 @@ def test_property_grice_manner_clear_responses(query: str, clear_response: str):
 def test_property_grice_quality_placeholders_low(query: str):
     """
     PROPERTY: Placeholder responses should score low (Quality maxim violation).
-    
+
     Pattern: property_based_grice
     Opinion: placeholders_score_low
     Category: grice_property
@@ -147,9 +144,9 @@ def test_property_grice_quality_placeholders_low(query: str):
         category="grice_property",
         hypothesis="Placeholder responses should get low relevance scores.",
     )
-    
+
     evaluator = SemanticEvaluator()
-    
+
     placeholders = [
         "[LLM service not available]",
         "[MCP integration ready]",
@@ -157,7 +154,7 @@ def test_property_grice_quality_placeholders_low(query: str):
         "to be filled",
         "placeholder",
     ]
-    
+
     for placeholder in placeholders:
         judgment = evaluator.evaluate_relevance(query=query, response=placeholder)
         # Placeholders should score low (but not necessarily 0 due to quality flags)
@@ -174,7 +171,7 @@ def test_property_grice_quality_placeholders_low(query: str):
 def test_property_semantic_consistency_symmetric(query: str, response1: str, response2: str):
     """
     PROPERTY: Consistency should be symmetric (order shouldn't matter).
-    
+
     Pattern: property_based_semantic
     Opinion: consistency_is_symmetric
     Category: semantic_property
@@ -187,12 +184,12 @@ def test_property_semantic_consistency_symmetric(query: str, response1: str, res
         category="semantic_property",
         hypothesis="Consistency should be symmetric: consistency([A, B]) == consistency([B, A]).",
     )
-    
+
     evaluator = SemanticEvaluator()
-    
+
     judgment1 = evaluator.evaluate_consistency(query=query, responses=[response1, response2])
     judgment2 = evaluator.evaluate_consistency(query=query, responses=[response2, response1])
-    
+
     # Consistency should be symmetric (order shouldn't matter)
     assert abs(judgment1.score - judgment2.score) < 0.001, (
         f"Consistency not symmetric: {judgment1.score} vs {judgment2.score}"
@@ -211,7 +208,7 @@ def test_property_semantic_consistency_monotonic(
 ):
     """
     PROPERTY: Adding a similar response shouldn't decrease consistency.
-    
+
     Pattern: property_based_semantic
     Opinion: consistency_is_monotonic
     Category: semantic_property
@@ -224,18 +221,18 @@ def test_property_semantic_consistency_monotonic(
         category="semantic_property",
         hypothesis="Adding similar response shouldn't decrease consistency.",
     )
-    
+
     evaluator = SemanticEvaluator()
-    
+
     # Single response (perfect consistency)
-    single_judgment = evaluator.evaluate_consistency(query=query, responses=[base_response])
-    
+    evaluator.evaluate_consistency(query=query, responses=[base_response])
+
     # Two responses
     two_judgment = evaluator.evaluate_consistency(query=query, responses=[base_response, similar_response])
-    
+
     # Calculate similarity
     similarity = evaluator._calculate_semantic_similarity(base_response, similar_response)
-    
+
     # If responses are very similar, consistency shouldn't drop much
     if similarity > 0.8:
         # Consistency with similar response should still be high

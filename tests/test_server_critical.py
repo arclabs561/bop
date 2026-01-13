@@ -1,23 +1,18 @@
 """Critical tests for HTTP server - finding flaws."""
 
-import pytest
-from fastapi.testclient import TestClient
-from unittest.mock import Mock, patch, MagicMock
-from bop.server import app, agent, orchestrator, verify_api_key
-from fastapi import HTTPException
 
 
 def test_global_agent_singleton():
     """CRITICAL: Global agent is a singleton - shared state across requests."""
     # This means concurrent requests share the same agent
     # Could cause race conditions in agent state
-    
+
     # Agent has instance variables like:
     # - conversation_history
     # - prior_beliefs
     # - recent_queries
     # - knowledge_tracker
-    
+
     # If two requests come in simultaneously, they'll modify the same state
     # This is a race condition waiting to happen
 
@@ -28,7 +23,7 @@ def test_no_request_isolation():
     # Request 1: "What is X?"
     # Request 2: "What is Y?"
     # Both see each other's messages in context
-    
+
     # This is a bug - each request should have isolated context
 
 
@@ -36,7 +31,7 @@ def test_api_key_optional_by_default():
     """CRITICAL: API key is optional by default - security issue."""
     # If BOP_API_KEY is not set, anyone can access protected endpoints
     # This is fine for development but dangerous if deployed publicly
-    
+
     # Should require explicit opt-in for no-auth mode
 
 
@@ -48,7 +43,7 @@ def test_error_exposes_internal_details():
     # - Internal paths
     # - API keys (if in error messages)
     # - Database connection strings
-    
+
     # Should sanitize error messages
 
 
@@ -60,7 +55,7 @@ def test_no_rate_limiting():
     # - Makes LLM calls
     # - Makes MCP tool calls
     # - Processes research
-    # 
+    #
     # No limits on:
     # - Requests per second
     # - Requests per IP
@@ -73,7 +68,7 @@ def test_no_timeout_handling():
     # If LLM call hangs, request hangs forever
     # If MCP tool call hangs, request hangs forever
     # No timeout protection
-    
+
     # Should have:
     # - Request timeout
     # - LLM call timeout
@@ -87,7 +82,7 @@ def test_orchestrator_mutable_state():
     # Request 1 sets use_constraints=True
     # Request 2 sets use_constraints=False
     # They interfere with each other
-    
+
     # Should not modify global orchestrator state per-request
 
 
@@ -111,7 +106,7 @@ def test_cors_allows_all_origins():
     # Line 105: allow_origins=["*"]
     # Comment says "In private network, this is safe"
     # But if network is compromised, this allows any origin
-    
+
     # Should restrict to known origins even in private network
 
 
@@ -131,7 +126,7 @@ def test_no_metrics_collection():
     # - MCP tool usage
     # - Memory usage
     # - CPU usage
-    
+
     # Should collect metrics for observability
 
 
@@ -157,7 +152,7 @@ def test_no_output_sanitization():
     # - HTML/JavaScript (XSS risk)
     # - SQL injection attempts
     # - Other malicious content
-    
+
     # Should sanitize before sending to client
 
 
@@ -176,7 +171,7 @@ def test_health_endpoint_no_actual_health_check():
     # - LLM service is available
     # - MCP tools are available
     # - Database/filesystem is accessible
-    
+
     # Should actually verify system health
 
 
@@ -193,7 +188,7 @@ def test_evaluate_compare_no_limits():
     # Will make that many LLM calls
     # Will cost a fortune
     # Will take forever
-    
+
     # Should limit iterations
 
 
@@ -204,7 +199,7 @@ def test_no_graceful_shutdown():
     # - Agent state is lost
     # - Knowledge tracker not saved
     # - No cleanup
-    
+
     # Should:
     # - Wait for in-flight requests
     # - Save state
@@ -219,7 +214,7 @@ def test_concurrent_requests_race_condition():
     # - agent.recent_queries
     # - orchestrator.use_constraints
     # - knowledge_tracker state
-    
+
     # Should use locks or request isolation
 
 
@@ -256,6 +251,6 @@ def test_no_input_sanitization():
     # - SQL injection (if agent uses SQL)
     # - Command injection (if agent executes commands)
     # - Prompt injection (definitely possible)
-    
+
     # Should sanitize or validate input
 

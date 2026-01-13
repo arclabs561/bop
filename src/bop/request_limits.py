@@ -2,10 +2,11 @@
 
 import logging
 from typing import Callable
+
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.types import ASGIApp, Receive
+from starlette.types import ASGIApp
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ MAX_QUERY_STRING_SIZE = 2 * 1024  # 2KB
 
 class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
     """Middleware to limit request sizes and prevent DoS attacks."""
-    
+
     def __init__(
         self,
         app: ASGIApp,
@@ -29,7 +30,7 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
         self.max_body_size = max_body_size
         self.max_header_size = max_header_size
         self.max_query_string_size = max_query_string_size
-    
+
     async def dispatch(self, request: Request, call_next: Callable) -> JSONResponse:
         # Check query string size
         query_string = str(request.url.query)
@@ -47,7 +48,7 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
                     }
                 },
             )
-        
+
         # Check header size
         total_header_size = sum(
             len(key.encode()) + len(value.encode())
@@ -67,7 +68,7 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
                     }
                 },
             )
-        
+
         # Check body size (for POST, PUT, PATCH)
         # Note: FastAPI/Starlette reads the body automatically, so we check Content-Length header
         # For actual body reading, we'd need to intercept at a lower level
@@ -93,6 +94,6 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
                 except ValueError:
                     # Invalid content-length, let it through (will be caught by FastAPI)
                     pass
-        
+
         return await call_next(request)
 

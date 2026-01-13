@@ -1,17 +1,15 @@
 """Scaled tests for meta-learning: using real datasets, augmented data, and BOP-based evaluation agents."""
 
-import pytest
-import tempfile
 import asyncio
 import json
-from pathlib import Path
-from typing import Dict, Any, List, Optional
 import random
+import tempfile
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import pytest
 
 from bop.agent import KnowledgeAgent
-from bop.meta_learning import MetaLearner, ExperienceStore
-from bop.llm import LLMService
-
 
 # ============================================================================
 # Dataset Loading and Augmentation
@@ -81,7 +79,7 @@ def augment_query(query: str, augmentation_type: str) -> str:
             f"{query} What are the limitations?",
         ],
     }
-    
+
     if augmentation_type in augmentations:
         return random.choice(augmentations[augmentation_type])
     return query
@@ -93,11 +91,11 @@ def augment_query(query: str, augmentation_type: str) -> str:
 
 class BOPEvaluationAgent:
     """Evaluation agent that uses BOP itself to evaluate meta-learning."""
-    
+
     def __init__(self, agent: KnowledgeAgent):
         self.agent = agent
         self.evaluations = []
-    
+
     async def evaluate_response_quality(
         self,
         query: str,
@@ -119,11 +117,11 @@ Evaluate on:
 
 Respond with JSON: {{"accuracy": 0.0-1.0, "completeness": 0.0-1.0, "clarity": 0.0-1.0, "relevance": 0.0-1.0, "overall": 0.0-1.0, "reasoning": "..."}}
 """
-        
+
         try:
             eval_response = await self.agent.chat(eval_query, use_research=False)
             eval_text = eval_response.get("response", "")
-            
+
             # Parse JSON from response
             import re
             json_match = re.search(r'\{[^}]+\}', eval_text, re.DOTALL)
@@ -135,9 +133,9 @@ Respond with JSON: {{"accuracy": 0.0-1.0, "completeness": 0.0-1.0, "clarity": 0.
                 return evaluation
         except Exception as e:
             return {"overall": 0.5, "error": str(e)}
-        
+
         return {"overall": 0.5}
-    
+
     async def evaluate_meta_learning_improvement(
         self,
         queries: List[str],
@@ -161,18 +159,18 @@ Evaluate:
 
 Respond with JSON: {{"improvement": 0.0-1.0, "consistency": 0.0-1.0, "learning": 0.0-1.0, "overall": 0.0-1.0, "reasoning": "..."}}
 """
-        
+
         try:
             eval_response = await self.agent.chat(eval_query, use_research=False)
             eval_text = eval_response.get("response", "")
-            
+
             import re
             json_match = re.search(r'\{[^}]+\}', eval_text, re.DOTALL)
             if json_match:
                 return json.loads(json_match.group())
         except Exception:
             pass
-        
+
         return {"overall": 0.5}
 
 
@@ -186,22 +184,22 @@ async def test_scaled_philosophy_queries_meta_learning():
     queries_data = load_philosophy_queries()
     if not queries_data:
         pytest.skip("Philosophy queries dataset not available")
-    
+
     # Extract queries
     queries = [q.get("query", "") for q in queries_data[:10] if q.get("query")]
     if not queries:
         pytest.skip("No valid queries in philosophy dataset")
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         responses = []
         for query in queries:
             response = await agent.chat(query, use_research=False)
@@ -211,9 +209,9 @@ async def test_scaled_philosophy_queries_meta_learning():
                 "has_reflection": "meta_reflection" in response,
             })
             await asyncio.sleep(0.1)
-        
+
         # Verify meta-learning happened
-        experiences = agent.meta_learner.experience_store.get_relevant_experiences("analytical", limit=10)
+        agent.meta_learner.experience_store.get_relevant_experiences("analytical", limit=10)
         assert len(responses) == len(queries)
         # At least some should have reflections
         assert sum(1 for r in responses if r["has_reflection"]) >= 0
@@ -227,38 +225,38 @@ async def test_scaled_augmented_queries_meta_learning():
         "What is causality?",
         "What is information geometry?",
     ]
-    
+
     # Augment queries
     augmented_queries = []
     for query in base_queries:
         for aug_type in ["rephrase", "add_context", "add_constraint", "multi_part"]:
             augmented_queries.append(augment_query(query, aug_type))
-    
+
     # Sample for speed
     augmented_queries = random.sample(augmented_queries, min(20, len(augmented_queries)))
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         responses = []
         for query in augmented_queries:
             response = await agent.chat(query, use_research=False)
             responses.append(response.get("response", ""))
             await asyncio.sleep(0.05)
-        
+
         # Should have accumulated experiences (if LLM available for reflection)
         all_experiences = []
         for q_type in ["factual", "analytical", "procedural"]:
             exps = agent.meta_learner.experience_store.get_relevant_experiences(q_type, limit=5)
             all_experiences.extend(exps)
-        
+
         assert len(responses) == len(augmented_queries)
         # Experiences may be 0 if LLM not available (reflection requires LLM)
         # But structure should work
@@ -273,36 +271,36 @@ async def test_scaled_bop_evaluates_meta_learning():
         "How does d-separation relate to causality?",
         "Explain d-separation with examples",
     ]
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         # Agent without meta-learning (simulated by disabling reflection)
         agent_no_ml = KnowledgeAgent(enable_quality_feedback=False)
-        
+
         # Agent with meta-learning
         agent_with_ml = KnowledgeAgent(enable_quality_feedback=True)
         if agent_with_ml.quality_feedback:
             agent_with_ml.quality_feedback.evaluation_history_path = history_path
         if agent_with_ml.meta_learner:
             agent_with_ml.meta_learner.experience_store.storage_path = experience_path
-        
+
         # Get responses without meta-learning
         responses_no_ml = []
         for query in queries:
             response = await agent_no_ml.chat(query, use_research=False)
             responses_no_ml.append(response.get("response", ""))
-        
+
         await asyncio.sleep(0.2)
-        
+
         # Get responses with meta-learning
         responses_with_ml = []
         for query in queries:
             response = await agent_with_ml.chat(query, use_research=False)
             responses_with_ml.append(response.get("response", ""))
             await asyncio.sleep(0.1)
-        
+
         # Use BOP to evaluate
         eval_agent = BOPEvaluationAgent(agent_with_ml)
         evaluation = await eval_agent.evaluate_meta_learning_improvement(
@@ -310,7 +308,7 @@ async def test_scaled_bop_evaluates_meta_learning():
             responses_no_ml,
             responses_with_ml,
         )
-        
+
         assert "overall" in evaluation
         assert 0.0 <= evaluation["overall"] <= 1.0
 
@@ -325,27 +323,27 @@ async def test_scaled_multi_turn_evaluation_agent():
         "What breaks trust?",
         "How do you repair trust?",
     ]
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         eval_agent = BOPEvaluationAgent(agent)
-        
+
         # Multi-turn conversation
         turn_evaluations = []
         for i, query in enumerate(queries):
             response_data = await agent.chat(query, use_research=False)
             response = response_data.get("response", "")
-            
+
             await asyncio.sleep(0.1)
-            
+
             # Evaluate this turn
             evaluation = await eval_agent.evaluate_response_quality(
                 query=query,
@@ -353,10 +351,10 @@ async def test_scaled_multi_turn_evaluation_agent():
                 context=f"Turn {i+1} of {len(queries)}",
             )
             turn_evaluations.append(evaluation)
-        
+
         # Should have evaluations for all turns (or at least responses)
         assert len(turn_evaluations) == len(queries) or len(responses) == len(queries)
-        
+
         # Check if quality improves over turns (meta-learning should help)
         if turn_evaluations:
             overall_scores = [e.get("overall", 0.5) for e in turn_evaluations]
@@ -370,7 +368,7 @@ async def test_scaled_cross_domain_meta_learning():
     philosophy_data = load_philosophy_queries()
     science_data = load_science_queries()
     technical_data = load_technical_queries()
-    
+
     domain_queries = {}
     if philosophy_data:
         domain_queries["philosophy"] = philosophy_data[:5]
@@ -378,37 +376,37 @@ async def test_scaled_cross_domain_meta_learning():
         domain_queries["science"] = science_data[:5]
     if technical_data:
         domain_queries["technical"] = technical_data[:5]
-    
+
     if not domain_queries:
         pytest.skip("No domain datasets available")
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         # Process queries from each domain
         for domain, queries_data in domain_queries.items():
             if not queries_data:
                 continue
-            
+
             queries = [q.get("query", "") for q in queries_data if q.get("query")]
             for query in queries:
-                response = await agent.chat(query, use_research=False)
+                await agent.chat(query, use_research=False)
                 await asyncio.sleep(0.05)
-        
+
         # Check experiences across domains
         all_experiences = []
         if agent.meta_learner:
             for q_type in ["factual", "analytical", "procedural"]:
                 exps = agent.meta_learner.experience_store.get_relevant_experiences(q_type, limit=10)
                 all_experiences.extend(exps)
-        
+
         # Should have processed queries from multiple domains
         # Experiences may be 0 if LLM not available (reflection requires LLM)
         assert len(domain_queries) > 0
@@ -428,17 +426,17 @@ async def test_hard_eval_adversarial_meta_learning():
         "What is trust?" + "\x00\x01\x02",  # Null bytes
         "What is trust?'; DROP TABLE experiences; --",  # SQL injection attempt
     ]
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         responses = []
         for query in adversarial_queries:
             try:
@@ -455,7 +453,7 @@ async def test_hard_eval_adversarial_meta_learning():
                     "success": False,
                 })
             await asyncio.sleep(0.1)
-        
+
         # System should handle adversarials gracefully
         assert len(responses) == len(adversarial_queries)
         # At least some should succeed
@@ -473,17 +471,17 @@ async def test_hard_eval_edge_case_queries():
         "What is trust?\n\n\n\n\n",  # Many newlines
         "What is trust?\t\t\t",  # Tabs
     ]
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         for query in edge_cases:
             try:
                 response = await agent.chat(query, use_research=False)
@@ -498,7 +496,7 @@ async def test_hard_eval_edge_case_queries():
 async def test_hard_eval_meta_learning_consistency():
     """Hard eval: Test meta-learning consistency across similar queries."""
     base_query = "What is d-separation?"
-    
+
     # Variations of same query
     variations = [
         base_query,
@@ -507,26 +505,26 @@ async def test_hard_eval_meta_learning_consistency():
         "Tell me about d-separation",
         "Can you explain d-separation?",
     ]
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         responses = []
         for query in variations:
             response = await agent.chat(query, use_research=False)
             responses.append(response.get("response", ""))
             await asyncio.sleep(0.1)
-        
+
         # Use BOP to evaluate consistency
-        eval_agent = BOPEvaluationAgent(agent)
-        
+        BOPEvaluationAgent(agent)
+
         consistency_query = f"""Evaluate consistency across similar queries:
 
 Queries: {variations}
@@ -539,11 +537,11 @@ Evaluate:
 
 Respond with JSON: {{"semantic": 0.0-1.0, "quality": 0.0-1.0, "learning": 0.0-1.0, "overall": 0.0-1.0}}
 """
-        
+
         try:
             eval_response = await agent.chat(consistency_query, use_research=False)
             eval_text = eval_response.get("response", "")
-            
+
             import re
             json_match = re.search(r'\{[^}]+\}', eval_text, re.DOTALL)
             if json_match:
@@ -551,7 +549,7 @@ Respond with JSON: {{"semantic": 0.0-1.0, "quality": 0.0-1.0, "learning": 0.0-1.
                 assert "overall" in evaluation
         except Exception:
             pass
-        
+
         # Should have responses for all variations
         assert len(responses) == len(variations)
 

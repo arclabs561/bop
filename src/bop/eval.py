@@ -1,7 +1,7 @@
 """Evaluation framework for reasoning quality."""
 
-import json
 import difflib
+import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -67,7 +67,7 @@ class EvaluationFramework:
                     expected_fields = set(required_fields)
 
                     field_coverage = len(actual_fields & expected_fields) / len(expected_fields) if expected_fields else 0.0
-                    
+
                     content_quality = 0.0
                     type_quality = 0.0
                     if actual_fields & expected_fields:
@@ -92,10 +92,10 @@ class EvaluationFramework:
                                         type_match_count += 1
                                 else:
                                     type_match_count += 1
-                        
+
                         content_quality = non_empty_count / len(actual_fields & expected_fields) if (actual_fields & expected_fields) else 0.0
                         type_quality = type_match_count / len(actual_fields & expected_fields) if (actual_fields & expected_fields) else 0.0
-                    
+
                     case_score = field_coverage * (0.4 + 0.3 * content_quality + 0.3 * type_quality)
                     total_score += case_score
 
@@ -172,12 +172,12 @@ class EvaluationFramework:
                     union = len(response_words[i] | response_words[j])
                     if union > 0:
                         overlaps.append(overlap / union)
-                    
+
                     response_i = responses[i].lower()
                     response_j = responses[j].lower()
                     similarity = difflib.SequenceMatcher(None, response_i, response_j).ratio()
                     semantic_similarities.append(similarity)
-            
+
             overlap_score = sum(overlaps) / len(overlaps) if overlaps else 0.0
             semantic_score = sum(semantic_similarities) / len(semantic_similarities) if semantic_similarities else 0.0
 
@@ -196,7 +196,7 @@ class EvaluationFramework:
 
         if 'semantic_score' not in locals():
             semantic_score = 0.0
-        
+
         return EvaluationResult(
             test_name="reasoning_coherence",
             passed=passed,
@@ -233,7 +233,7 @@ class EvaluationFramework:
             query = test_case.get("query", "")
             expected_steps = test_case.get("intermediate_steps", [])
             actual_steps = test_case.get("actual_steps", [])
-            expected_answer = test_case.get("final_answer", "")
+            test_case.get("final_answer", "")
             actual_answer = test_case.get("actual_answer", "")
 
             if not query:
@@ -244,7 +244,7 @@ class EvaluationFramework:
             step_relevance_score = 0.0
             if actual_steps:
                 step_count_score = min(1.0, len(actual_steps) / max(1, len(expected_steps)))
-                
+
                 if expected_steps:
                     relevance_scores = []
                     for actual_step in actual_steps:
@@ -252,13 +252,13 @@ class EvaluationFramework:
                             best_match = 0.0
                             for expected_step in expected_steps:
                                 similarity = difflib.SequenceMatcher(
-                                    None, 
-                                    str(actual_step).lower(), 
+                                    None,
+                                    str(actual_step).lower(),
                                     str(expected_step).lower()
                                 ).ratio()
                                 best_match = max(best_match, similarity)
                             relevance_scores.append(best_match)
-                    
+
                     query_words = set(query.lower().split())
                     query_relevance = []
                     for step in actual_steps:
@@ -270,12 +270,12 @@ class EvaluationFramework:
                             if query_words_clean:
                                 relevance = len(step_words & query_words_clean) / len(query_words_clean)
                                 query_relevance.append(relevance)
-                    
+
                     step_relevance_score = (
                         (sum(relevance_scores) / len(relevance_scores) if relevance_scores else 0.0) * 0.6 +
                         (sum(query_relevance) / len(query_relevance) if query_relevance else 0.0) * 0.4
                     )
-                
+
                 step_score = step_count_score * 0.5 + step_relevance_score * 0.5
             else:
                 errors.append(f"Test case {i}: No intermediate steps found")
@@ -288,11 +288,11 @@ class EvaluationFramework:
                     answer_score = 0.0
                 else:
                     length_score = min(1.0, len(answer_str) / max(50, len(query) * 0.5))
-                    
+
                     query_words = set(query.lower().split())
                     answer_words = set(answer_str.lower().split())
                     relevance_score = len(query_words & answer_words) / len(query_words) if query_words else 0.0
-                    
+
                     answer_score = (length_score * 0.6 + relevance_score * 0.4)
             else:
                 errors.append(f"Test case {i}: No answer provided")
@@ -389,7 +389,7 @@ class EvaluationFramework:
             try:
                 from .research import load_content
                 knowledge_base = load_content(content_dir)
-                
+
                 # Way 1: Document-level queries
                 doc_test_cases = []
                 for doc_name, doc_content in list(knowledge_base.items())[:3]:
@@ -403,11 +403,11 @@ class EvaluationFramework:
                                 "final_result": f"{doc_name} discusses relevant concepts",
                             },
                         })
-                
+
                 if doc_test_cases:
                     doc_result = self.evaluate_schema_usage("chain_of_thought", doc_test_cases)
                     results[f"{doc_result.test_name}_doc_level"] = doc_result.model_dump()
-                
+
                 # Way 2: Concept-based queries
                 all_content = " ".join(knowledge_base.values()).lower()
                 concept_test_cases = []
@@ -422,11 +422,11 @@ class EvaluationFramework:
                                 "steps": [f"Define {concept}", "Find examples"],
                             },
                         })
-                
+
                 if concept_test_cases:
                     concept_result = self.evaluate_schema_usage("chain_of_thought", concept_test_cases)
                     results[f"{concept_result.test_name}_concept_level"] = concept_result.model_dump()
-                
+
                 # Way 3: Sentence-level responses
                 sentence_responses = []
                 for doc_name, doc_content in knowledge_base.items():
@@ -434,11 +434,11 @@ class EvaluationFramework:
                     for sentence in sentences:
                         if sentence.strip() and len(sentence.strip()) > 20:
                             sentence_responses.append(f"From {doc_name}: {sentence.strip()}.")
-                
+
                 if sentence_responses:
                     sentence_result = self.evaluate_reasoning_coherence(sentence_responses)
                     results[f"{sentence_result.test_name}_sentence_level"] = sentence_result.model_dump()
-                
+
                 # Way 4: Paragraph-level responses
                 para_responses = []
                 for doc_name, doc_content in knowledge_base.items():
@@ -446,11 +446,11 @@ class EvaluationFramework:
                     for para in paragraphs:
                         if para.strip() and len(para.strip()) > 50:
                             para_responses.append(f"Paragraph from {doc_name}: {para[:300]}")
-                
+
                 if para_responses:
                     para_result = self.evaluate_reasoning_coherence(para_responses)
                     results[f"{para_result.test_name}_paragraph_level"] = para_result.model_dump()
-                
+
                 # Way 5: Cross-document queries
                 if len(knowledge_base) >= 2:
                     doc_names = list(knowledge_base.keys())[:2]
@@ -459,14 +459,14 @@ class EvaluationFramework:
                             "input": f"Compare {doc_names[0]} and {doc_names[1]}",
                             "expected": {"input_analysis": str, "comparison": dict},
                             "actual": {
-                                "input_analysis": f"Comparing documents",
+                                "input_analysis": "Comparing documents",
                                 "comparison": {"similarities": [], "differences": []},
                             },
                         }
                     ]
                     cross_result = self.evaluate_schema_usage("decompose_and_synthesize", cross_test_cases)
                     results[f"{cross_result.test_name}_cross_doc"] = cross_result.model_dump()
-                
+
                 # Way 6: Multi-hop dependency gaps with content
                 all_content_text = " ".join(knowledge_base.values()).lower()
                 if "trust" in all_content_text and "uncertainty" in all_content_text and "knowledge" in all_content_text:
@@ -495,7 +495,7 @@ class EvaluationFramework:
                     ]
                     multi_hop_result = self.evaluate_dependency_gap_handling(multi_hop_cases)
                     results[f"{multi_hop_result.test_name}_multi_hop"] = multi_hop_result.model_dump()
-                
+
                 # Way 7: Temporal queries
                 temporal_test_cases = []
                 for doc_name in list(knowledge_base.keys())[:2]:
@@ -507,22 +507,22 @@ class EvaluationFramework:
                             "temporal_context": "Historical",
                         },
                     })
-                
+
                 if temporal_test_cases:
                     temporal_result = self.evaluate_schema_usage("scenario_analysis", temporal_test_cases)
                     results[f"{temporal_result.test_name}_temporal"] = temporal_result.model_dump()
-                
+
                 # Way 8: Quality gradation
                 quality_responses = []
                 for doc_name, doc_content in list(knowledge_base.items())[:2]:
                     quality_responses.append(f"High quality: {doc_content[:200]}")
                     quality_responses.append(f"Medium quality: {doc_content[:100]}")
                     quality_responses.append(f"Low quality: {doc_content[:50]}")
-                
+
                 if quality_responses:
                     quality_result = self.evaluate_reasoning_coherence(quality_responses)
                     results[f"{quality_result.test_name}_quality_gradation"] = quality_result.model_dump()
-                    
+
             except Exception as e:
                 results["content_evaluation_error"] = {
                     "test_name": "content_evaluation",

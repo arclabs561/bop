@@ -1,20 +1,15 @@
 """BOP-integrated meta-learning tests: BOP evaluates itself using its own capabilities."""
 
-import pytest
-import tempfile
 import asyncio
 import json
+import tempfile
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List
+
+import pytest
 
 from bop.agent import KnowledgeAgent
-from bop.meta_learning import MetaLearner
-from bop.research import ResearchAgent
-from bop.orchestrator import StructuredOrchestrator
-from bop.quality_feedback import QualityFeedbackLoop
-from bop.adaptive_quality import AdaptiveQualityManager
-from datasets.load_external_datasets import load_hotpotqa, load_fever, load_scifact
-
+from datasets.load_external_datasets import load_fever, load_hotpotqa
 
 # ============================================================================
 # BOP Self-Evaluation Framework
@@ -22,18 +17,18 @@ from datasets.load_external_datasets import load_hotpotqa, load_fever, load_scif
 
 class BOPSelfEvaluator:
     """BOP evaluates its own meta-learning capabilities."""
-    
+
     def __init__(self, agent: KnowledgeAgent):
         self.agent = agent
         self.evaluation_results = []
-    
+
     async def evaluate_meta_learning_with_bop_research(
         self,
         query: str,
         use_meta_learning: bool = True,
     ) -> Dict[str, Any]:
         """Use BOP's research capabilities to evaluate meta-learning."""
-        
+
         # Create evaluation query that uses BOP's research
         eval_query = f"""Research and evaluate: Does meta-learning improve AI system responses?
 
@@ -55,14 +50,14 @@ Provide evaluation with:
 2. Analysis of meta-learning effectiveness
 3. Recommendations for improvement
 """
-        
+
         # Use BOP's research to evaluate
         response = await self.agent.chat(
             eval_query,
             use_research=True,
             use_schema="decompose_and_synthesize",
         )
-        
+
         evaluation = {
             "query": query,
             "research_conducted": response.get("research_conducted", False),
@@ -70,27 +65,27 @@ Provide evaluation with:
             "has_meta_reflection": "meta_reflection" in response,
             "quality_score": response.get("quality", {}).get("score"),
         }
-        
+
         if response.get("research"):
             research = response["research"]
             evaluation["research_sources"] = len(research.get("subsolutions", []))
             evaluation["topology_available"] = "topology" in research
-        
+
         self.evaluation_results.append(evaluation)
         return evaluation
-    
+
     async def evaluate_experience_accumulation(
         self,
         queries: List[str],
     ) -> Dict[str, Any]:
         """Use BOP to evaluate if experiences accumulate correctly."""
-        
+
         # Get experiences from meta-learner
         all_experiences = []
         for q_type in ["factual", "analytical", "procedural"]:
             exps = self.agent.meta_learner.experience_store.get_relevant_experiences(q_type, limit=20)
             all_experiences.extend(exps)
-        
+
         # Use BOP to analyze experience accumulation
         analysis_query = f"""Analyze experience accumulation in a meta-learning system:
 
@@ -113,11 +108,11 @@ Evaluate:
 
 Respond with JSON: {{"accumulation_working": 0.0-1.0, "diverse": 0.0-1.0, "helpful": 0.0-1.0, "health": 0.0-1.0, "reasoning": "..."}}
 """
-        
+
         try:
             response = await self.agent.chat(analysis_query, use_research=False)
             response_text = response.get("response", "")
-            
+
             import re
             json_match = re.search(r'\{[^}]+\}', response_text, re.DOTALL)
             if json_match:
@@ -127,7 +122,7 @@ Respond with JSON: {{"accumulation_working": 0.0-1.0, "diverse": 0.0-1.0, "helpf
                 return analysis
         except Exception:
             pass
-        
+
         return {
             "accumulation_working": 0.5,
             "total_experiences": len(all_experiences),
@@ -146,29 +141,29 @@ async def test_bop_integrated_hotpotqa_meta_learning():
         hotpot_data = load_hotpotqa(split="dev", max_samples=5)
     except Exception:
         pytest.skip("HotpotQA dataset not available")
-    
+
     if not hotpot_data:
         pytest.skip("HotpotQA dataset empty")
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         evaluator = BOPSelfEvaluator(agent)
-        
+
         # Process queries with BOP research
         queries = [item.get("question", "") for item in hotpot_data if item.get("question")]
-        
+
         for query in queries[:3]:  # Limit for speed
-            evaluation = await evaluator.evaluate_meta_learning_with_bop_research(query)
+            await evaluator.evaluate_meta_learning_with_bop_research(query)
             await asyncio.sleep(0.2)
-        
+
         # BOP should have used its own research capabilities
         assert len(evaluator.evaluation_results) > 0
         assert any(e.get("research_conducted") for e in evaluator.evaluation_results)
@@ -181,23 +176,23 @@ async def test_bop_integrated_fever_meta_learning():
         fever_data = load_fever(split="dev", max_samples=5)
     except Exception:
         pytest.skip("FEVER dataset not available")
-    
+
     if not fever_data:
         pytest.skip("FEVER dataset empty")
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         # Process FEVER claims
         claims = [item.get("claim", "") for item in fever_data if item.get("claim")]
-        
+
         responses = []
         for claim in claims[:3]:  # Limit for speed
             # Use BOP to verify claim
@@ -209,7 +204,7 @@ async def test_bop_integrated_fever_meta_learning():
             )
             responses.append(response)
             await asyncio.sleep(0.2)
-        
+
         # Should have research and meta-learning
         assert len(responses) > 0
         assert any(r.get("research_conducted") for r in responses)
@@ -223,33 +218,33 @@ async def test_bop_integrated_self_evaluation_workflow():
         "How does d-separation relate to causality?",
         "Explain d-separation with examples",
     ]
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         evaluator = BOPSelfEvaluator(agent)
-        
+
         # Process queries
         for query in queries:
-            response = await agent.chat(query, use_research=False)
+            await agent.chat(query, use_research=False)
             await asyncio.sleep(0.1)
-        
+
         # Use BOP to evaluate experience accumulation
         accumulation_analysis = await evaluator.evaluate_experience_accumulation(queries)
-        
+
         # Use BOP research to evaluate meta-learning
         meta_eval = await evaluator.evaluate_meta_learning_with_bop_research(
             "What is meta-learning?",
             use_meta_learning=True,
         )
-        
+
         # BOP should have evaluated itself
         assert "total_experiences" in accumulation_analysis
         assert "research_conducted" in meta_eval
@@ -261,22 +256,22 @@ async def test_bop_integrated_multi_component_evaluation():
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         query = "What is trust and why is it important for knowledge systems?"
-        
+
         # Use all BOP capabilities
         response = await agent.chat(
             query,
             use_research=True,
             use_schema="decompose_and_synthesize",
         )
-        
+
         # Check all components worked together
         components_active = {
             "research": response.get("research_conducted", False),
@@ -284,10 +279,10 @@ async def test_bop_integrated_multi_component_evaluation():
             "meta_learning": "meta_reflection" in response or len(agent.meta_learner.experience_store.experiences) > 0,
             "adaptive": agent.adaptive_manager is not None,
         }
-        
+
         # At least some components should be active
         assert sum(components_active.values()) >= 2
-        
+
         # If research was conducted, check topology
         if response.get("research"):
             research = response["research"]
@@ -300,13 +295,13 @@ async def test_bop_integrated_meta_learning_research_integration():
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         # Add experience about tool effectiveness
         agent.meta_learner.experience_store.add_experience(
             query_type="factual",
@@ -317,18 +312,18 @@ async def test_bop_integrated_meta_learning_research_integration():
             tools_used=["perplexity_search"],
             quality_score=0.9,
         )
-        
+
         # Query that should use experience context in research
         response = await agent.chat(
             "What is d-separation?",
             use_research=True,
             use_schema="decompose_and_synthesize",
         )
-        
+
         # Experience should have been injected into research query
         # (Can't easily verify without mocking, but should not crash)
         assert "response" in response
-        
+
         # If research was conducted, experience context should have helped
         if response.get("research_conducted"):
             assert "research" in response
@@ -342,27 +337,27 @@ async def test_bop_integrated_adaptive_meta_learning_synergy():
         ("How do you build trust?", "procedural"),
         ("Why is trust important?", "analytical"),
     ]
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
         experience_path = Path(tmpdir) / "experiences.json"
-        
+
         agent = KnowledgeAgent(enable_quality_feedback=True)
         if agent.quality_feedback:
             agent.quality_feedback.evaluation_history_path = history_path
         if agent.meta_learner:
             agent.meta_learner.experience_store.storage_path = experience_path
-        
+
         # Process queries - both systems should learn
         for query, expected_type in queries:
-            response = await agent.chat(query, use_research=False)
+            await agent.chat(query, use_research=False)
             await asyncio.sleep(0.1)
-            
+
             # Adaptive learning should learn schema preferences
             if agent.adaptive_manager:
                 strategy = agent.adaptive_manager.get_adaptive_strategy(query)
                 assert strategy is not None
-            
+
             # Meta-learning should accumulate experiences
             experiences = agent.meta_learner.experience_store.get_relevant_experiences(
                 expected_type,
@@ -370,19 +365,19 @@ async def test_bop_integrated_adaptive_meta_learning_synergy():
             )
             # May be 0 if reflection didn't happen, but structure should work
             assert isinstance(experiences, list)
-        
+
         # Both systems should have learned
         if agent.adaptive_manager:
             insights = agent.adaptive_manager.get_performance_insights()
             # Should have some insights
             assert insights is not None
-        
+
         # Meta-learner should have experiences
         all_experiences = []
         for q_type in ["factual", "procedural", "analytical"]:
             exps = agent.meta_learner.experience_store.get_relevant_experiences(q_type, limit=5)
             all_experiences.extend(exps)
-        
+
         # Structure should work (experiences may be 0 if LLM not available)
         assert isinstance(all_experiences, list)
 

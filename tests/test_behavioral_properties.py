@@ -1,9 +1,8 @@
 """Tests for behavioral properties: flow, turn-taking, context, intent."""
 
-import pytest
-import asyncio
-from pathlib import Path
 import tempfile
+
+import pytest
 
 from bop.agent import KnowledgeAgent
 from bop.llm import LLMService
@@ -14,7 +13,7 @@ from tests.test_annotations import annotate_test
 async def test_conversational_flow_natural():
     """
     Test conversational flow: Conversation should flow naturally with smooth transitions.
-    
+
     Pattern: behavioral_properties
     Opinion: conversations_should_flow_naturally
     Category: behavioral_properties
@@ -27,15 +26,15 @@ async def test_conversational_flow_natural():
         category="behavioral_properties",
         hypothesis="Conversations should have natural flow with smooth transitions and maintained context.",
     )
-    
+
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
+
+    with tempfile.TemporaryDirectory():
         agent = KnowledgeAgent(enable_quality_feedback=True)
-        
+
         # Multi-turn conversation
         conversation = [
             ("What is knowledge structure?", "initial"),
@@ -43,7 +42,7 @@ async def test_conversational_flow_natural():
             ("How does that relate to trust?", "related follow-up"),
             ("Thanks, that helps!", "closing"),
         ]
-        
+
         responses = []
         for query, turn_type in conversation:
             response_data = await agent.chat(query, use_research=False)
@@ -52,7 +51,7 @@ async def test_conversational_flow_natural():
                 "turn_type": turn_type,
                 "response": response_data.get("response", "")[:300],
             })
-        
+
         # Use LLM judge to evaluate flow
         judge_prompt = f"""
 Evaluate conversational flow.
@@ -77,7 +76,7 @@ Respond with JSON: {{
     "reasoning": "..."
 }}
 """
-        
+
         try:
             result = await llm.generate_response(judge_prompt)
             assert len(result) > 0
@@ -90,7 +89,7 @@ Respond with JSON: {{
 async def test_turn_taking_appropriate():
     """
     Test turn-taking: Agent should wait appropriately and handle interruptions.
-    
+
     Pattern: behavioral_properties
     Opinion: turn_taking_should_be_appropriate
     Category: behavioral_properties
@@ -103,22 +102,22 @@ async def test_turn_taking_appropriate():
         category="behavioral_properties",
         hypothesis="Agent should wait appropriately, handle interruptions, and maintain natural timing.",
     )
-    
+
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
+
+    with tempfile.TemporaryDirectory():
         agent = KnowledgeAgent(enable_quality_feedback=True)
-        
+
         # Simulate rapid queries (interruption-like)
         queries = [
             "What is knowledge structure?",
             "Wait, actually",  # Interruption attempt
             "What I really want to know is how it relates to trust?",
         ]
-        
+
         responses = []
         for query in queries:
             response_data = await agent.chat(query, use_research=False)
@@ -126,7 +125,7 @@ async def test_turn_taking_appropriate():
                 "query": query,
                 "response": response_data.get("response", "")[:300],
             })
-        
+
         # Use LLM judge to evaluate turn-taking
         judge_prompt = f"""
 Evaluate turn-taking behavior.
@@ -151,7 +150,7 @@ Respond with JSON: {{
     "reasoning": "..."
 }}
 """
-        
+
         try:
             result = await llm.generate_response(judge_prompt)
             assert len(result) > 0
@@ -164,7 +163,7 @@ Respond with JSON: {{
 async def test_context_maintenance_across_turns():
     """
     Test context maintenance: Context should be remembered and referenced across turns.
-    
+
     Pattern: behavioral_properties
     Opinion: context_should_be_maintained
     Category: behavioral_properties
@@ -177,22 +176,22 @@ async def test_context_maintenance_across_turns():
         category="behavioral_properties",
         hypothesis="Agent should remember and reference context across multiple turns.",
     )
-    
+
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
+
+    with tempfile.TemporaryDirectory():
         agent = KnowledgeAgent(enable_quality_feedback=True)
-        
+
         # Conversation with context references
         conversation = [
             "My name is Alice and I'm researching knowledge structure.",
             "What are the key concepts?",  # Should remember "knowledge structure"
             "How does that relate to what I'm researching?",  # Should remember context
         ]
-        
+
         responses = []
         for query in conversation:
             response_data = await agent.chat(query, use_research=False)
@@ -200,7 +199,7 @@ async def test_context_maintenance_across_turns():
                 "query": query,
                 "response": response_data.get("response", "")[:300],
             })
-        
+
         # Use LLM judge to evaluate context maintenance
         judge_prompt = f"""
 Evaluate context maintenance.
@@ -225,7 +224,7 @@ Respond with JSON: {{
     "reasoning": "..."
 }}
 """
-        
+
         try:
             result = await llm.generate_response(judge_prompt)
             assert len(result) > 0
@@ -238,7 +237,7 @@ Respond with JSON: {{
 async def test_user_intent_understanding():
     """
     Test user intent understanding: Agent should correctly identify and respond to user intent.
-    
+
     Pattern: behavioral_properties
     Opinion: intent_should_be_understood
     Category: behavioral_properties
@@ -251,22 +250,22 @@ async def test_user_intent_understanding():
         category="behavioral_properties",
         hypothesis="Agent should correctly identify user intent, understand implicit needs, and provide appropriate clarifications.",
     )
-    
+
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
+
+    with tempfile.TemporaryDirectory():
         agent = KnowledgeAgent(enable_quality_feedback=True)
-        
+
         # Ambiguous queries testing intent understanding
         queries = [
             "I need help with this.",  # Ambiguous
             "Can you explain it better?",  # Implicit reference
             "What about the other thing?",  # Very implicit
         ]
-        
+
         responses = []
         for query in queries:
             response_data = await agent.chat(query, use_research=False)
@@ -274,7 +273,7 @@ async def test_user_intent_understanding():
                 "query": query,
                 "response": response_data.get("response", "")[:300],
             })
-        
+
         # Use LLM judge to evaluate intent understanding
         judge_prompt = f"""
 Evaluate user intent understanding.
@@ -299,7 +298,7 @@ Respond with JSON: {{
     "reasoning": "..."
 }}
 """
-        
+
         try:
             result = await llm.generate_response(judge_prompt)
             assert len(result) > 0

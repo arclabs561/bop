@@ -1,11 +1,10 @@
 """Tests for adaptive quality manager."""
 
-import pytest
-from pathlib import Path
 import tempfile
+from pathlib import Path
 
-from bop.quality_feedback import QualityFeedbackLoop
 from bop.adaptive_quality import AdaptiveQualityManager, AdaptiveStrategy
+from bop.quality_feedback import QualityFeedbackLoop
 
 
 def test_adaptive_manager_initialization():
@@ -15,7 +14,7 @@ def test_adaptive_manager_initialization():
         learning_path = Path(tmpdir) / "test_learning.json"
         feedback = QualityFeedbackLoop(evaluation_history_path=history_path)
         manager = AdaptiveQualityManager(feedback, learning_data_path=learning_path)
-        
+
         assert manager.quality_feedback == feedback
         # Structures may be empty or populated from history
         assert isinstance(manager.query_type_to_schema, dict)
@@ -28,7 +27,7 @@ def test_query_classification():
         history_path = Path(tmpdir) / "test_history.json"
         feedback = QualityFeedbackLoop(evaluation_history_path=history_path)
         manager = AdaptiveQualityManager(feedback)
-        
+
         assert manager._classify_query("What is trust?") == "factual"
         assert manager._classify_query("How does it work?") == "procedural"
         assert manager._classify_query("Why is this important?") == "analytical"
@@ -42,9 +41,9 @@ def test_get_adaptive_strategy():
         history_path = Path(tmpdir) / "test_history.json"
         feedback = QualityFeedbackLoop(evaluation_history_path=history_path)
         manager = AdaptiveQualityManager(feedback)
-        
+
         strategy = manager.get_adaptive_strategy("What is trust?")
-        
+
         assert isinstance(strategy, AdaptiveStrategy)
         assert strategy.schema_selection is not None
         assert strategy.expected_length > 0
@@ -58,7 +57,7 @@ def test_update_from_evaluation():
         history_path = Path(tmpdir) / "test_history.json"
         feedback = QualityFeedbackLoop(evaluation_history_path=history_path)
         manager = AdaptiveQualityManager(feedback)
-        
+
         manager.update_from_evaluation(
             query="What is trust?",
             schema="chain_of_thought",
@@ -66,7 +65,7 @@ def test_update_from_evaluation():
             response_length=150,
             quality_score=0.7,
         )
-        
+
         # Should have learned something
         assert len(manager.query_type_to_schema) > 0 or len(manager.query_type_to_length) > 0
 
@@ -77,7 +76,7 @@ def test_get_improvement_suggestions():
         history_path = Path(tmpdir) / "test_history.json"
         feedback = QualityFeedbackLoop(evaluation_history_path=history_path)
         manager = AdaptiveQualityManager(feedback)
-        
+
         # Add some learning data
         manager.update_from_evaluation(
             query="What is trust?",
@@ -86,9 +85,9 @@ def test_get_improvement_suggestions():
             response_length=150,
             quality_score=0.8,
         )
-        
+
         suggestions = manager.get_improvement_suggestions("What is trust?", 0.5)
-        
+
         assert isinstance(suggestions, list)
         # May or may not have suggestions depending on learning data
         for suggestion in suggestions:
@@ -103,7 +102,7 @@ def test_get_performance_insights():
         history_path = Path(tmpdir) / "test_history.json"
         feedback = QualityFeedbackLoop(evaluation_history_path=history_path)
         manager = AdaptiveQualityManager(feedback)
-        
+
         # Add some learning data
         manager.update_from_evaluation(
             query="What is trust?",
@@ -112,7 +111,7 @@ def test_get_performance_insights():
             response_length=150,
             quality_score=0.7,
         )
-        
+
         manager.update_from_evaluation(
             query="What is trust?",
             schema="chain_of_thought",
@@ -120,9 +119,9 @@ def test_get_performance_insights():
             response_length=200,
             quality_score=0.8,
         )
-        
+
         insights = manager.get_performance_insights()
-        
+
         assert "query_type_performance" in insights
         assert "schema_recommendations" in insights
         assert "research_effectiveness" in insights
@@ -132,9 +131,9 @@ def test_get_performance_insights():
 def test_agent_integration():
     """Test that agent integrates adaptive manager."""
     from bop.agent import KnowledgeAgent
-    
+
     agent = KnowledgeAgent(enable_quality_feedback=True)
-    
+
     assert agent.adaptive_manager is not None
     assert isinstance(agent.adaptive_manager, AdaptiveQualityManager)
 

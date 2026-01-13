@@ -4,16 +4,14 @@ These tests validate complex behavioral nuances that require semantic understand
 or judgment that's difficult to encode in simple assertions.
 """
 
-import pytest
 import tempfile
-import asyncio
 from pathlib import Path
 
+import pytest
+
 from bop.agent import KnowledgeAgent
-from bop.session_manager import HierarchicalSessionManager
-from bop.quality_feedback import QualityFeedbackLoop
-from bop.adaptive_quality import AdaptiveQualityManager
 from bop.llm import LLMService
+from bop.session_manager import HierarchicalSessionManager
 from tests.test_annotations import annotate_test
 
 
@@ -21,7 +19,7 @@ from tests.test_annotations import annotate_test
 async def test_llm_judge_hierarchical_learning_quality():
     """
     Use LLM judge to validate that hierarchical learning improves quality.
-    
+
     Nuance: Judge whether adaptive strategies selected based on hierarchical
     patterns actually improve response quality.
     """
@@ -32,31 +30,31 @@ async def test_llm_judge_hierarchical_learning_quality():
         category="llm_judged",
         hypothesis="Hierarchical learning patterns improve response quality",
     )
-    
+
     # Skip if no LLM available
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
+
+    with tempfile.TemporaryDirectory():
         agent = KnowledgeAgent(enable_quality_feedback=True)
         manager = agent.quality_feedback.session_manager
-        
+
         # Create hierarchical learning scenario
         queries = [
             "What is knowledge structure?",
             "How does it relate to trust?",
             "What are practical applications?",
         ]
-        
+
         responses = []
         for query in queries:
             response = await agent.chat(query, use_research=False)
             responses.append(response.get("response", ""))
-        
+
         manager.flush_buffer()
-        
+
         # Use LLM judge to evaluate if later responses show improvement
         # based on hierarchical learning
         judge_prompt = f"""
@@ -73,12 +71,12 @@ access to hierarchical learning from previous interactions?
 
 Respond with JSON: {{"improved": true/false, "reasoning": "..."}}
 """
-        
+
         try:
             result = await llm.generate_response(judge_prompt)
             # Parse result (simplified - would need proper JSON parsing)
             assert "improved" in result.lower() or "better" in result.lower()
-        except Exception as e:
+        except Exception:
             # If LLM judge fails, at least verify responses exist
             assert len(responses) == 3
             assert all(len(r) > 0 for r in responses)
@@ -88,7 +86,7 @@ Respond with JSON: {{"improved": true/false, "reasoning": "..."}}
 async def test_llm_judge_session_context_relevance():
     """
     Use LLM judge to validate that session context improves relevance.
-    
+
     Nuance: Judge whether responses in a session context are more relevant
     than isolated responses.
     """
@@ -99,21 +97,21 @@ async def test_llm_judge_session_context_relevance():
         category="llm_judged",
         hypothesis="Session context makes responses more relevant",
     )
-    
+
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
+
+    with tempfile.TemporaryDirectory():
         agent = KnowledgeAgent(enable_quality_feedback=True)
-        
+
         # First query establishes context
         response1 = await agent.chat("What is hierarchical learning?", use_research=False)
-        
+
         # Second query should benefit from context
         response2 = await agent.chat("How does it work in practice?", use_research=False)
-        
+
         # Use LLM judge to evaluate relevance
         judge_prompt = f"""
 Evaluate whether the second response is more relevant given the session context.
@@ -128,7 +126,7 @@ Does the second response appropriately build on the first response's context?
 
 Respond with JSON: {{"relevant": true/false, "reasoning": "..."}}
 """
-        
+
         try:
             result = await llm.generate_response(judge_prompt)
             # Verify response shows some awareness of context
@@ -143,7 +141,7 @@ Respond with JSON: {{"relevant": true/false, "reasoning": "..."}}
 async def test_llm_judge_adaptive_strategy_selection():
     """
     Use LLM judge to validate adaptive strategy selection quality.
-    
+
     Nuance: Judge whether adaptive manager selects appropriate strategies
     based on hierarchical patterns.
     """
@@ -154,29 +152,29 @@ async def test_llm_judge_adaptive_strategy_selection():
         category="llm_judged",
         hypothesis="Adaptive manager selects appropriate strategies from hierarchical patterns",
     )
-    
+
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
+
+    with tempfile.TemporaryDirectory():
         agent = KnowledgeAgent(enable_quality_feedback=True)
         adaptive = agent.adaptive_manager
-        
+
         # Build history
         queries = [
             "What is trust?",
             "What is uncertainty?",
             "How do they relate?",
         ]
-        
+
         for query in queries:
             await agent.chat(query, use_research=False)
-        
+
         # Get adaptive strategy
         strategy = adaptive.get_adaptive_strategy("Complex research question")
-        
+
         # Use LLM judge to evaluate strategy appropriateness
         judge_prompt = f"""
 Evaluate whether this adaptive strategy is appropriate for a complex research question,
@@ -188,7 +186,7 @@ Is this strategy appropriate for a complex research question?
 
 Respond with JSON: {{"appropriate": true/false, "reasoning": "..."}}
 """
-        
+
         try:
             result = await llm.generate_response(judge_prompt)
             # Verify we got a judgment
@@ -202,7 +200,7 @@ Respond with JSON: {{"appropriate": true/false, "reasoning": "..."}}
 async def test_llm_judge_cross_session_learning_effectiveness():
     """
     Use LLM judge to validate cross-session learning effectiveness.
-    
+
     Nuance: Judge whether learning from one session actually improves
     performance in a subsequent session.
     """
@@ -213,26 +211,26 @@ async def test_llm_judge_cross_session_learning_effectiveness():
         category="llm_judged",
         hypothesis="Learning from one session improves performance in next session",
     )
-    
+
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
-    with tempfile.TemporaryDirectory() as tmpdir:
+
+    with tempfile.TemporaryDirectory():
         agent = KnowledgeAgent(enable_quality_feedback=True)
-        
+
         # First session
         response1 = await agent.chat("What is knowledge structure?", use_research=False)
-        
+
         # Close first session (simulate)
         manager = agent.quality_feedback.session_manager
         if manager.current_session_id:
             manager.close_session(manager.current_session_id, finalize=True)
-        
+
         # Second session (should benefit from first)
         response2 = await agent.chat("What is knowledge structure?", use_research=False)
-        
+
         # Use LLM judge to compare
         judge_prompt = f"""
 Compare these two responses to the same query, where the second response
@@ -245,7 +243,7 @@ Does the second response show improvement from cross-session learning?
 
 Respond with JSON: {{"improved": true/false, "reasoning": "..."}}
 """
-        
+
         try:
             result = await llm.generate_response(judge_prompt)
             assert len(result) > 0
@@ -259,7 +257,7 @@ Respond with JSON: {{"improved": true/false, "reasoning": "..."}}
 async def test_llm_judge_group_pattern_coherence():
     """
     Use LLM judge to validate coherence of patterns within session groups.
-    
+
     Nuance: Judge whether sessions within a group show coherent patterns
     that differ from other groups.
     """
@@ -270,21 +268,21 @@ async def test_llm_judge_group_pattern_coherence():
         category="llm_judged",
         hypothesis="Sessions within groups show coherent patterns",
     )
-    
+
     try:
         llm = LLMService()
     except Exception:
         pytest.skip("LLM service not available")
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         manager = HierarchicalSessionManager(
             sessions_dir=Path(tmpdir),
             auto_group_by="day",
         )
-        
+
         # Create sessions in same group with similar patterns
         for i in range(3):
-            session_id = manager.create_session(context="research_day")
+            manager.create_session(context="research_day")
             manager.add_evaluation(
                 query=f"Research question {i}",
                 response=f"Research response {i}",
@@ -295,27 +293,27 @@ async def test_llm_judge_group_pattern_coherence():
                 reasoning="",
                 metadata={"group": "research", "day": 1},
             )
-        
+
         manager.flush_buffer()
-        
+
         # Use LLM judge to evaluate group coherence
         groups = manager.groups
         if groups:
             group = list(groups.values())[0]
             sessions = [manager.get_session(sid) for sid in group.session_ids]
-            
+
             judge_prompt = f"""
 Evaluate whether these sessions show coherent patterns within their group.
 
 Sessions in group:
-{chr(10).join(f"Session {i}: {s.context} - {len(s.evaluations)} evaluations" 
+{chr(10).join(f"Session {i}: {s.context} - {len(s.evaluations)} evaluations"
               for i, s in enumerate(sessions))}
 
 Do these sessions show coherent patterns?
 
 Respond with JSON: {{"coherent": true/false, "reasoning": "..."}}
 """
-            
+
             try:
                 llm = LLMService()
                 result = await llm.generate_response(judge_prompt)

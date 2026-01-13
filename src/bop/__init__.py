@@ -1,9 +1,9 @@
 """BOP: Knowledge Structure Research Agent."""
 
-import os
 import logging
+import os
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional, Tuple
 
 # Auto-load .env file from repo root
 from dotenv import load_dotenv
@@ -44,7 +44,7 @@ else:
 def validate_env_setup(verbose: bool = False) -> Tuple[bool, Dict[str, List[str]]]:
     """
     Validate environment variable setup.
-    
+
     Returns:
         (is_valid, issues_dict) where issues_dict contains:
         - 'missing_required': List of missing required variables
@@ -56,7 +56,7 @@ def validate_env_setup(verbose: bool = False) -> Tuple[bool, Dict[str, List[str]
         "missing_optional": [],
         "available": [],
     }
-    
+
     # Check LLM backends (at least one required)
     llm_backends = {
         "OPENAI_API_KEY": "OpenAI",
@@ -65,7 +65,7 @@ def validate_env_setup(verbose: bool = False) -> Tuple[bool, Dict[str, List[str]
         "GOOGLE_API_KEY": "Google/Gemini",
         "GROQ_API_KEY": "Groq",
     }
-    
+
     has_llm = False
     for key, name in llm_backends.items():
         if os.getenv(key):
@@ -74,10 +74,10 @@ def validate_env_setup(verbose: bool = False) -> Tuple[bool, Dict[str, List[str]
         else:
             if verbose:
                 issues["missing_optional"].append(f"⚠️  {name} ({key}) - optional")
-    
+
     if not has_llm:
         issues["missing_required"].append("At least one LLM backend API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY, GOOGLE_API_KEY, or GROQ_API_KEY)")
-    
+
     # Check MCP tools (optional)
     mcp_tools = {
         "PERPLEXITY_API_KEY": "Perplexity (deep research)",
@@ -85,21 +85,21 @@ def validate_env_setup(verbose: bool = False) -> Tuple[bool, Dict[str, List[str]
         "TAVILY_API_KEY": "Tavily (search)",
         "KAGI_API_KEY": "Kagi (search & summarization)",
     }
-    
+
     for key, name in mcp_tools.items():
         if os.getenv(key):
             issues["available"].append(f"✅ {name} ({key})")
         elif verbose:
             issues["missing_optional"].append(f"⚠️  {name} ({key}) - optional")
-    
+
     # Check server config (optional)
     if os.getenv("BOP_API_KEY"):
         issues["available"].append("✅ BOP_API_KEY (server authentication)")
     elif verbose:
         issues["missing_optional"].append("⚠️  BOP_API_KEY - optional (for server auth)")
-    
+
     is_valid = len(issues["missing_required"]) == 0
-    
+
     return is_valid, issues
 
 

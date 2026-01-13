@@ -1,7 +1,8 @@
 """Tests for LLM service error handling and edge cases."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from bop.llm import LLMService
 from bop.schemas import CHAIN_OF_THOUGHT, DECOMPOSE_AND_SYNTHESIZE
@@ -24,9 +25,9 @@ async def test_llm_service_generate_response_with_context():
                     "research": {"summary": "Research summary", "final_synthesis": "Synthesis"},
                     "knowledge_base_results": ["Result 1", "Result 2"],
                 }
-                
+
                 response = await service.generate_response("Test", context=context)
-                
+
                 assert response == "Context-aware response"
                 # Verify context was included in prompt
                 call_args = mock_agent.run.call_args[0][0]
@@ -47,7 +48,7 @@ async def test_llm_service_generate_response_with_schema():
 
                 service = LLMService(backend="openai")
                 response = await service.generate_response("Test", schema=CHAIN_OF_THOUGHT)
-                
+
                 assert response == "Schema-guided response"
                 call_args = mock_agent.run.call_args[0][0]
                 assert "chain_of_thought" in call_args.lower() or "step-by-step" in call_args.lower()
@@ -71,7 +72,7 @@ async def test_llm_service_hydrate_schema_complex():
 
                 service = LLMService(backend="openai")
                 hydrated = await service.hydrate_schema(DECOMPOSE_AND_SYNTHESIZE, "Complex query")
-                
+
                 assert isinstance(hydrated, dict)
                 assert "decomposition" in hydrated or len(hydrated) > 0
 
@@ -90,7 +91,7 @@ async def test_llm_service_hydrate_schema_invalid_response():
 
                 service = LLMService(backend="openai")
                 hydrated = await service.hydrate_schema(CHAIN_OF_THOUGHT, "Test")
-                
+
                 # Should return empty dict for invalid response
                 assert isinstance(hydrated, dict)
 
@@ -109,7 +110,7 @@ async def test_llm_service_decompose_query_fallback():
 
                 service = LLMService(backend="openai")
                 decomposition = await service.decompose_query("Test", DECOMPOSE_AND_SYNTHESIZE)
-                
+
                 # Should fall back to single query
                 assert isinstance(decomposition, list)
                 assert len(decomposition) >= 1
@@ -129,7 +130,7 @@ async def test_llm_service_synthesize_empty_results():
 
                 service = LLMService(backend="openai")
                 synthesis = await service.synthesize_tool_results([], "Test subproblem")
-                
+
                 # Should handle empty results gracefully
                 assert isinstance(synthesis, str)
 
@@ -153,9 +154,9 @@ async def test_llm_service_synthesize_filtered_results():
                     None,  # Invalid
                     {"tool": "test3", "result": ""},  # Empty result
                 ]
-                
+
                 synthesis = await service.synthesize_tool_results(tool_results, "Test")
-                
+
                 # Should synthesize only valid results
                 assert isinstance(synthesis, str)
                 assert len(synthesis) > 0
@@ -177,7 +178,7 @@ async def test_llm_service_synthesize_subsolutions_empty():
                 synthesis = await service.synthesize_subsolutions(
                     [], DECOMPOSE_AND_SYNTHESIZE, "Original query"
                 )
-                
+
                 assert isinstance(synthesis, str)
 
 
@@ -192,7 +193,7 @@ async def test_llm_service_error_propagation():
                 mock_agent_class.return_value = mock_agent
 
                 service = LLMService(backend="openai")
-                
+
                 with pytest.raises(Exception):
                     await service.generate_response("Test")
 
@@ -205,7 +206,7 @@ def test_llm_service_format_schema_def_nested():
         with patch("bop.llm.OpenAIChatModel"):
             with patch("bop.llm.Agent"):
                 service = LLMService(backend="openai")
-                
+
                 complex_schema_def = {
                     "steps": "List of steps",
                     "refinements": [
@@ -215,9 +216,9 @@ def test_llm_service_format_schema_def_nested():
                         }
                     ],
                 }
-                
+
                 formatted = service._format_schema_def(complex_schema_def)
-                
+
                 assert "steps" in formatted
                 assert "refinements" in formatted
                 assert "iteration" in formatted or "changes" in formatted

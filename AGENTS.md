@@ -20,9 +20,12 @@ BOP implements a multi-agent architecture for knowledge structure research and r
 - `System Reminders`: Keep agent on track during long sessions (optional)
 
 **State Management**:
-- `conversation_history`: Tracks conversation context
-- `prior_beliefs`: Tracks user's stated beliefs for evidence alignment
-- `recent_queries`: Tracks recent queries for context-dependent adaptation
+- `conversation_history`: Tracks conversation context (with automatic compaction)
+- `prior_beliefs`: Tracks user's stated beliefs for evidence alignment (last 20)
+- `recent_queries`: Tracks recent queries for context-dependent adaptation (last 20)
+- `todo_list`: Tracks TODO items for multi-step tasks (used by system reminders)
+- `conversation_summary`: Summary of compacted conversation history
+- `scratchpad_dir`: File-based persistent memory directory (optional)
 
 **Key Methods**:
 - `chat()`: Process user messages with optional schema and research
@@ -34,6 +37,12 @@ BOP implements a multi-agent architecture for knowledge structure research and r
 - `_add_source_references()`: Add source citations to response text
 - `_extract_expected_concepts()`: Extract concepts for evaluation
 - `_get_relevant_context()`: Retrieve relevant knowledge base context
+- `_generate_system_reminders()`: Generate system reminders to keep agent on track (when enabled)
+- `update_todo_list()`: Update TODO list for multi-step task tracking (returns result with instructions)
+- `get_todo_list()`: Get current TODO list state
+- `_compact_conversation_history()`: Compact conversation history when it exceeds max length
+- `_save_todo_to_scratchpad()`: Save TODO list to file for persistent memory
+- `_load_todo_from_scratchpad()`: Load TODO list from file on initialization
 
 **Usage**:
 ```python
@@ -58,6 +67,37 @@ response = await agent.chat(
     use_research=True,
 )
 # Skills are automatically loaded based on query relevance
+
+# With TODO list tracking (for multi-step tasks)
+agent = KnowledgeAgent(enable_system_reminders=True)
+# Agent can update TODO list during complex tasks
+result = agent.update_todo_list([
+    {"id": "1", "content": "Analyze codebase structure", "status": "completed", "priority": "high"},
+    {"id": "2", "content": "Identify key components", "status": "in_progress", "priority": "high"},
+    {"id": "3", "content": "Generate summary report", "status": "pending", "priority": "medium"},
+])
+# Result includes TODO list, progress, and embedded instructions (Claude Code pattern)
+# System reminders will include TODO list state in context
+
+# With file-based scratchpad (persistent memory across context resets)
+import os
+os.environ["BOP_ENABLE_SCRATCHPAD"] = "true"
+agent = KnowledgeAgent(enable_system_reminders=True)
+# TODO list automatically saved to .bop_scratchpad/todo.md
+# Agent can resume work after context compaction or restart
+
+# With observability and self-reflection
+agent = KnowledgeAgent(enable_system_reminders=True)
+# ... use agent ...
+
+# Get metrics and self-analysis
+metrics = agent.get_metrics()
+print(f"Compaction events: {metrics['summary']['compaction']['total_events']}")
+
+# Self-reflection: analyze behavior and get suggestions
+analysis = agent.self_reflect()
+print(f"Health score: {analysis['health_score']:.2f}")
+print(f"Suggestions: {analysis['suggestions']}")
 
 # Access progressive disclosure tiers
 summary = response["response_tiers"]["summary"]
@@ -318,6 +358,21 @@ BOP_USE_CONSTRAINTS=true
 
 # Quality Feedback
 BOP_QUALITY_FEEDBACK=true
+
+# Conversation History Management
+BOP_MAX_CONVERSATION_HISTORY=50  # Max messages before compaction
+BOP_USE_LLM_COMPACTION=false  # Use LLM for better compaction quality (adds latency/cost)
+
+# File-Based Scratchpad (persistent memory)
+BOP_ENABLE_SCRATCHPAD=false  # Enable file-based TODO list persistence
+BOP_SCRATCHPAD_DIR=.bop_scratchpad  # Directory for scratchpad files
+
+# Observability and Self-Reflection
+BOP_ENABLE_OBSERVABILITY=true  # Enable metrics tracking and self-reflection
+BOP_METRICS_DIR=data/metrics  # Directory for metrics persistence
+
+# Token-Level Tracking
+BOP_TOKEN_THRESHOLD=140000  # Token count threshold for compaction (70% of 200K default)
 ```
 
 **Setup**:
@@ -494,6 +549,65 @@ This skill should be loaded when...
 10. **Context Adaptation**: System automatically adapts detail level based on query patterns
 11. **Error Handling**: Check `response.get("research_error")` if research was requested but failed
 12. **Constraint Solver**: Enable for production workloads where cost/latency optimization matters; heuristics are sufficient for development
+13. **System Reminders**: Enable `enable_system_reminders=True` for long, multi-step tasks to keep agent focused
+    - Reminders automatically include TODO list state
+    - Reinforce key instructions (scope, file creation rules)
+    - Help prevent drift during complex workflows
+14. **TODO Lists**: Use `update_todo_list()` for multi-step tasks to track progress
+    - Create TODO list at start of complex tasks
+    - Update status as work progresses (pending → in_progress → completed)
+    - System reminders will include TODO state in context
+    - TODO list is isolated per-request in server mode (no state bleeding)
+15. **Request Isolation**: In server mode, each request gets isolated state
+    - Conversation history, beliefs, queries, and TODO lists are per-request
+    - Expensive resources (LLM service, research agent) are shared
+    - Prevents race conditions and state bleeding between concurrent requests
+16. **Conversation History Management**: Automatic compaction for long sessions
+    - Configurable max history length (default: 50 messages, via `BOP_MAX_CONVERSATION_HISTORY`)
+    - Triggers at 70% capacity (not 100%) to prevent performance degradation
+    - Keeps recent messages, summarizes older ones (Claude Code pattern)
+    - Preserves critical context (decisions, unresolved issues)
+    - Supports both heuristic-based (fast) and LLM-based (higher quality) summarization
+    - Robust error handling: never loses history if compaction fails (rollback on error)
+    - Prevents context window overflow while maintaining coherence
+17. **File-Based Scratchpad**: Optional persistent memory (Manus pattern)
+    - Enable with `BOP_ENABLE_SCRATCHPAD=true`
+    - Saves TODO list to `.bop_scratchpad/todo.md`
+    - Persists across context resets and agent restarts
+    - Allows agent to resume work after compaction
+18. **Instructions in Tool Results**: TODO list updates return embedded instructions
+    - Following Claude Code pattern: instructions in tool results, not just system prompts
+    - Reinforces behavior every time TODO list is updated
+    - Includes progress tracking and next task suggestions
+19. **Recency Weighting**: Improved context adaptation
+    - Recent queries and beliefs kept longer (20 instead of 10)
+    - Topic similarity uses recency weighting (more recent = higher weight)
+    - Better adaptation in long conversations
+20. **Observability and Self-Reflection**: Built-in metrics and self-analysis
+    - Tracks compaction events, TODO updates, reminders, errors
+    - `get_metrics()`: Get detailed observability metrics
+    - `self_reflect()`: Analyze own behavior and suggest improvements
+    - Health score calculation and improvement suggestions
+    - Metrics persistence: saves/loads historical metrics across sessions
+    - Enable/disable via `BOP_ENABLE_OBSERVABILITY` (default: true)
+21. **Token-Level Tracking**: Accurate context window management
+    - Uses tiktoken if available for precise token counting
+    - Falls back to character-based estimation (1 token ≈ 4 chars)
+    - Token-based compaction triggers (more accurate than message count)
+    - Configurable via `BOP_TOKEN_THRESHOLD` (default: 140000 = 70% of 200K)
+22. **Improved Heuristic Summarization**: Better NLP-based compaction
+    - Uses key term extraction for better summaries
+    - Preserves key topics and decisions
+    - Falls back gracefully if NLP unavailable
+23. **Automated Health Checks**: Self-optimization
+    - Periodic health monitoring (every 20 operations)
+    - Auto-adjusts settings based on health score
+    - Suggests optimizations (e.g., disable LLM compaction on high failure rate)
+    - Increases history limit automatically on high error rates
+24. **Instruction Effectiveness Tracking**: Feedback loop for improvements
+    - Tracks which instruction formats are used
+    - Enables A/B testing of instruction effectiveness
+    - Context-aware instruction tracking
 
 ## See Also
 

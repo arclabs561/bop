@@ -6,15 +6,14 @@ These tests require:
 - Actual Fly.io deployment access
 """
 
+import json
 import os
 import subprocess
 import time
+from pathlib import Path
+
 import pytest
 import requests
-from pathlib import Path
-from typing import Optional, Dict, Any
-import json
-
 
 # Test configuration
 APP_NAME = os.getenv("FLY_APP_NAME", "bop-wispy-voice-3017")
@@ -91,7 +90,7 @@ class TestDeploymentE2E:
         """Test app has at least one LLM backend secret."""
         exit_code, stdout, _ = run_flyctl_command(["secrets", "list", "-a", APP_NAME])
         assert exit_code == 0
-        
+
         # Check for at least one LLM backend
         has_llm = any(
             key in stdout
@@ -146,7 +145,7 @@ class TestDeployedEndpointsE2E:
         start = time.time()
         response = requests.get(f"{APP_URL}/health", timeout=10)
         elapsed = time.time() - start
-        
+
         assert response.status_code == 200
         assert elapsed < 5.0, f"Health endpoint too slow: {elapsed}s"
 
@@ -166,7 +165,7 @@ class TestDeployedEndpointsE2E:
         exit_code, stdout, _ = run_flyctl_command(["secrets", "list", "-a", APP_NAME])
         if exit_code != 0:
             pytest.skip("Cannot retrieve secrets")
-        
+
         # Try to extract API key (if set)
         api_key = None
         for line in stdout.split("\n"):
@@ -176,17 +175,17 @@ class TestDeployedEndpointsE2E:
                 if len(parts) >= 2:
                     api_key = parts[1]
                 break
-        
+
         if not api_key:
             pytest.skip("BOP_API_KEY not set")
-        
+
         response = requests.post(
             f"{APP_URL}/chat",
             json={"message": "test", "research": False},
             headers={"X-API-Key": api_key},
             timeout=30,  # Chat may take longer
         )
-        
+
         # Should succeed (200) or be unavailable (503)
         assert response.status_code in [200, 503]
         if response.status_code == 200:
@@ -205,17 +204,17 @@ class TestDeployedEndpointsE2E:
                     if len(parts) >= 2:
                         api_key = parts[1]
                     break
-        
+
         headers = {}
         if api_key:
             headers["X-API-Key"] = api_key
-        
+
         response = requests.get(
             f"{APP_URL}/constraints/status",
             headers=headers,
             timeout=10,
         )
-        
+
         # May require auth or be unavailable
         assert response.status_code in [200, 401, 503]
         if response.status_code == 200:
@@ -235,17 +234,17 @@ class TestDeployedEndpointsE2E:
                     if len(parts) >= 2:
                         api_key = parts[1]
                     break
-        
+
         headers = {}
         if api_key:
             headers["X-API-Key"] = api_key
-        
+
         response = requests.get(
             f"{APP_URL}/metrics",
             headers=headers,
             timeout=10,
         )
-        
+
         # May require auth or be unavailable
         assert response.status_code in [200, 401, 503]
         if response.status_code == 200:
@@ -288,7 +287,7 @@ class TestDeploymentFlowE2E:
         """Test validate_secrets.sh script works."""
         script = Path(__file__).parent.parent.parent / "scripts" / "validate_secrets.sh"
         assert script.exists()
-        
+
         # Run script
         result = subprocess.run(
             ["bash", str(script)],
@@ -297,7 +296,7 @@ class TestDeploymentFlowE2E:
             timeout=30,
             env={**os.environ, "FLY_APP_NAME": APP_NAME},
         )
-        
+
         # Should succeed (exit 0) or fail gracefully (exit 1 with message)
         assert result.returncode in [0, 1]
         if result.returncode == 1:
@@ -308,7 +307,7 @@ class TestDeploymentFlowE2E:
         """Test verify_deployment.sh script works."""
         script = Path(__file__).parent.parent.parent / "scripts" / "verify_deployment.sh"
         assert script.exists()
-        
+
         # Run script
         result = subprocess.run(
             ["bash", str(script)],
@@ -317,7 +316,7 @@ class TestDeploymentFlowE2E:
             timeout=60,
             env={**os.environ, "FLY_APP_NAME": APP_NAME},
         )
-        
+
         # Should succeed or fail with clear error
         assert result.returncode in [0, 1]
         if result.returncode == 0:
@@ -328,15 +327,15 @@ class TestDeploymentFlowE2E:
         """Test full deployment flow (validation → deploy → verification)."""
         # This would actually deploy, so we'll just test the scripts exist and are callable
         scripts_dir = Path(__file__).parent.parent.parent / "scripts"
-        
+
         deploy_script = scripts_dir / "deploy_fly.sh"
         validate_script = scripts_dir / "validate_secrets.sh"
         verify_script = scripts_dir / "verify_deployment.sh"
-        
+
         assert deploy_script.exists()
         assert validate_script.exists()
         assert verify_script.exists()
-        
+
         # Check that deploy script calls the others
         deploy_content = deploy_script.read_text()
         assert "validate_secrets" in deploy_content
@@ -351,11 +350,11 @@ class TestDeploymentConfigurationE2E:
     def test_fly_toml_matches_deployment(self):
         """Test fly.toml configuration matches actual deployment."""
         import tomllib
-        
+
         fly_toml = Path(__file__).parent.parent.parent / "fly.toml"
         with open(fly_toml, "rb") as f:
             config = tomllib.load(f)
-        
+
         # Get actual app info
         exit_code, stdout, _ = run_flyctl_command(["info", "-a", APP_NAME, "--json"])
         if exit_code == 0:
@@ -371,7 +370,7 @@ class TestDeploymentConfigurationE2E:
         """Test Dockerfile can be built (dry run)."""
         dockerfile = Path(__file__).parent.parent.parent / "Dockerfile"
         assert dockerfile.exists()
-        
+
         # Check Dockerfile syntax (basic validation)
         content = dockerfile.read_text()
         assert "FROM" in content
@@ -382,15 +381,15 @@ class TestDeploymentConfigurationE2E:
     def test_deployment_configuration_consistent(self):
         """Test deployment configuration is consistent."""
         import tomllib
-        
+
         fly_toml = Path(__file__).parent.parent.parent / "fly.toml"
         dockerfile = Path(__file__).parent.parent.parent / "Dockerfile"
-        
+
         with open(fly_toml, "rb") as f:
             config = tomllib.load(f)
-        
+
         dockerfile_content = dockerfile.read_text()
-        
+
         # Check port consistency
         fly_port = config["http_service"]["internal_port"]
         assert str(fly_port) in dockerfile_content or "8080" in dockerfile_content

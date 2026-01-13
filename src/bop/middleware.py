@@ -3,8 +3,8 @@
 import json
 import logging
 import time
-from typing import Callable, Dict, Any, Optional
 from datetime import datetime, timezone
+from typing import Any, Callable, Dict
 
 from fastapi import Request, Response, status
 from fastapi.responses import JSONResponse
@@ -16,32 +16,33 @@ logger = logging.getLogger(__name__)
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """Add security headers to all responses."""
-    
+
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         response = await call_next(request)
-        
+
         # Security headers
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["X-XSS-Protection"] = "1; mode=block"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
-        
+
         # Remove server header if present (uvicorn adds it)
+        # Use del instead of pop (MutableHeaders doesn't have pop)
         if "server" in response.headers:
             del response.headers["server"]
-        
+
         return response
 
 
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
     """Log all requests for audit trail and debugging."""
-    
+
     def __init__(self, app: ASGIApp, log_body: bool = False, log_headers: bool = False):
         super().__init__(app)
         self.log_body = log_body
         self.log_headers = log_headers
-    
+
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         # Get request ID from context (set by RequestIDMiddleware)
         request_id = getattr(request.state, "request_id", None)
@@ -50,17 +51,17 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
             import uuid
             request_id = str(uuid.uuid4())
             request.state.request_id = request_id
-        
+
         # Get client info
         client_ip = request.client.host if request.client else "unknown"
         user_agent = request.headers.get("user-agent", "unknown")
         method = request.method
         path = request.url.path
         query_params = str(request.query_params) if request.query_params else ""
-        
+
         # Start timer
         start_time = time.time()
-        
+
         # Log request
         log_data: Dict[str, Any] = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -74,7 +75,7 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
             "duration_ms": None,
             "error": None,
         }
-        
+
         # Add headers if requested (but sanitize sensitive ones)
         if self.log_headers:
             headers = dict(request.headers)
@@ -83,10 +84,16 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
                 if key.lower() in headers:
                     headers[key.lower()] = "[REDACTED]"
             log_data["headers"] = headers
-        
+
         # Add body if requested (but limit size and sanitize)
+        # WARNING: Reading body here consumes the stream - body won't be available to endpoint
+        # Only enable body logging if you understand this limitation
         if self.log_body and method in ["POST", "PUT", "PATCH"]:
             try:
+                # Peek at body without consuming (if possible)
+                # Note: FastAPI/Starlette doesn't support peeking, so we must read
+                # This will consume the body stream - endpoint handlers won't receive body
+                # For production, consider disabling body logging or using a custom ASGI middleware
                 body = await request.body()
                 if body and len(body) > 1024 * 1024:  # 1MB max
                     log_data["body"] = "[BODY TOO LARGE - TRUNCATED]"
@@ -112,9 +119,9 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
                             log_data["body"] = "[POTENTIALLY DANGEROUS CONTENT - REDACTED]"
                         else:
                             log_data["body"] = body_str[:512]  # Further limit non-JSON
-            except Exception as e:
+            except Exception:
                 log_data["body_error"] = "Failed to read body"
-        
+
         # Process request
         error_occurred = False
         try:
@@ -131,7 +138,7 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
             # Calculate duration
             duration_ms = (time.time() - start_time) * 1000
             log_data["duration_ms"] = round(duration_ms, 2)
-            
+
             # Log based on status code
             if error_occurred or log_data["status_code"] >= 500:
                 logger.error(f"Request: {json.dumps(log_data)}")
@@ -139,36 +146,42 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
                 logger.warning(f"Request: {json.dumps(log_data)}")
             else:
                 logger.info(f"Request: {json.dumps(log_data)}")
-        
+
         return response
 
 
 class EnhancedRateLimitMiddleware(BaseHTTPMiddleware):
     """Enhanced rate limiting with headers and better tracking."""
-    
+
     def __init__(self, app: ASGIApp, window_seconds: int = 60, max_requests: int = 30):
         super().__init__(app)
         self.window_seconds = window_seconds
         self.max_requests = max_requests
         # In-memory store (TODO: Replace with Redis for multi-instance)
         self._rate_limit_store: Dict[str, list] = {}
-    
+
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         # Skip rate limiting for health checks
         if request.url.path in ["/health", "/"]:
             return await call_next(request)
-        
+
         # Get client identifier (IP or API key if available)
         client_ip = request.client.host if request.client else "unknown"
-        
+
         # Try to get API key for per-key rate limiting
         api_key = request.headers.get("X-API-Key")
         if api_key:
-            # Use API key as identifier (allows per-key rate limiting)
-            identifier = f"api_key:{api_key[:8]}..."  # Truncate for logging
+            # Use full API key for rate limiting (prevents collisions)
+            # Hash it for security (don't store raw key in memory)
+            import hashlib
+            api_key_hash = hashlib.sha256(api_key.encode()).hexdigest()[:16]
+            identifier = f"api_key:{api_key_hash}"
+            # For logging only (truncated for security)
+            log_identifier = f"api_key:{api_key[:8]}..."
         else:
             identifier = f"ip:{client_ip}"
-        
+            log_identifier = identifier
+
         # Check rate limit
         now = time.time()
         if identifier in self._rate_limit_store:
@@ -177,14 +190,14 @@ class EnhancedRateLimitMiddleware(BaseHTTPMiddleware):
                 t for t in self._rate_limit_store[identifier]
                 if now - t < self.window_seconds
             ]
-            
+
             # Check limit
             request_count = len(self._rate_limit_store[identifier])
             if request_count >= self.max_requests:
                 # Calculate reset time
                 oldest_request = min(self._rate_limit_store[identifier])
                 reset_time = int(oldest_request + self.window_seconds)
-                
+
                 response = JSONResponse(
                     status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                     content={
@@ -194,15 +207,15 @@ class EnhancedRateLimitMiddleware(BaseHTTPMiddleware):
                         "reset_at": reset_time,
                     }
                 )
-                
+
                 # Add rate limit headers
                 response.headers["X-RateLimit-Limit"] = str(self.max_requests)
                 response.headers["X-RateLimit-Remaining"] = "0"
                 response.headers["X-RateLimit-Reset"] = str(reset_time)
-                
-                logger.warning(f"Rate limit exceeded: {identifier} ({request_count} requests)")
+
+                logger.warning(f"Rate limit exceeded: {log_identifier} ({request_count} requests)")
                 return response
-            
+
             # Add to store
             self._rate_limit_store[identifier].append(now)
             remaining = self.max_requests - len(self._rate_limit_store[identifier])
@@ -210,17 +223,17 @@ class EnhancedRateLimitMiddleware(BaseHTTPMiddleware):
             # First request
             self._rate_limit_store[identifier] = [now]
             remaining = self.max_requests - 1
-        
+
         # Process request
         response = await call_next(request)
-        
+
         # Add rate limit headers to successful requests
         response.headers["X-RateLimit-Limit"] = str(self.max_requests)
         response.headers["X-RateLimit-Remaining"] = str(remaining)
         response.headers["X-RateLimit-Window"] = str(self.window_seconds)
-        
+
         return response
-    
+
     def clear_expired(self):
         """Clear expired entries (call periodically)."""
         now = time.time()

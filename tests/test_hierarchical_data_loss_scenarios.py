@@ -3,19 +3,17 @@
 These tests identify when data can actually be lost.
 """
 
-import pytest
 import tempfile
 from pathlib import Path
 
 from bop.session_manager import HierarchicalSessionManager
-from bop.quality_feedback import QualityFeedbackLoop
 from tests.test_annotations import annotate_test
 
 
 def test_data_loss_buffer_not_flushed():
     """
     DATA LOSS SCENARIO: Buffer not flushed before crash.
-    
+
     This is expected behavior (performance vs. durability tradeoff),
     but we should document it.
     """
@@ -26,13 +24,13 @@ def test_data_loss_buffer_not_flushed():
         category="data_loss",
         hypothesis="Buffer loss on crash is documented limitation",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         manager = HierarchicalSessionManager(
             sessions_dir=Path(tmpdir),
             batch_size=5,
         )
-        
+
         # Add evaluations (buffered, not flushed)
         session_id = manager.create_session()
         for i in range(3):
@@ -46,14 +44,14 @@ def test_data_loss_buffer_not_flushed():
                 reasoning="",
                 metadata={},
             )
-        
+
         # Don't flush (simulate crash)
         # Data is in buffer, not persisted
-        
+
         # Reload
         manager2 = HierarchicalSessionManager(sessions_dir=Path(tmpdir))
         session = manager2.get_session(session_id)
-        
+
         # Data might be lost (expected - buffer tradeoff)
         # This documents the limitation
         if session:
@@ -67,7 +65,7 @@ def test_data_loss_buffer_not_flushed():
 def test_data_loss_index_out_of_sync():
     """
     DATA LOSS SCENARIO: Index out of sync, sessions not found.
-    
+
     If index is corrupted or out of sync, sessions might not be queryable.
     """
     annotate_test(
@@ -77,13 +75,13 @@ def test_data_loss_index_out_of_sync():
         category="data_loss",
         hypothesis="Index out of sync can make sessions unqueryable",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         manager = HierarchicalSessionManager(
             sessions_dir=Path(tmpdir),
             enable_indexing=True,
         )
-        
+
         # Create session
         session_id = manager.create_session()
         manager.add_evaluation(
@@ -97,17 +95,17 @@ def test_data_loss_index_out_of_sync():
             metadata={},
         )
         manager.flush_buffer()
-        
+
         # Corrupt index
         index_file = Path(tmpdir) / "sessions" / "index.json"
         if index_file.exists():
             index_file.write_text("{}")  # Empty index
-        
+
         # Session file still exists, but index doesn't know about it
         # Query might not find it
-        sessions = manager.query_sessions(min_score=0.6)
+        manager.query_sessions(min_score=0.6)
         # Might not include session_id (index is empty)
-        
+
         # But direct get should work
         session = manager.get_session(session_id)
         assert session is not None  # File still exists
@@ -116,7 +114,7 @@ def test_data_loss_index_out_of_sync():
 def test_data_loss_checksum_failure_handling():
     """
     DATA LOSS SCENARIO: What if checksum fails and we can't repair?
-    
+
     Data might be lost or corrupted.
     """
     annotate_test(
@@ -126,10 +124,10 @@ def test_data_loss_checksum_failure_handling():
         category="data_loss",
         hypothesis="Checksum failures are handled without data loss",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         manager = HierarchicalSessionManager(sessions_dir=Path(tmpdir))
-        
+
         # Create session
         session_id = manager.create_session()
         manager.add_evaluation(
@@ -143,21 +141,21 @@ def test_data_loss_checksum_failure_handling():
             metadata={},
         )
         manager.flush_buffer()
-        
+
         # Corrupt file (change checksum)
         session_file = Path(tmpdir) / "sessions" / f"{session_id}.json"
         if session_file.exists():
             data = json.loads(session_file.read_text())
             data["checksum"] = "wrong_checksum"
             session_file.write_text(json.dumps(data))
-        
+
         # Try to load
         session = manager.get_session(session_id)
         # Should either:
         # 1. Detect corruption and return None
         # 2. Repair and return session
         # 3. Return corrupted session (bug)
-        
+
         # Current implementation recalculates checksum, so should work
         if session:
             assert session.evaluations[0].query == "Test"
@@ -166,7 +164,7 @@ def test_data_loss_checksum_failure_handling():
 def test_actual_behavior_vs_documented():
     """
     DEEP: Compare actual behavior to what we claim.
-    
+
     Do features actually work as documented?
     """
     annotate_test(
@@ -176,14 +174,14 @@ def test_actual_behavior_vs_documented():
         category="deep_analysis",
         hypothesis="Actual behavior matches documented behavior",
     )
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         manager = HierarchicalSessionManager(
             sessions_dir=Path(tmpdir),
             enable_indexing=True,
             enable_buffering=True,
         )
-        
+
         # Documented: "Write buffering for performance"
         # Test: Does it actually buffer?
         session_id = manager.create_session()
@@ -197,23 +195,23 @@ def test_actual_behavior_vs_documented():
             reasoning="",
             metadata={},
         )
-        
+
         # Before flush, data might be in buffer
         # Check if file exists
         session_file = Path(tmpdir) / "sessions" / f"{session_id}.json"
         # Might not exist if buffered
-        
+
         # Flush
         manager.flush_buffer()
-        
+
         # After flush, should exist
         assert session_file.exists()
-        
+
         # Documented: "Indexing for fast lookups"
         # Test: Does query actually use index?
         sessions = manager.query_sessions(min_score=0.6)
         assert isinstance(sessions, list)
-        
+
         # Documented: "Lazy loading with LRU cache"
         # Test: Does it actually lazy load?
         session = manager.get_session(session_id)

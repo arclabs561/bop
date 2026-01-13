@@ -1,7 +1,8 @@
 """Tests for multi-backend LLM service support."""
 
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 from bop.llm import LLMService
 
@@ -51,7 +52,7 @@ def test_llm_service_custom_model_name():
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
         with patch("bop.llm.OpenAIChatModel") as mock_model:
             with patch("bop.llm.Agent"):
-                service = LLMService(backend="openai", model_name="gpt-4o")
+                LLMService(backend="openai", model_name="gpt-4o")
                 mock_model.assert_called_once_with("gpt-4o")
 
 
@@ -76,7 +77,7 @@ def test_llm_service_env_model():
     }):
         with patch("bop.llm.OpenAIChatModel") as mock_model:
             with patch("bop.llm.Agent"):
-                service = LLMService(backend="openai")
+                LLMService(backend="openai")
                 mock_model.assert_called_once_with("gpt-4o")
 
 

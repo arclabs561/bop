@@ -1,10 +1,9 @@
 """Tests for query refinement features."""
 
-import pytest
 from bop.query_refinement import (
-    suggest_followup_queries,
-    refine_query_from_provenance,
     create_query_refinement_panel,
+    refine_query_from_provenance,
+    suggest_followup_queries,
 )
 
 
@@ -29,9 +28,9 @@ def test_suggest_followup_queries():
             }
         ],
     }
-    
+
     suggestions = suggest_followup_queries(claim, provenance_info)
-    
+
     assert len(suggestions) > 0
     assert all("query" in s for s in suggestions)
     assert all("rationale" in s for s in suggestions)
@@ -42,9 +41,9 @@ def test_suggest_followup_queries_no_sources():
     """Test follow-up suggestions when no sources available."""
     claim = "Test claim"
     provenance_info = {"sources": []}
-    
+
     suggestions = suggest_followup_queries(claim, provenance_info)
-    
+
     assert len(suggestions) > 0
     # Should suggest verification query
     assert any(s["type"] == "verification" for s in suggestions)
@@ -65,9 +64,9 @@ def test_refine_query_from_provenance():
             ],
         }
     }
-    
+
     suggestions = refine_query_from_provenance(original_query, provenance_data)
-    
+
     assert len(suggestions) > 0
     assert all("query" in s for s in suggestions)
 
@@ -85,9 +84,9 @@ def test_create_query_refinement_panel():
         }
     }
     original_query = "Test query"
-    
+
     panel = create_query_refinement_panel(provenance_data, original_query)
-    
+
     assert isinstance(panel, str)
     assert len(panel) > 0
     assert "Query Refinement" in panel or "Suggestions" in panel

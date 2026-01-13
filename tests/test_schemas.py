@@ -1,12 +1,11 @@
 """Tests for reasoning schemas."""
 
-import pytest
 
 from bop.schemas import (
-    get_schema,
-    list_schemas,
-    hydrate_schema,
     CHAIN_OF_THOUGHT,
+    get_schema,
+    hydrate_schema,
+    list_schemas,
 )
 
 
