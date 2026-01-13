@@ -1,0 +1,53 @@
+[package]
+name = "bop-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "BOP CLI - Research agent command line interface"
+
+[[bin]]
+name = "bop"
+path = "src/main.rs"
+
+[dependencies]
+# Core
+bop-core = { path = "../bop-core" }
+
+# Async
+tokio = { workspace = true }
+
+# CLI
+clap = { workspace = true }
+clap_complete = "4.5"
+
+# TUI (optional)
+ratatui = { workspace = true, optional = true }
+crossterm = { workspace = true, optional = true }
+
+# Error handling
+anyhow = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+# Output formatting
+serde_json = { workspace = true }
+
+# Directories
+dirs = "6.0"
+
+# Environment
+dotenvy = "0.15"
+
+# Better REPL
+rustyline = "15.0"
+
+# Progress
+indicatif = "0.17"
+
+[features]
+default = []
+tui = ["dep:ratatui", "dep:crossterm"]

@@ -1,0 +1,69 @@
+[workspace]
+resolver = "2"
+members = [
+    "bop-core",
+    "bop-cli",    # Primary interface (CLI-first)
+    # "bop-serve",  # TODO: axum server
+    # "bop-py",     # TODO: pyo3 bindings
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+authors = ["Arc <attobop@gmail.com>"]
+repository = "https://github.com/arclabs561/bop"
+
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1.43", features = ["full"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+thiserror = "2.0"
+anyhow = "1.0"
+
+# CLI
+clap = { version = "4.5", features = ["derive"] }
+
+# TUI
+ratatui = "0.29"
+crossterm = "0.28"
+
+# HTTP client (for LLM APIs)
+reqwest = { version = "0.12", features = ["json", "stream"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Storage
+sled = "0.34"
+
+# Constraint solving
+varisat = "0.2"
+
+# UUID
+uuid = { version = "1.11", features = ["v4", "serde"] }
+
+# Time
+chrono = { version = "0.4", features = ["serde"] }
+
+# Testing
+proptest = "1.5"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+debug = 1
+
+[profile.release-optimized]
+inherits = "release"
+lto = "fat"
+panic = "abort"
+strip = true
+debug = false

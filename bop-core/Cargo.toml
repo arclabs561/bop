@@ -1,0 +1,50 @@
+[package]
+name = "bop-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Core agent logic for BOP - research orchestration, LLM, MCP"
+
+[dependencies]
+# Async
+tokio = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+
+# HTTP (LLM APIs)
+reqwest = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# Storage
+sled = { workspace = true }
+
+# Constraints
+varisat = { workspace = true, optional = true }
+
+# IDs and time
+uuid = { workspace = true }
+chrono = { workspace = true }
+
+# Scholar Stack integration (optional)
+# Note: For serious retrieval, use hop-core at the CLI/app level.
+# These are kept minimal - bop-core focuses on agent/LLM logic.
+cerno-fuse = { path = "../../cerno/crates/cerno-fuse", optional = true }
+
+[features]
+default = []
+constraints = ["dep:varisat"]
+# Enable cerno-fuse for result fusion (RRF, weighted, etc.)
+fusion = ["dep:cerno-fuse"]
+
+[dev-dependencies]
+proptest = { workspace = true }
+tokio = { workspace = true, features = ["test-util"] }
