@@ -103,3 +103,6 @@ Thumbs.db
 
 # OpenMemory - IDE/Assistant specific rules
 .cursor/rules/openmemory.mdc
+
+# Rust
+target/
