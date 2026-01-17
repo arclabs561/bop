@@ -17,18 +17,24 @@
 //! ```
 
 pub mod agent;
+pub mod curation;
 pub mod error;
 pub mod llm;
 pub mod mcp;
+pub mod ops;
 pub mod orchestrator;
 pub mod research;
 pub mod retrieval;
 pub mod session;
+pub mod stigmergy;
 pub mod storage;
 
 pub use agent::Agent;
+pub use curation::{CurationAgent, CurationStats};
 pub use error::{Error, Result};
 pub use llm::LlmProvider;
+pub use ops::cost::{CostMonitor, CostStats};
 pub use orchestrator::Orchestrator;
 pub use research::ResearchAgent;
 pub use session::Session;
+pub use stigmergy::{Stigmergy, StigmergyMarker, MarkerType};

@@ -17,6 +17,7 @@ serde_json = { workspace = true }
 
 # Error handling
 thiserror = { workspace = true }
+anyhow = { workspace = true }
 
 # HTTP (LLM APIs)
 reqwest = { workspace = true }
@@ -26,6 +27,8 @@ tracing = { workspace = true }
 
 # Storage
 sled = { workspace = true }
+redb = { workspace = true }
+hiqlite = { workspace = true }
 
 # Constraints
 varisat = { workspace = true, optional = true }
@@ -34,10 +37,18 @@ varisat = { workspace = true, optional = true }
 uuid = { workspace = true }
 chrono = { workspace = true }
 
+# AWS SDK
+aws-config = { workspace = true }
+aws-sdk-s3 = { workspace = true }
+aws-sdk-costexplorer = { workspace = true }
+
+# Knowledge primitives
+hop-core = { workspace = true }
+
 # Scholar Stack integration (optional)
 # Note: For serious retrieval, use hop-core at the CLI/app level.
 # These are kept minimal - bop-core focuses on agent/LLM logic.
-cerno-fuse = { path = "../../cerno/crates/cerno-fuse", optional = true }
+cerno-fuse = { workspace = true, optional = true }
 
 [features]
 default = []
@@ -48,3 +59,10 @@ fusion = ["dep:cerno-fuse"]
 [dev-dependencies]
 proptest = { workspace = true }
 tokio = { workspace = true, features = ["test-util"] }
+tempfile = { workspace = true }
+criterion = { workspace = true }
+turmoil = { workspace = true }
+
+[[bench]]
+name = "storage_comparison"
+harness = false

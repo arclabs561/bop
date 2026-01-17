@@ -1,11 +1,14 @@
 //! Session management - persistence and replay
 
 use chrono::{DateTime, Utc};
+use redb::{Database, TableDefinition, ReadableTable};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::llm::Message;
 use crate::Result;
+
+const SESSIONS_TABLE: TableDefinition<&[u8; 16], Vec<u8>> = TableDefinition::new("sessions");
 
 /// A conversation session
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -57,15 +60,21 @@ impl Default for Session {
     }
 }
 
-/// Session store backed by sled
+/// Session store backed by redb
 pub struct SessionStore {
-    db: sled::Db,
+    db: Database,
 }
 
 impl SessionStore {
     /// Open or create a session store
     pub fn open(path: impl AsRef<std::path::Path>) -> Result<Self> {
-        let db = sled::open(path)?;
+        let db = Database::create(path)?;
+        // Ensure table exists
+        let write_txn = db.begin_write()?;
+        {
+            let _table = write_txn.open_table(SESSIONS_TABLE)?;
+        }
+        write_txn.commit()?;
         Ok(Self { db })
     }
 
@@ -73,16 +82,25 @@ impl SessionStore {
     pub fn save(&self, session: &Session) -> Result<()> {
         let key = session.id.as_bytes();
         let value = serde_json::to_vec(session)?;
-        self.db.insert(key, value)?;
-        self.db.flush()?;
+        
+        let write_txn = self.db.begin_write()?;
+        {
+            let mut table = write_txn.open_table(SESSIONS_TABLE)?;
+            table.insert(key, value)?;
+        }
+        write_txn.commit()?;
         Ok(())
     }
 
     /// Load a session by ID
     pub fn load(&self, id: Uuid) -> Result<Option<Session>> {
         let key = id.as_bytes();
-        match self.db.get(key)? {
-            Some(value) => {
+        let read_txn = self.db.begin_read()?;
+        let table = read_txn.open_table(SESSIONS_TABLE)?;
+        
+        match table.get(key)? {
+            Some(access) => {
+                let value = access.value();
                 let session: Session = serde_json::from_slice(&value)?;
                 Ok(Some(session))
             }
@@ -93,12 +111,12 @@ impl SessionStore {
     /// List all session IDs
     pub fn list(&self) -> Result<Vec<Uuid>> {
         let mut ids = Vec::new();
-        for result in self.db.iter() {
+        let read_txn = self.db.begin_read()?;
+        let table = read_txn.open_table(SESSIONS_TABLE)?;
+        
+        for result in table.iter()? {
             let (key, _) = result?;
-            if key.len() == 16 {
-                let bytes: [u8; 16] = key.as_ref().try_into().unwrap();
-                ids.push(Uuid::from_bytes(bytes));
-            }
+            ids.push(Uuid::from_bytes(*key.value()));
         }
         Ok(ids)
     }
@@ -106,7 +124,12 @@ impl SessionStore {
     /// Delete a session
     pub fn delete(&self, id: Uuid) -> Result<()> {
         let key = id.as_bytes();
-        self.db.remove(key)?;
+        let write_txn = self.db.begin_write()?;
+        {
+            let mut table = write_txn.open_table(SESSIONS_TABLE)?;
+            table.remove(key)?;
+        }
+        write_txn.commit()?;
         Ok(())
     }
 }

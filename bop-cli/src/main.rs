@@ -131,6 +131,23 @@ enum Commands {
         action: SessionAction,
     },
 
+    /// Infrastructure operations
+    Ops {
+        #[command(subcommand)]
+        action: OpsAction,
+    },
+
+    /// Curation operations
+    Curate {
+        /// Knowledge store path
+        #[arg(short, long, default_value = "/data/knowledge.db")]
+        db: PathBuf,
+
+        /// Stale days threshold
+        #[arg(short, long, default_value = "30")]
+        stale_days: i64,
+    },
+
     /// Launch TUI interface
     #[cfg(feature = "tui")]
     Tui {
@@ -172,6 +189,36 @@ enum SessionAction {
     Delete {
         /// Session ID
         id: String,
+    },
+}
+
+#[derive(Subcommand)]
+enum OpsAction {
+    /// Clean expired stigmergy markers from S3
+    Clean {
+        /// S3 bucket name
+        #[arg(short, long, default_value = "site-arclabs-systems")]
+        bucket: String,
+
+        /// Dry run (don't actually delete)
+        #[arg(long)]
+        dry_run: bool,
+    },
+    /// List active stigmergy markers
+    Sense {
+        /// S3 bucket name
+        #[arg(short, long, default_value = "site-arclabs-systems")]
+        bucket: String,
+
+        /// Filter by topic
+        #[arg(short, long)]
+        topic: Option<String>,
+    },
+    /// AWS cost analysis
+    Cost {
+        /// Month-to-date analysis
+        #[arg(long, default_value = "true")]
+        mtd: bool,
     },
 }
 
@@ -220,6 +267,10 @@ async fn main() -> Result<()> {
         } => cmd_chat(model.as_deref(), &provider, &local_url, session.as_deref()).await,
 
         Commands::Session { action } => cmd_session(action, cli.json).await,
+
+        Commands::Ops { action } => cmd_ops(action, cli.json).await,
+
+        Commands::Curate { db, stale_days } => cmd_curate(&db, stale_days, cli.json).await,
 
         #[cfg(feature = "tui")]
         Commands::Tui { model, provider } => tui::run(&model, &provider).await,
@@ -545,6 +596,97 @@ async fn cmd_session(action: SessionAction, json_output: bool) -> Result<()> {
             store.delete(uuid)?;
             eprintln!("Deleted: {}", id);
         }
+    }
+
+    Ok(())
+}
+
+async fn cmd_ops(action: OpsAction, json_output: bool) -> Result<()> {
+    use bop_core::Stigmergy;
+
+    match action {
+        OpsAction::Clean { bucket, dry_run } => {
+            let stig = Stigmergy::new(bucket).await?;
+            let markers = stig.sense_markers(None, None).await?;
+            
+            let mut deleted = 0;
+            for marker in markers {
+                if marker.is_expired() {
+                    if !dry_run {
+                        stig.delete_marker(&marker).await?;
+                        deleted += 1;
+                    } else {
+                        deleted += 1;
+                    }
+                }
+            }
+
+            if json_output {
+                let output = serde_json::json!({
+                    "status": "success",
+                    "deleted": deleted,
+                    "dry_run": dry_run,
+                });
+                println!("{}", serde_json::to_string_pretty(&output)?);
+            } else {
+                if dry_run {
+                    eprintln!("Dry run: would have deleted {} markers", deleted);
+                } else {
+                    eprintln!("Deleted {} markers", deleted);
+                }
+            }
+        }
+        OpsAction::Sense { bucket, topic } => {
+            let stig = Stigmergy::new(bucket).await?;
+            let markers = stig.sense_markers(topic.as_deref(), None).await?;
+
+            if json_output {
+                println!("{}", serde_json::to_string_pretty(&markers)?);
+            } else {
+                for marker in markers {
+                    println!("[{}] {}: {} (intensity: {:.2})", 
+                        marker.marker_type, marker.agent_id, marker.topic, marker.intensity);
+                }
+            }
+        }
+        OpsAction::Cost { mtd } => {
+            if mtd {
+                let monitor = bop_core::CostMonitor::new().await?;
+                let stats = monitor.get_mtd_stats().await?;
+
+                if json_output {
+                    println!("{}", serde_json::to_string_pretty(&stats)?);
+                } else {
+                    println!("AWS Cost Analysis (MTD: {} to {}):", stats.period_start, stats.period_end);
+                    println!("  Total USD: ${:.2}", stats.total_usd);
+                    println!("  Top Services:");
+                    for (svc, amt) in stats.top_services {
+                        println!("    - {:20}: ${:.2}", svc, amt);
+                    }
+                }
+            }
+        }
+    }
+
+    Ok(())
+}
+
+async fn cmd_curate(db_path: &std::path::Path, stale_days: i64, json_output: bool) -> Result<()> {
+    use bop_core::{CurationAgent, KnowledgeStore};
+
+    let store = KnowledgeStore::open(db_path)?;
+    let agent = CurationAgent::new(store).with_stale_days(stale_days);
+
+    let stats = agent.curate().await?;
+
+    if json_output {
+        println!("{}", serde_json::to_string_pretty(&stats)?);
+    } else {
+        println!("Curation complete:");
+        println!("  Checked: {}", stats.checked);
+        println!("  Stale removed: {}", stats.stale_removed);
+        println!("  Consolidated: {}", stats.consolidated);
+        println!("  Conflicts: {}", stats.conflicts_detected);
     }
 
     Ok(())

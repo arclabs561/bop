@@ -13,14 +13,14 @@ path = "src/main.rs"
 
 [dependencies]
 # Core
-bop-core = { path = "../bop-core" }
+bop-core = { workspace = true }
 
 # Async
 tokio = { workspace = true }
 
 # CLI
 clap = { workspace = true }
-clap_complete = "4.5"
+clap_complete = { workspace = true }
 
 # TUI (optional)
 ratatui = { workspace = true, optional = true }
@@ -43,10 +43,10 @@ dirs = "6.0"
 dotenvy = "0.15"
 
 # Better REPL
-rustyline = "15.0"
+rustyline = { workspace = true }
 
 # Progress
-indicatif = "0.17"
+indicatif = { workspace = true }
 
 [features]
 default = []

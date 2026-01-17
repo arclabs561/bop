@@ -1,50 +1,50 @@
-# BOP Service Dockerfile with Tailscale for Fly.io
-FROM python:3.11-slim
+# BOP - Agentic Research and Orchestration
+# Multi-stage build for lean production image
 
-# Install system dependencies including Tailscale
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    ca-certificates \
+# ============================================================
+# Stage 1: Rust Builder
+# ============================================================
+FROM rust:1.85-slim-bookworm AS builder
+
+WORKDIR /build
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    pkg-config \
+    libssl-dev \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Tailscale
-RUN curl -fsSL https://tailscale.com/install.sh | sh
+# Copy workspace files
+COPY . .
 
-# Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+# Build BOP CLI
+RUN cargo build --release -p bop-cli
 
-# Set working directory
+# ============================================================
+# Stage 2: Runtime Image
+# ============================================================
+FROM debian:bookworm-slim AS runtime
+
 WORKDIR /app
 
-# Copy dependency files and source (needed for package discovery)
-COPY pyproject.toml uv.lock ./
-COPY README.md ./
-COPY src/ ./src/
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    libssl3 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies (including constraint solver)
-# Source is needed for hatchling to discover the package
-RUN uv sync --frozen --extra constraints --extra llm-all
+# Copy binary from builder
+COPY --from=builder /build/target/release/bop /usr/local/bin/bop
 
-# Copy content directory
-COPY content/ ./content/
+# Create data directory
+RUN mkdir -p /data && chmod 755 /data
 
-# Copy Tailscale startup script
-COPY scripts/tailscale-start.sh /usr/local/bin/tailscale-start.sh
-RUN chmod +x /usr/local/bin/tailscale-start.sh
+# Create non-root user
+RUN useradd -m -u 1000 -s /bin/bash agent && \
+    chown -R agent:agent /app /data
 
-# Set environment variables
-ENV PYTHONPATH=/app/src
-ENV BOP_USE_CONSTRAINTS=true
-ENV PORT=8080
+USER agent
 
-# Expose port (Fly.io uses PORT env var)
-EXPOSE 8080
-
-# Health check (uses PORT env var)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD sh -c "python -c \"import urllib.request, os; urllib.request.urlopen('http://localhost:' + os.getenv('PORT', '8080') + '/health')\""
-
-# Start Tailscale and then the server
-CMD ["/usr/local/bin/tailscale-start.sh"]
-
+# Default: show version
+CMD ["bop", "--version"]
