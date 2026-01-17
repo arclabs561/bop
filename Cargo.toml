@@ -3,6 +3,11 @@ resolver = "2"
 members = [
     "bop-core",
     "bop-cli",
+    # L6: Contracts
+    "axi/crates/axi",
+    "axi/crates/axi-eval",
+    "axi/crates/axi-infra-critic",
+    "axi/crates/axi-macros",
 ]
 
 [workspace.package]
@@ -67,8 +72,9 @@ redb = "2.4"
 hiqlite = { version = "0.12", features = ["full"] }
 
 # Knowledge primitives
-hop-core = { path = "../hop-core", default-features = false, features = ["core", "fastembed"] }
+hop-core = { path = "../hop-core", default-features = false, features = ["core", "fastembed", "embeddings"] }
 anno = { path = "../anno/anno", default-features = false }
+axi = { path = "../axi/crates/axi" }
 
 # Constraint solving
 varisat = "0.2"

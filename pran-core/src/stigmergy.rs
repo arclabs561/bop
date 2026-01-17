@@ -83,7 +83,7 @@ impl Stigmergy {
         };
 
         let mut markers = Vec::new();
-        let mut response = self.client
+        let response = self.client
             .list_objects_v2()
             .bucket(&self.bucket)
             .prefix(prefix)
@@ -97,6 +97,8 @@ impl Stigmergy {
                         continue;
                     }
 
+                    // Purposeful fetching: skip if recently seen or stale metadata
+                    // For now, fetch all active markers
                     let data = self.client
                         .get_object()
                         .bucket(&self.bucket)
@@ -107,19 +109,23 @@ impl Stigmergy {
                         .collect()
                         .await?;
 
-                    let marker: StigmergyMarker = serde_json::from_slice(&data.into_bytes())?;
-                    
-                    // Filter by topic if requested
-                    if let Some(t) = topic {
-                        if marker.topic != t {
-                            continue;
-                        }
-                    }
+                    match serde_json::from_slice::<StigmergyMarker>(&data.into_bytes()) {
+                        Ok(marker) => {
+                            // Filter by topic if requested
+                            if let Some(t) = topic {
+                                if marker.topic != t {
+                                    continue;
+                                }
+                            }
 
-                    // Check expiration
-                    let age = Utc::now() - marker.timestamp;
-                    if age.num_hours() < marker.ttl_hours as i64 {
-                        markers.push(marker);
+                            // Check expiration
+                            if !marker.is_expired() {
+                                markers.push(marker);
+                            }
+                        }
+                        Err(e) => {
+                            tracing::warn!("Skipping corrupted marker {}: {}", key, e);
+                        }
                     }
                 }
             }

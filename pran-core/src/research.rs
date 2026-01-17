@@ -40,6 +40,21 @@ impl ResearchAgent {
 
     /// Research a topic
     pub async fn research(&mut self, topic: &str) -> Result<String> {
+        if self.inner().config().use_axi {
+            return self.research_axi(topic).await;
+        }
+        let query = format!(
+            "Research the following topic and provide a comprehensive summary:\n\n{}",
+            topic
+        );
+        self.inner.query(&query).await
+    }
+
+    /// Internal research using Axi deep research pattern
+    async fn research_axi(&mut self, topic: &str) -> Result<String> {
+        // This is where we'd implement the multi-agent planning/critique loop
+        // similar to axi/examples/deep_research.rs
+        // For now, fall back to a structured run
         let query = format!(
             "Research the following topic and provide a comprehensive summary:\n\n{}",
             topic

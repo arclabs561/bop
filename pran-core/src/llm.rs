@@ -150,6 +150,10 @@ impl LlmClient {
         }
     }
 
+    pub fn provider(&self) -> &LlmProvider {
+        &self.provider
+    }
+
     /// Send a completion request
     pub async fn complete(&self, messages: &[Message]) -> Result<String> {
         match &self.provider {

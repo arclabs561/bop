@@ -1,5 +1,5 @@
 [package]
-name = "bop-cli"
+name = "pran-cli"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

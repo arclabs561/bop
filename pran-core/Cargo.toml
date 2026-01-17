@@ -1,5 +1,5 @@
 [package]
-name = "bop-core"
+name = "pran-core"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -44,6 +44,7 @@ aws-sdk-costexplorer = { workspace = true }
 
 # Knowledge primitives
 hop-core = { workspace = true }
+axi = { workspace = true }
 
 # Scholar Stack integration (optional)
 # Note: For serious retrieval, use hop-core at the CLI/app level.
