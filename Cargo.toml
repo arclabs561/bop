@@ -41,7 +41,10 @@ ort = "2.0.0-rc.10"
 rusqlite = "0.32"
 
 # CLI
-clap = { version = "4.5", features = ["derive"] }
+clap = { version = "4.5", features = ["derive", "env", "wrap_help"] }
+clap_complete = "4.5"
+indicatif = "0.17"
+rustyline = "15.0"
 
 # TUI
 ratatui = "0.29"
