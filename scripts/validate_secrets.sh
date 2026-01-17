@@ -4,7 +4,7 @@
 
 set -e
 
-APP_NAME="${FLY_APP_NAME:-bop-wispy-voice-3017}"
+APP_NAME="${FLY_APP_NAME:-pran-wispy-voice-3017}"
 
 echo "🔐 Validating secrets for $APP_NAME..."
 

@@ -41,7 +41,7 @@ footer (optional)
 - `deploy`, `paths`, `hookwise`, `skills`
 
 ### Subject Rules
-- **Maximum 72 characters**
+- **Mbopmum 72 characters**
 - Use imperative mood: "add feature" not "added feature"
 - No period at end
 - Be specific and descriptive

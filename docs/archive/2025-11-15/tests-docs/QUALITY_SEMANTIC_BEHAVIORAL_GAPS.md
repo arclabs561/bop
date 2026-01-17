@@ -14,7 +14,7 @@ We test **security/adversarial** but miss **quality, semantic correctness, and b
 
 ### What We DON'T Test
 
-1. **Grice's Maxims** ❌
+1. **Grice's Mbopms** ❌
    - Quality (truthfulness, evidence)
    - Quantity (right amount)
    - Relation (relevance) - partially
@@ -38,18 +38,18 @@ We test **security/adversarial** but miss **quality, semantic correctness, and b
    - Error handling
    - Self-correction (partially)
 
-## Grice's Maxims: Missing Tests
+## Grice's Mbopms: Missing Tests
 
-### Maxim of Quality (Truthfulness)
+### Mbopm of Quality (Truthfulness)
 **Missing**: Tests for false information, unsupported claims, hallucinations
 
-### Maxim of Quantity (Right Amount)
+### Mbopm of Quantity (Right Amount)
 **Missing**: Tests for appropriate detail level, verbosity, comprehensiveness
 
-### Maxim of Relation (Relevance)
+### Mbopm of Relation (Relevance)
 **Partial**: We test relevance but not conversational relevance
 
-### Maxim of Manner (Clarity)
+### Mbopm of Manner (Clarity)
 **Missing**: Tests for clarity, organization, ambiguity, orderliness
 
 ## Semantic Properties: Missing Tests
@@ -97,14 +97,14 @@ We test **security/adversarial** but miss **quality, semantic correctness, and b
 ## MCP Tools Could Help
 
 ### Research Quality Patterns
-- Perplexity: How to test Grice's maxims
+- Perplexity: How to test Grice's mbopms
 - Firecrawl: Quality evaluation frameworks
 - arXiv: Formal quality evaluation
 - Tavily: Quality testing tools
 
 ## Recommendations
 
-1. **Add Grice's Maxims Tests** - All 4 maxims
+1. **Add Grice's Mbopms Tests** - All 4 mbopms
 2. **Add Semantic Property Tests** - Consistency, coherence, correctness
 3. **Add Behavioral Property Tests** - Flow, turn-taking, context, intent
 4. **Add LLM Agent Behavior Tests** - Tool selection, reasoning, errors

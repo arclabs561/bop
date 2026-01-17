@@ -12,10 +12,10 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.context_topology import ContextNode, ContextTopology
-from bop.orchestrator import StructuredOrchestrator
-from bop.provenance import build_provenance_map
+from pran.agent import KnowledgeAgent
+from pran.context_topology import ContextNode, ContextTopology
+from pran.orchestrator import StructuredOrchestrator
+from pran.provenance import build_provenance_map
 
 
 def test_d_separation_preservation_in_orchestration():
@@ -160,7 +160,7 @@ def test_fisher_information_correlation_with_relevance():
     Test: Verify that claims with high information content (high Fisher Information)
     have higher relevance scores than claims with low information content.
     """
-    from bop.provenance import build_provenance_map
+    from pran.provenance import build_provenance_map
 
     research = {
         "subsolutions": [
@@ -439,7 +439,7 @@ def test_information_geometry_manifold_structure():
     - High relevance = high Fisher Information = strong structure
     - Low relevance = low Fisher Information = weak structure
     """
-    from bop.provenance import build_provenance_map
+    from pran.provenance import build_provenance_map
 
     research = {
         "subsolutions": [

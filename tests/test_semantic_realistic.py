@@ -4,10 +4,10 @@ from pathlib import Path
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.orchestrator import StructuredOrchestrator
-from bop.research import ResearchAgent, load_content
-from bop.semantic_eval import SemanticEvaluator
+from pran.agent import KnowledgeAgent
+from pran.orchestrator import StructuredOrchestrator
+from pran.research import ResearchAgent, load_content
+from pran.semantic_eval import SemanticEvaluator
 
 
 @pytest.fixture

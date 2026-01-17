@@ -9,7 +9,7 @@ Based on:
 import numpy as np
 import pytest
 
-from bop.uncertainty import (
+from pran.uncertainty import (
     aggregate_with_aleatoric_weighting,
     compute_aleatoric_uncertainty_entropy,
     compute_epistemic_uncertainty_jsd,

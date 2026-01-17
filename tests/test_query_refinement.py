@@ -1,6 +1,6 @@
 """Tests for query refinement features."""
 
-from bop.query_refinement import (
+from pran.query_refinement import (
     create_query_refinement_panel,
     refine_query_from_provenance,
     suggest_followup_queries,

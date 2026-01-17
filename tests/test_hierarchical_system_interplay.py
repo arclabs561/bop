@@ -17,11 +17,11 @@ from pathlib import Path
 
 import pytest
 
-from bop.adaptive_quality import AdaptiveQualityManager
-from bop.quality_feedback import QualityFeedbackLoop
-from bop.session_manager import HierarchicalSessionManager
-from bop.session_replay import SessionReplayManager
-from bop.unified_storage import UnifiedSessionStorage
+from pran.adaptive_quality import AdaptiveQualityManager
+from pran.quality_feedback import QualityFeedbackLoop
+from pran.session_manager import HierarchicalSessionManager
+from pran.session_replay import SessionReplayManager
+from pran.unified_storage import UnifiedSessionStorage
 from tests.test_annotations import annotate_test
 
 

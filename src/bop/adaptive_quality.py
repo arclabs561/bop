@@ -287,7 +287,7 @@ class AdaptiveQualityManager:
         queries into subproblems. Without adaptive depth allocation:
         - Simple queries waste compute on unnecessary subproblems
         - Complex queries may not get enough depth for quality answers
-        - Fixed depth (e.g., always 5 subproblems) is suboptimal
+        - Fixed depth (e.g., always 5 subproblems) is suprantimal
 
         ## Learning Approach
 

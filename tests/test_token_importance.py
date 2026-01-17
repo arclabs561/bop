@@ -1,6 +1,6 @@
 """Tests for token importance tracking and visualization."""
 
-from bop.token_importance import (
+from pran.token_importance import (
     compute_term_importance,
     compute_token_importance_for_results,
     extract_key_terms,

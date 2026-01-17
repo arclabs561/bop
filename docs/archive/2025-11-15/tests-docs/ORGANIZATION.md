@@ -19,7 +19,7 @@ tests/
 ├── test_annotations.json              # Stored annotations
 │
 ├── Quality Tests/
-│   ├── test_grice_maxims.py          # Grice's maxims (7 tests)
+│   ├── test_grice_mbopms.py          # Grice's mbopms (7 tests)
 │   ├── test_semantic_properties.py   # Semantic properties (4 tests)
 │   ├── test_behavioral_properties.py # Behavioral properties (4 tests)
 │   ├── test_llm_agent_behavior.py    # LLM agent behavior (4 tests)
@@ -152,8 +152,8 @@ python tests/run_all_tests.py --pattern integration
 
 ### 3. Direct File Execution
 ```bash
-pytest tests/test_grice_maxims.py -v
-python tests/run_all_tests.py --files test_grice_maxims.py
+pytest tests/test_grice_mbopms.py -v
+python tests/run_all_tests.py --files test_grice_mbopms.py
 ```
 
 ## Evaluation Files

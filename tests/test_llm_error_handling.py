@@ -4,16 +4,16 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from bop.llm import LLMService
-from bop.schemas import CHAIN_OF_THOUGHT, DECOMPOSE_AND_SYNTHESIZE
+from pran.llm import LLMService
+from pran.schemas import CHAIN_OF_THOUGHT, DECOMPOSE_AND_SYNTHESIZE
 
 
 @pytest.mark.asyncio
 async def test_llm_service_generate_response_with_context():
     """Test response generation with full context."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent") as mock_agent_class:
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent") as mock_agent_class:
                 mock_agent = AsyncMock()
                 mock_result = MagicMock()
                 mock_result.data = "Context-aware response"
@@ -38,8 +38,8 @@ async def test_llm_service_generate_response_with_context():
 async def test_llm_service_generate_response_with_schema():
     """Test response generation with schema."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent") as mock_agent_class:
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent") as mock_agent_class:
                 mock_agent = AsyncMock()
                 mock_result = MagicMock()
                 mock_result.data = "Schema-guided response"
@@ -58,8 +58,8 @@ async def test_llm_service_generate_response_with_schema():
 async def test_llm_service_hydrate_schema_complex():
     """Test schema hydration with complex schema."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent") as mock_agent_class:
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent") as mock_agent_class:
                 mock_agent = AsyncMock()
                 mock_result = MagicMock()
                 mock_result.data = {
@@ -81,8 +81,8 @@ async def test_llm_service_hydrate_schema_complex():
 async def test_llm_service_hydrate_schema_invalid_response():
     """Test schema hydration handles invalid LLM response."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent") as mock_agent_class:
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent") as mock_agent_class:
                 mock_agent = AsyncMock()
                 mock_result = MagicMock()
                 mock_result.data = "Not a dict"  # Invalid response
@@ -100,8 +100,8 @@ async def test_llm_service_hydrate_schema_invalid_response():
 async def test_llm_service_decompose_query_fallback():
     """Test query decomposition falls back if LLM returns invalid format."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent") as mock_agent_class:
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent") as mock_agent_class:
                 mock_agent = AsyncMock()
                 mock_result = MagicMock()
                 mock_result.data = "Not a list"  # Invalid format
@@ -120,8 +120,8 @@ async def test_llm_service_decompose_query_fallback():
 async def test_llm_service_synthesize_empty_results():
     """Test synthesis handles empty tool results."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent") as mock_agent_class:
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent") as mock_agent_class:
                 mock_agent = AsyncMock()
                 mock_result = MagicMock()
                 mock_result.data = "No results message"
@@ -139,8 +139,8 @@ async def test_llm_service_synthesize_empty_results():
 async def test_llm_service_synthesize_filtered_results():
     """Test synthesis filters invalid tool results."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent") as mock_agent_class:
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent") as mock_agent_class:
                 mock_agent = AsyncMock()
                 mock_result = MagicMock()
                 mock_result.data = "Synthesized"
@@ -166,8 +166,8 @@ async def test_llm_service_synthesize_filtered_results():
 async def test_llm_service_synthesize_subsolutions_empty():
     """Test synthesis handles empty subsolutions."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent") as mock_agent_class:
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent") as mock_agent_class:
                 mock_agent = AsyncMock()
                 mock_result = MagicMock()
                 mock_result.data = "No solutions"
@@ -186,8 +186,8 @@ async def test_llm_service_synthesize_subsolutions_empty():
 async def test_llm_service_error_propagation():
     """Test that LLM errors are properly handled."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent") as mock_agent_class:
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent") as mock_agent_class:
                 mock_agent = AsyncMock()
                 mock_agent.run = AsyncMock(side_effect=Exception("LLM API error"))
                 mock_agent_class.return_value = mock_agent
@@ -203,8 +203,8 @@ def test_llm_service_format_schema_def_nested():
     # Test the method directly without requiring API key
     # We'll create a minimal service instance or test the method logic
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent"):
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent"):
                 service = LLMService(backend="openai")
 
                 complex_schema_def = {

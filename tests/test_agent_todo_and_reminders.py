@@ -12,7 +12,7 @@ os.environ["BOP_ENABLE_OBSERVABILITY"] = "true"
 @pytest.fixture
 def agent():
     """Create agent for testing."""
-    from src.bop.agent import KnowledgeAgent
+    from src.pran.agent import KnowledgeAgent
     return KnowledgeAgent(enable_system_reminders=True)
 
 

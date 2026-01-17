@@ -1,6 +1,6 @@
 """Tests for visualization helpers."""
 
-from bop.visualizations import (
+from pran.visualizations import (
     create_document_relationship_graph,
     create_source_matrix_heatmap,
     create_token_importance_chart,

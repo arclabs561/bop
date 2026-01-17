@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.semantic_eval import SemanticEvaluator
+from pran.agent import KnowledgeAgent
+from pran.semantic_eval import SemanticEvaluator
 from datasets import get_dataset_by_domain, load_all_datasets
 
 

@@ -21,7 +21,7 @@ if ! flyctl auth whoami &> /dev/null; then
     flyctl auth login
 fi
 
-APP_NAME="bop-wispy-voice-3017"
+APP_NAME="pran-wispy-voice-3017"
 export FLY_APP_NAME="$APP_NAME"
 
 # Validate secrets before deployment

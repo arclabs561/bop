@@ -7,7 +7,7 @@ from typing import List
 from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 
-from bop.quality_feedback import QualityFeedbackLoop
+from pran.quality_feedback import QualityFeedbackLoop
 from tests.test_annotations import annotate_test
 
 

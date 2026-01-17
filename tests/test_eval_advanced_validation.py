@@ -2,14 +2,14 @@
 
 import pytest
 
-from bop.eval import EvaluationFramework
+from pran.eval import EvaluationFramework
 
 
 def test_evaluate_schema_usage_type_validation():
     """Test that schema evaluation validates field types."""
     framework = EvaluationFramework()
 
-    from bop.schemas import get_schema
+    from pran.schemas import get_schema
     schema = get_schema("chain_of_thought")
     if not schema:
         pytest.skip("chain_of_thought schema not found")
@@ -43,7 +43,7 @@ def test_evaluate_schema_usage_correct_types():
     """Test that schema evaluation rewards correct types."""
     framework = EvaluationFramework()
 
-    from bop.schemas import get_schema
+    from pran.schemas import get_schema
     schema = get_schema("chain_of_thought")
     if not schema:
         pytest.skip("chain_of_thought schema not found")
@@ -192,7 +192,7 @@ def test_evaluate_schema_usage_type_validation_mixed():
     """Test type validation with mixed correct and incorrect types."""
     framework = EvaluationFramework()
 
-    from bop.schemas import get_schema
+    from pran.schemas import get_schema
     schema = get_schema("chain_of_thought")
     if not schema:
         pytest.skip("chain_of_thought schema not found")

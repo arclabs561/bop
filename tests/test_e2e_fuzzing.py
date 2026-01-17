@@ -9,7 +9,7 @@ import tempfile
 
 import pytest
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 from tests.test_annotations import annotate_test
 
 

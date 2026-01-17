@@ -4,7 +4,7 @@ Tests based on established evaluation frameworks: HELM, Chatbot Arena, MT-Bench.
 """
 
 
-from bop.semantic_eval import SemanticEvaluator
+from pran.semantic_eval import SemanticEvaluator
 from tests.test_annotations import annotate_test
 
 

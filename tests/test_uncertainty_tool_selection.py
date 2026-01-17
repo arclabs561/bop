@@ -4,8 +4,8 @@ Tests for MUSE-based tool selection and aleatoric-aware aggregation.
 
 import pytest
 
-from bop.context_topology import ContextNode
-from bop.uncertainty_tool_selection import (
+from pran.context_topology import ContextNode
+from pran.uncertainty_tool_selection import (
     aggregate_results_with_aleatoric_weighting,
     select_tools_with_muse,
 )

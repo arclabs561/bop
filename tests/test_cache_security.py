@@ -3,7 +3,7 @@
 import tempfile
 from pathlib import Path
 
-from bop.cache import PersistentCache
+from pran.cache import PersistentCache
 
 
 class TestCacheSecurity:

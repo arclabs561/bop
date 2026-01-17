@@ -2,7 +2,7 @@
 
 from fastapi import status
 
-from src.bop.error_handling import handle_exception, sanitize_error_message
+from src.pran.error_handling import handle_exception, sanitize_error_message
 
 
 def test_safe_error_message_returned():
@@ -20,7 +20,7 @@ def test_safe_error_message_returned():
 def test_unsafe_error_message_sanitized():
     """Test that unsafe error messages are sanitized."""
     # Unsafe error (contains file path)
-    unsafe_error = ValueError("Error in /app/src/bop/server.py line 123")
+    unsafe_error = ValueError("Error in /app/src/pran/server.py line 123")
     sanitized = sanitize_error_message(unsafe_error)
 
     # Should return generic message
@@ -64,7 +64,7 @@ def test_handle_exception_returns_informative():
 def test_handle_exception_sanitizes_unsafe():
     """Test that handle_exception sanitizes unsafe errors."""
     # Unsafe error
-    unsafe_error = ValueError("Error at /app/src/bop/server.py:123")
+    unsafe_error = ValueError("Error at /app/src/pran/server.py:123")
     http_exception = handle_exception(unsafe_error)
 
     # Should have generic message

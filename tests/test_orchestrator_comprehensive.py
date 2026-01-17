@@ -2,9 +2,9 @@
 
 import pytest
 
-from bop.orchestrator import StructuredOrchestrator
-from bop.research import ResearchAgent
-from bop.schemas import list_schemas
+from pran.orchestrator import StructuredOrchestrator
+from pran.research import ResearchAgent
+from pran.schemas import list_schemas
 
 
 @pytest.mark.asyncio

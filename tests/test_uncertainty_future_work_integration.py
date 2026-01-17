@@ -10,13 +10,13 @@ End-to-end integration tests for all future work items:
 import numpy as np
 import pytest
 
-from bop.calibration_improvement import (
+from pran.calibration_improvement import (
     calibrate_confidence_with_uncertainty,
     improve_calibration_with_uncertainty,
 )
-from bop.context_topology import ContextNode
-from bop.uncertainty import extract_prediction_from_result
-from bop.uncertainty_tool_selection import (
+from pran.context_topology import ContextNode
+from pran.uncertainty import extract_prediction_from_result
+from pran.uncertainty_tool_selection import (
     aggregate_results_with_aleatoric_weighting,
     select_tools_with_muse,
 )

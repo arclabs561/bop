@@ -3,8 +3,8 @@
 import tempfile
 from pathlib import Path
 
-from bop.adaptive_quality import AdaptiveQualityManager, AdaptiveStrategy
-from bop.quality_feedback import QualityFeedbackLoop
+from pran.adaptive_quality import AdaptiveQualityManager, AdaptiveStrategy
+from pran.quality_feedback import QualityFeedbackLoop
 
 
 def test_adaptive_manager_initialization():
@@ -130,7 +130,7 @@ def test_get_performance_insights():
 
 def test_agent_integration():
     """Test that agent integrates adaptive manager."""
-    from bop.agent import KnowledgeAgent
+    from pran.agent import KnowledgeAgent
 
     agent = KnowledgeAgent(enable_quality_feedback=True)
 

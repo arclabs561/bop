@@ -2,8 +2,8 @@
 
 import pytest
 
-from bop.constraints import PYSAT_AVAILABLE, ConstraintSolver, create_default_constraints
-from bop.eval import EvaluationFramework, EvaluationResult
+from pran.constraints import PYSAT_AVAILABLE, ConstraintSolver, create_default_constraints
+from pran.eval import EvaluationFramework, EvaluationResult
 
 
 @pytest.mark.skipif(not PYSAT_AVAILABLE, reason="PySAT not available")
@@ -171,8 +171,8 @@ def test_eval_constraint_solver_comparison():
     """Evaluate constraint solver vs heuristic selection."""
     framework = EvaluationFramework()
 
-    from bop.constraints import create_default_constraints
-    from bop.orchestrator import StructuredOrchestrator
+    from pran.constraints import create_default_constraints
+    from pran.orchestrator import StructuredOrchestrator
 
     query = "Research topic"
     constraints = create_default_constraints()

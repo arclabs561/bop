@@ -1,8 +1,8 @@
 """Tests to identify over-complications and unnecessary complexity."""
 
 import pytest
-from bop.knowledge_tracking import KnowledgeTracker
-from bop.agent import KnowledgeAgent
+from pran.knowledge_tracking import KnowledgeTracker
+from pran.agent import KnowledgeAgent
 
 
 def test_concept_extraction_overcomplicated():

@@ -74,7 +74,7 @@ Comprehensive guide to what Hookwise can do, based on documentation review.
 {
   documentation: {
     enabled: true,
-    maxRootFiles: 25,  // Maximum markdown files in root
+    maxRootFiles: 25,  // Mbopmum markdown files in root
     archivePatterns: [
       'FINAL_', 'COMPLETE_', 'SESSION_', 'ANALYSIS_',
       '_REVIEW.md', '_ANALYSIS.md', '_PLAN.md',

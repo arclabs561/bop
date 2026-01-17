@@ -53,7 +53,7 @@ X-API-Key: your-api-key
 **Query Parameters:**
 - `group_id` (optional): Filter by group ID
 - `user_id` (optional): Filter by user ID
-- `limit` (default: 10): Maximum number of sessions to return
+- `limit` (default: 10): Mbopmum number of sessions to return
 - `session_status` (optional): Filter by status (active, closed, archived)
 
 ### Close Session

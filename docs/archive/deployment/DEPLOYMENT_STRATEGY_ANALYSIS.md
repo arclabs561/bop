@@ -166,7 +166,7 @@
 - ✅ Use Fly proxy for local development
 
 **Benefits**:
-- Maximum security (no public exposure)
+- Mbopmum security (no public exposure)
 - Best mobile experience (native Tailscale apps)
 - Simple access (works like local network)
 - Cost-effective (auto-stop + free Tailscale)

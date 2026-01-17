@@ -1,6 +1,6 @@
 """Tests for token-level provenance tracking."""
 
-from bop.provenance import (
+from pran.provenance import (
     build_provenance_map,
     compute_token_matches,
     extract_claims_from_response,

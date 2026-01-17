@@ -6,7 +6,7 @@ These tests identify when data can actually be lost.
 import tempfile
 from pathlib import Path
 
-from bop.session_manager import HierarchicalSessionManager
+from pran.session_manager import HierarchicalSessionManager
 from tests.test_annotations import annotate_test
 
 

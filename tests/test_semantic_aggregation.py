@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from bop.semantic_eval import SemanticEvaluator, SemanticJudgment
+from pran.semantic_eval import SemanticEvaluator, SemanticJudgment
 
 
 def test_judgment_aggregation():

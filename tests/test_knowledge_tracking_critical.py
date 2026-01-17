@@ -4,8 +4,8 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.knowledge_tracking import KnowledgeTracker
+from pran.agent import KnowledgeAgent
+from pran.knowledge_tracking import KnowledgeTracker
 
 
 def test_knowledge_tracker_persistence():

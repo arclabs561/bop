@@ -2,7 +2,7 @@
 
 import pytest
 
-from bop.mcp_tools import TOOL_PARAM_MAP, call_mcp_tool
+from pran.mcp_tools import TOOL_PARAM_MAP, call_mcp_tool
 
 
 @pytest.mark.asyncio

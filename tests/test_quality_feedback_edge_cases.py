@@ -3,7 +3,7 @@
 import tempfile
 from pathlib import Path
 
-from bop.quality_feedback import QualityFeedbackLoop
+from pran.quality_feedback import QualityFeedbackLoop
 
 
 def test_quality_feedback_without_sessions():

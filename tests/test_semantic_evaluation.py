@@ -5,9 +5,9 @@ from typing import Any, Dict, List
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.orchestrator import StructuredOrchestrator
-from bop.research import ResearchAgent, load_content
+from pran.agent import KnowledgeAgent
+from pran.orchestrator import StructuredOrchestrator
+from pran.research import ResearchAgent, load_content
 
 
 @pytest.fixture

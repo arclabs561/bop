@@ -9,7 +9,7 @@ use crate::llm::{LlmClient, LlmProvider, Message};
 use crate::mcp::McpClient;
 use crate::session::Session;
 use crate::Result;
-use axi::Agent as AxiAgent;
+use axi::Agent as BopAgent;
 use axi::ModelAdapter;
 
 /// Agent configuration
@@ -18,7 +18,7 @@ pub struct AgentConfig {
     pub system_prompt: String,
     pub max_turns: usize,
     pub tool_use_enabled: bool,
-    pub use_axi: bool,
+    pub use_bop: bool,
 }
 
 impl Default for AgentConfig {
@@ -27,7 +27,7 @@ impl Default for AgentConfig {
             system_prompt: "You are a helpful research assistant.".into(),
             max_turns: 10,
             tool_use_enabled: true,
-            use_axi: true,
+            use_bop: true,
         }
     }
 }
@@ -50,8 +50,8 @@ pub struct Agent {
     mcp: Option<McpClient>,
     state: AgentState,
     history: Vec<Message>,
-    // Experimental: Axi agent integration
-    axi_agent: Option<AxiAgent>,
+    // Experimental: Bop agent integration
+    bop_agent: Option<BopAgent>,
 }
 
 impl Agent {
@@ -64,16 +64,16 @@ impl Agent {
             mcp: None,
             state: AgentState::Idle,
             history: Vec::new(),
-            axi_agent: None,
+            bop_agent: None,
         }
     }
 
-    /// Create an agent using Axi (experimental)
-    pub fn with_axi(provider: LlmProvider) -> Self {
+    /// Create an agent using Bop (experimental)
+    pub fn with_bop(provider: LlmProvider) -> Self {
         let mut agent = Self::new(provider);
-        // Initialize Axi agent with empty context for now
+        // Initialize Bop agent with empty context for now
         // This is a placeholder for future integration
-        agent.axi_agent = Some(AxiAgent::new((), "You are a helpful research assistant."));
+        agent.bop_agent = Some(BopAgent::new((), "You are a helpful research assistant."));
         agent
     }
 
@@ -102,8 +102,8 @@ impl Agent {
 
     /// Process a user query and return a response
     pub async fn query(&mut self, input: &str) -> Result<String> {
-        if self.config.use_axi {
-            return self.query_axi(input).await;
+        if self.config.use_bop {
+            return self.query_bop(input).await;
         }
 
         self.state = AgentState::Thinking;
@@ -142,9 +142,13 @@ impl Agent {
         }
     }
 
-    /// Internal query using Axi engine
-    async fn query_axi(&mut self, input: &str) -> Result<String> {
-        use axi::adapters::{anthropic::AnthropicAdapter, openai::OpenAiAdapter, ollama::OllamaAdapter};
+    /// Internal query using Bop engine
+    async fn query_bop(&mut self, input: &str) -> Result<String> {
+        use axi::adapters::{
+            anthropic::AnthropicAdapter,
+            ollama::OllamaAdapter,
+            openai::OpenAiAdapter,
+        };
         use axi::RunOutcome;
 
         let provider = self.llm.provider();
@@ -164,18 +168,18 @@ impl Agent {
             }
         };
 
-        let mut axi_agent = self.axi_agent.take().unwrap_or_else(|| {
-            AxiAgent::new((), &self.config.system_prompt)
+        let mut bop_agent = self.bop_agent.take().unwrap_or_else(|| {
+            BopAgent::new((), &self.config.system_prompt)
         });
 
-        // Map history to axi messages
+        // Map history to bop messages
         for msg in &self.history {
-            // axi::agent::Message mapping logic
+            // bop::agent::Message mapping logic
         }
         
-        let result = axi_agent.run::<String>(adapter.as_ref(), input, None);
+        let result = bop_agent.run::<String>(adapter.as_ref(), input, None);
         
-        self.axi_agent = Some(axi_agent);
+        self.bop_agent = Some(bop_agent);
 
         match result {
             Ok(RunOutcome::Completed(run)) => {

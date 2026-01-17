@@ -2,7 +2,7 @@
 
 import tempfile
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 
 
 async def test_agent_with_corrupted_sessions():

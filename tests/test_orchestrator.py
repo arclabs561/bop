@@ -2,9 +2,9 @@
 
 import pytest
 
-from bop.orchestrator import StructuredOrchestrator, ToolSelector, ToolType
-from bop.research import ResearchAgent
-from bop.schemas import get_schema
+from pran.orchestrator import StructuredOrchestrator, ToolSelector, ToolType
+from pran.research import ResearchAgent
+from pran.schemas import get_schema
 
 
 @pytest.mark.asyncio
@@ -139,7 +139,7 @@ async def test_topology_aware_tool_selection():
     orchestrator = StructuredOrchestrator(research_agent)
 
     # Add some nodes to topology first
-    from bop.context_topology import ContextNode
+    from pran.context_topology import ContextNode
     node = ContextNode(
         id="test_node",
         content="Test content",

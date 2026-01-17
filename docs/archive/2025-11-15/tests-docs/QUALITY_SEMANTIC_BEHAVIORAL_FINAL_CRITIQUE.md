@@ -4,7 +4,7 @@
 
 **What We Test**: Security/adversarial attacks, basic quality metrics (relevance, accuracy, completeness)
 
-**What We Miss**: Grice's maxims, semantic properties, behavioral properties, LLM agent behavior, custom requirements
+**What We Miss**: Grice's mbopms, semantic properties, behavioral properties, LLM agent behavior, custom requirements
 
 **Critical Gap**: We test security but miss conversational quality, semantic correctness, and behavioral properties.
 
@@ -31,7 +31,7 @@
 
 ### What We DON'T Test ❌
 
-1. **Grice's Maxims** - **ZERO coverage**
+1. **Grice's Mbopms** - **ZERO coverage**
    - Quality (truthfulness, evidence-based)
    - Quantity (right amount)
    - Relation (relevance) - partially
@@ -66,7 +66,7 @@
 
 ### Perplexity Research Found:
 
-1. **Grice's Maxims Testing**
+1. **Grice's Mbopms Testing**
    - Quality: Test for false information, unsupported claims, hallucinations, confidence calibration
    - Quantity: Test for appropriate detail level, verbosity, comprehensiveness, expertise adaptation
    - Relation: Test for relevance, topic focus, tangents (we partially do this)
@@ -94,9 +94,9 @@
 
 ### Firecrawl Research Found:
 
-1. **Conversational Maxims for Human-AI**
+1. **Conversational Mbopms for Human-AI**
    - Prescriptive guidance on assessing conversational quality
-   - Reinterpreted maxims tailored to human-LLM contexts
+   - Reinterpreted mbopms tailored to human-LLM contexts
    - Actionable design considerations by interaction stage
 
 2. **Evaluation Frameworks**
@@ -119,14 +119,14 @@
 
 ## New Tests Created
 
-### Grice's Maxims Tests (6 tests)
-- `test_grice_quality_maxim_truthfulness` - Truthfulness and evidence
-- `test_grice_quantity_maxim_appropriate_amount` - Right amount
-- `test_grice_relation_maxim_relevance` - Relevance (enhance existing)
-- `test_grice_manner_maxim_clarity` - Clarity and organization
-- `test_grice_benevolence_maxim_harmful_content` - Harmful content handling
-- `test_grice_transparency_maxim_knowledge_boundaries` - Knowledge boundaries
-- `test_grice_maxims_comprehensive` - All maxims together
+### Grice's Mbopms Tests (6 tests)
+- `test_grice_quality_mbopm_truthfulness` - Truthfulness and evidence
+- `test_grice_quantity_mbopm_appropriate_amount` - Right amount
+- `test_grice_relation_mbopm_relevance` - Relevance (enhance existing)
+- `test_grice_manner_mbopm_clarity` - Clarity and organization
+- `test_grice_benevolence_mbopm_harmful_content` - Harmful content handling
+- `test_grice_transparency_mbopm_knowledge_boundaries` - Knowledge boundaries
+- `test_grice_mbopms_comprehensive` - All mbopms together
 
 ### Semantic Property Tests (4 tests)
 - `test_semantic_consistency_across_responses` - Concept consistency
@@ -152,7 +152,7 @@
 
 | Aspect | Current | Ideal |
 |--------|---------|-------|
-| **Grice's Maxims** | ❌ None | ✅ All 4 + augmented (7 tests) |
+| **Grice's Mbopms** | ❌ None | ✅ All 4 + augmented (7 tests) |
 | **Semantic Properties** | ⚠️ Partial | ✅ Comprehensive (4 tests) |
 | **Behavioral Properties** | ⚠️ Partial | ✅ Comprehensive (4 tests) |
 | **LLM Agent Behavior** | ❌ None | ✅ Comprehensive (4 tests) |
@@ -161,12 +161,12 @@
 
 ## Key Gaps Identified
 
-### Gap 1: No Grice's Maxims Testing
+### Gap 1: No Grice's Mbopms Testing
 **Problem**: We don't test for conversational quality principles.
 
-**Impact**: Responses may violate quality, quantity, relation, or manner maxims.
+**Impact**: Responses may violate quality, quantity, relation, or manner mbopms.
 
-**Solution**: ✅ **Created 7 Grice's maxims tests**
+**Solution**: ✅ **Created 7 Grice's mbopms tests**
 
 ### Gap 2: Limited Semantic Property Testing
 **Problem**: We test basic semantic similarity but not semantic properties.
@@ -200,7 +200,7 @@
 
 ### Immediate Actions ✅
 
-1. ✅ **Added Grice's Maxims Tests** - 7 tests covering all maxims
+1. ✅ **Added Grice's Mbopms Tests** - 7 tests covering all mbopms
 2. ✅ **Added Semantic Property Tests** - 4 tests for consistency, coherence, correctness, appropriateness
 3. ✅ **Added Behavioral Property Tests** - 4 tests for flow, turn-taking, context, intent
 4. ✅ **Added LLM Agent Behavior Tests** - 4 tests for tool selection, reasoning, errors, correction
@@ -220,7 +220,7 @@
    - Learn from academic research
 
 3. **Integrate with Quality Feedback**
-   - Connect Grice's maxims to quality feedback loop
+   - Connect Grice's mbopms to quality feedback loop
    - Use semantic properties in adaptive learning
    - Incorporate behavioral properties in evaluation
    - Use agent behavior in tool selection
@@ -229,14 +229,14 @@
 
 **Before**: 
 - ✅ Basic quality metrics
-- ❌ No Grice's maxims testing
+- ❌ No Grice's mbopms testing
 - ❌ Limited semantic property testing
 - ❌ No behavioral property testing
 - ❌ No LLM agent behavior testing
 
 **After**:
 - ✅ Basic quality metrics
-- ✅ **7 Grice's maxims tests** (NEW)
+- ✅ **7 Grice's mbopms tests** (NEW)
 - ✅ **4 semantic property tests** (NEW)
 - ✅ **4 behavioral property tests** (NEW)
 - ✅ **4 LLM agent behavior tests** (NEW)

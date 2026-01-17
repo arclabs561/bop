@@ -16,7 +16,7 @@ All future work items from `UNCERTAINTY_INTEGRATION_COMPLETE.md` have been imple
 
 **New Module:**
 - `select_tools_with_muse()`: Selects optimal subset of tools using MUSE algorithm
-  - Greedy strategy: Maximizes diversity (epistemic uncertainty)
+  - Greedy strategy: Mbopmizes diversity (epistemic uncertainty)
   - Conservative strategy: Minimizes total uncertainty
   - Source credibility filtering: Filters low-credibility sources
   - Uses credibility as confidence scores in MUSE

@@ -8,7 +8,7 @@ and correctly weight sources based on credibility and evidence.
 
 import pytest
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 
 
 @pytest.mark.asyncio
@@ -54,8 +54,8 @@ async def test_fever_conflicting_sources():
 
     # Test: System should weight high-credibility source more
     # Aleatoric weighting should prioritize arxiv.org
-    from bop.context_topology import ContextNode
-    from bop.uncertainty_tool_selection import aggregate_results_with_aleatoric_weighting
+    from pran.context_topology import ContextNode
+    from pran.uncertainty_tool_selection import aggregate_results_with_aleatoric_weighting
 
     nodes = [
         ContextNode(
@@ -102,7 +102,7 @@ async def test_fever_evidence_matching():
 
     # Test: System should identify which evidence sentences support the claim
     # This tests provenance matching accuracy
-    from bop.provenance import match_claim_to_sources
+    from pran.provenance import match_claim_to_sources
 
     research_results = [{
         "result": evidence_sentences[0],

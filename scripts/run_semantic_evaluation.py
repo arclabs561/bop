@@ -8,11 +8,11 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from bop.semantic_eval import SemanticEvaluator
-from bop.agent import KnowledgeAgent
-from bop.orchestrator import StructuredOrchestrator
-from bop.research import ResearchAgent, load_content
-from bop.schemas import list_schemas
+from pran.semantic_eval import SemanticEvaluator
+from pran.agent import KnowledgeAgent
+from pran.orchestrator import StructuredOrchestrator
+from pran.research import ResearchAgent, load_content
+from pran.schemas import list_schemas
 
 
 async def run_comprehensive_evaluation(

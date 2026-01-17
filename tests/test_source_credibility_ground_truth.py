@@ -5,8 +5,8 @@ Tests if MUSE selection and credibility filtering work correctly
 with known source credibility scores.
 """
 
-from bop.context_topology import ContextTopology
-from bop.uncertainty_tool_selection import select_tools_with_muse
+from pran.context_topology import ContextTopology
+from pran.uncertainty_tool_selection import select_tools_with_muse
 
 
 class TestSourceCredibilityGroundTruth:
@@ -147,7 +147,7 @@ class TestCredibilityLearning:
         topology = ContextTopology()
 
         # Add nodes with known credibility
-        from bop.context_topology import ContextNode
+        from pran.context_topology import ContextNode
 
         for source, true_cred in ground_truth.items():
             node = ContextNode(

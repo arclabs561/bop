@@ -22,7 +22,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 from datasets.load_external_datasets import (
     load_fever,
     load_hotpotqa,
@@ -305,7 +305,7 @@ def evaluate_calibration_ground_truth() -> Dict[str, Any]:
     except Exception as e:
         return {"error": f"Failed to load calibration data: {e}"}
     
-    from bop.calibration_improvement import improve_calibration_with_uncertainty
+    from pran.calibration_improvement import improve_calibration_with_uncertainty
     import numpy as np
     
     results = {
@@ -360,7 +360,7 @@ def evaluate_source_credibility_ground_truth() -> Dict[str, Any]:
     except Exception as e:
         return {"error": f"Failed to load credibility data: {e}"}
     
-    from bop.uncertainty_tool_selection import select_tools_with_muse
+    from pran.uncertainty_tool_selection import select_tools_with_muse
     
     results = {
         "total_sources": len(credibility_data),

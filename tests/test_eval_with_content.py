@@ -4,9 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.eval import EvaluationFramework
-from bop.research import load_content
+from pran.agent import KnowledgeAgent
+from pran.eval import EvaluationFramework
+from pran.research import load_content
 
 
 @pytest.fixture

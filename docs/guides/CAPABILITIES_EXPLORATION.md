@@ -43,7 +43,7 @@ KnowledgeAgent.chat()
 - Prevents attention dilution from premature context injection
 
 **2. Information Bottleneck Filtering**
-- **Objective**: Maximize I(compressed; target) - beta * I(compressed; original)
+- **Objective**: Mbopmize I(compressed; target) - beta * I(compressed; original)
 - **Method**: Filters retrieved passages by mutual information with query/target
 - **Implementation**: Uses semantic similarity as proxy for mutual information
 - **Threshold**: min_mi=0.3 (filters out low-relevance results)
@@ -53,7 +53,7 @@ KnowledgeAgent.chat()
 - **Location**: `src/bop/information_bottleneck.py`, integrated into `LLMService.synthesize_tool_results()`
 
 **3. Topological Analysis**
-- **Clique Complexes**: Finds coherent source clusters (maximal cliques)
+- **Clique Complexes**: Finds coherent source clusters (mbopmal cliques)
   - Greedy algorithm (exact clique-finding is NP-complete)
   - Trust-aware: tracks credibility, confidence, trust scores
   - Coherence scoring: measures how well nodes fit together
@@ -61,7 +61,7 @@ KnowledgeAgent.chat()
   - Avoids collider bias through conditional independence
   - Simplified implementation for undirected graphs
   - Trust-weighted: low-trust paths considered blocked
-- **Attractor Basins**: Maximal cliques as stable knowledge structures
+- **Attractor Basins**: Mbopmal cliques as stable knowledge structures
   - Represents stable patterns in knowledge space
   - Trust-weighted: high-trust cliques are more reliable
 - **Fisher Information**: Estimates structure quality (heuristic)
@@ -132,7 +132,7 @@ BOP integrates with 8 MCP tools across 4 providers:
 
 **MUSE-Based Selection** (optional):
 - Uncertainty-aware tool selection
-- Maximizes diversity while minimizing epistemic uncertainty
+- Mbopmizes diversity while minimizing epistemic uncertainty
 - Uses aleatoric weighting for result aggregation
 
 ### Tool Call Flow
@@ -333,7 +333,7 @@ BOP integrates with 8 MCP tools across 4 providers:
 - Causal structure preservation
 
 **Dynamical Systems**:
-- Attractor basins as maximal cliques
+- Attractor basins as mbopmal cliques
 - Edge-of-chaos dynamics
 - Class 4 CA patterns
 

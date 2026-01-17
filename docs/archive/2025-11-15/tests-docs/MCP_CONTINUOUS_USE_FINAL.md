@@ -19,7 +19,7 @@ Continuously used MCP tools to research, discover, and implement comprehensive q
 - Scrape Hypothesis documentation
 - Find conversational AI patterns
 - OWASP patterns
-- Grice's maxims resources
+- Grice's mbopms resources
 - Quality evaluation frameworks
 
 ### Tavily (6+ calls)
@@ -45,7 +45,7 @@ Continuously used MCP tools to research, discover, and implement comprehensive q
 ## Complete Test Suite (57 tests)
 
 ### LLM-Judged Tests (25 tests)
-1. **Grice's Maxims** (7 tests)
+1. **Grice's Mbopms** (7 tests)
    - Quality, Quantity, Relation, Manner
    - Benevolence, Transparency
    - Comprehensive
@@ -72,7 +72,7 @@ Continuously used MCP tools to research, discover, and implement comprehensive q
    - Score ranges, flag consistency, determinism
    - Empty/identical handling, similarity properties
 
-2. **Grice's Maxims Properties** (5 tests)
+2. **Grice's Mbopms Properties** (5 tests)
    - Relation transitive-like, Quantity length independence
    - Manner clarity, Quality placeholders, Consistency symmetry
 
@@ -152,7 +152,7 @@ Continuously used MCP tools to research, discover, and implement comprehensive q
 ## Key Discoveries from Continuous MCP Use
 
 ### Iteration 1: Initial Research
-- Grice's maxims testing
+- Grice's mbopms testing
 - Semantic property testing
 - Behavioral property testing
 
@@ -186,14 +186,14 @@ Continuously used MCP tools to research, discover, and implement comprehensive q
 ### Before
 - Basic quality metrics
 - No property-based testing
-- No Grice's maxims testing
+- No Grice's mbopms testing
 - No metamorphic testing
 - Limited semantic/behavioral testing
 
 ### After
 - ✅ 57 comprehensive quality/semantic/behavioral tests
 - ✅ 32 property-based tests with Hypothesis
-- ✅ 7 Grice's maxims tests
+- ✅ 7 Grice's mbopms tests
 - ✅ 4 metamorphic tests
 - ✅ 6 additional quality property tests
 - ✅ Custom strategies for realistic inputs
@@ -203,7 +203,7 @@ Continuously used MCP tools to research, discover, and implement comprehensive q
 ## Files Created
 
 ### Test Files (11 files)
-1. `test_grice_maxims.py` - 7 tests
+1. `test_grice_mbopms.py` - 7 tests
 2. `test_semantic_properties.py` - 4 tests
 3. `test_behavioral_properties.py` - 4 tests
 4. `test_llm_agent_behavior.py` - 4 tests
@@ -231,7 +231,7 @@ Continuously used MCP tools to research, discover, and implement comprehensive q
 **MCP tools enabled comprehensive quality testing** through continuous research and discovery.
 
 **Key Achievement**: 57 comprehensive tests covering:
-- Grice's maxims (7 tests)
+- Grice's mbopms (7 tests)
 - Semantic properties (4 tests)
 - Behavioral properties (4 tests)
 - LLM agent behavior (4 tests)

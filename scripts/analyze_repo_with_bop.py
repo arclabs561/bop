@@ -11,7 +11,7 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 
 
 async def analyze_repository():

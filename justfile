@@ -123,7 +123,7 @@ test-list:
 
 # Run tests with coverage
 test-cov:
-    uv run pytest tests/ --cov=src/bop --cov-report=html --cov-report=term
+    uv run pytest tests/ --cov=src/pran --cov-report=html --cov-report=term
 
 # ============================================================================
 # Mutation Testing
@@ -231,27 +231,27 @@ test-visual-install:
 
 # Start interactive chat
 chat:
-    uv run bop chat
+    uv run pran chat
 
 # Start chat with research
 chat-research:
-    uv run bop chat --research
+    uv run pran chat --research
 
 # Start chat with schema
 chat-schema SCHEMA:
-    uv run bop chat --schema {{SCHEMA}}
+    uv run pran chat --schema {{SCHEMA}}
 
 # Start chat with constraints
 chat-constraints:
-    uv run bop chat --constraints
+    uv run pran chat --constraints
 
 # Start HTTP server
 serve:
-    uv run bop serve
+    uv run pran serve
 
 # Start server with constraints
 serve-constraints:
-    uv run bop serve --constraints
+    uv run pran serve --constraints
 
 # ============================================================================
 # Evaluation
@@ -267,7 +267,7 @@ eval-v2:
 
 # Run evaluation framework
 eval-framework:
-    uv run bop eval
+    uv run pran eval
 
 # ============================================================================
 # Documentation
@@ -325,31 +325,31 @@ deploy-verify:
 deploy-secrets:
     @echo "Setting Fly.io secrets..."
     @echo "Edit this recipe to set your API keys:"
-    @echo "flyctl secrets set OPENAI_API_KEY=... -a bop-wispy-voice-3017"
-    @echo "flyctl secrets set ANTHROPIC_API_KEY=... -a bop-wispy-voice-3017"
-    @echo "flyctl secrets set PERPLEXITY_API_KEY=... -a bop-wispy-voice-3017"
-    @echo "flyctl secrets set FIRECRAWL_API_KEY=... -a bop-wispy-voice-3017"
-    @echo "flyctl secrets set TAILSCALE_AUTHKEY=... -a bop-wispy-voice-3017"
+    @echo "flyctl secrets set OPENAI_API_KEY=... -a pran-wispy-voice-3017"
+    @echo "flyctl secrets set ANTHROPIC_API_KEY=... -a pran-wispy-voice-3017"
+    @echo "flyctl secrets set PERPLEXITY_API_KEY=... -a pran-wispy-voice-3017"
+    @echo "flyctl secrets set FIRECRAWL_API_KEY=... -a pran-wispy-voice-3017"
+    @echo "flyctl secrets set TAILSCALE_AUTHKEY=... -a pran-wispy-voice-3017"
 
 # View Fly.io logs
 deploy-logs:
-    flyctl logs -a bop-wispy-voice-3017 --no-tail
+    flyctl logs -a pran-wispy-voice-3017 --no-tail
 
 # Follow Fly.io logs
 deploy-logs-follow:
-    flyctl logs -a bop-wispy-voice-3017 -f
+    flyctl logs -a pran-wispy-voice-3017 -f
 
 # Open Fly.io app
 deploy-open:
-    flyctl apps open -a bop-wispy-voice-3017
+    flyctl apps open -a pran-wispy-voice-3017
 
 # Check Fly.io status
 deploy-status:
-    flyctl status -a bop-wispy-voice-3017
+    flyctl status -a pran-wispy-voice-3017
 
 # Open Fly.io dashboard
 deploy-dashboard:
-    flyctl dashboard -a bop-wispy-voice-3017
+    flyctl dashboard -a pran-wispy-voice-3017
 
 # Make app private (remove public IPs)
 deploy-private:

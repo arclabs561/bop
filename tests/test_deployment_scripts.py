@@ -112,7 +112,7 @@ class TestDeployScript:
     def test_script_sets_app_name(self, script_path):
         """Test script sets app name."""
         content = script_path.read_text()
-        assert "bop-wispy-voice-3017" in content
+        assert "pran-wispy-voice-3017" in content
         assert "APP_NAME" in content or "FLY_APP_NAME" in content
 
 
@@ -244,7 +244,7 @@ class TestDeploymentScriptProperties:
     def test_all_scripts_use_consistent_app_name(self):
         """Test all scripts use consistent app name."""
         scripts_dir = Path(__file__).parent.parent.parent / "scripts"
-        app_name = "bop-wispy-voice-3017"
+        app_name = "pran-wispy-voice-3017"
 
         scripts = [
             "deploy_fly.sh",

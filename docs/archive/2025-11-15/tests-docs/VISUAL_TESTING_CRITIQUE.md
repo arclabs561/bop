@@ -21,7 +21,7 @@
 
 #### 2. **Principles Integration**
 - ✅ BOP principles clearly embedded in prompts
-- ✅ Grice's maxims provide structured quality framework
+- ✅ Grice's mbopms provide structured quality framework
 - ✅ Semantic and behavioral properties well-defined
 - ✅ Theoretical foundations visible in test design
 

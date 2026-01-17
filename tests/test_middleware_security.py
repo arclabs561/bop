@@ -4,7 +4,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from bop.middleware import (
+from pran.middleware import (
     EnhancedRateLimitMiddleware,
     RequestLoggingMiddleware,
     SecurityHeadersMiddleware,

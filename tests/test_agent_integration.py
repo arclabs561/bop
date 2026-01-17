@@ -4,13 +4,13 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 
 
 @pytest.mark.asyncio
 async def test_agent_full_flow_with_schema_and_research():
     """Test complete agent flow with schema and research."""
-    with patch("bop.agent.LLMService") as mock_llm_class:
+    with patch("pran.agent.LLMService") as mock_llm_class:
         mock_llm = MagicMock()
         mock_llm.generate_response = AsyncMock(return_value="Full response")
         mock_llm.hydrate_schema = AsyncMock(return_value={"steps": ["step1"]})
@@ -41,7 +41,7 @@ async def test_agent_full_flow_with_schema_and_research():
 @pytest.mark.asyncio
 async def test_agent_knowledge_base_integration():
     """Test agent uses knowledge base in responses."""
-    with patch("bop.agent.LLMService") as mock_llm_class:
+    with patch("pran.agent.LLMService") as mock_llm_class:
         mock_llm = MagicMock()
         mock_llm.generate_response = AsyncMock(return_value="KB-enhanced response")
         mock_llm_class.return_value = mock_llm
@@ -79,7 +79,7 @@ async def test_agent_conversation_history_persistence():
 @pytest.mark.asyncio
 async def test_agent_schema_hydration_error_handling():
     """Test agent handles schema hydration errors gracefully."""
-    with patch("bop.agent.LLMService") as mock_llm_class:
+    with patch("pran.agent.LLMService") as mock_llm_class:
         mock_llm = MagicMock()
         mock_llm.generate_response = AsyncMock(return_value="Response")
         mock_llm.hydrate_schema = AsyncMock(side_effect=Exception("Hydration error"))
@@ -100,7 +100,7 @@ async def test_agent_schema_hydration_error_handling():
 @pytest.mark.asyncio
 async def test_agent_research_error_handling():
     """Test agent handles research errors gracefully."""
-    with patch("bop.agent.LLMService") as mock_llm_class:
+    with patch("pran.agent.LLMService") as mock_llm_class:
         mock_llm = MagicMock()
         mock_llm.generate_response = AsyncMock(return_value="Response despite error")
         mock_llm_class.return_value = mock_llm
@@ -153,7 +153,7 @@ async def test_agent_multiple_schemas():
 @pytest.mark.asyncio
 async def test_agent_research_without_schema():
     """Test agent can do research without schema."""
-    with patch("bop.agent.LLMService") as mock_llm_class:
+    with patch("pran.agent.LLMService") as mock_llm_class:
         mock_llm = MagicMock()
         mock_llm.generate_response = AsyncMock(return_value="Response")
         mock_llm_class.return_value = mock_llm
@@ -176,7 +176,7 @@ async def test_agent_research_without_schema():
 @pytest.mark.asyncio
 async def test_agent_context_building():
     """Test that agent builds context correctly for LLM."""
-    with patch("bop.agent.LLMService") as mock_llm_class:
+    with patch("pran.agent.LLMService") as mock_llm_class:
         mock_llm = MagicMock()
         mock_llm.generate_response = AsyncMock(return_value="Contextual response")
         mock_llm_class.return_value = mock_llm

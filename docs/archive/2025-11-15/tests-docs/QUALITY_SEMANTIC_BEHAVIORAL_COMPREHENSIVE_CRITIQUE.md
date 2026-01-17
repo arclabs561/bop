@@ -4,7 +4,7 @@
 
 **What We Test**: Security/adversarial attacks, basic quality metrics (relevance, accuracy, completeness)
 
-**What We Miss**: Grice's maxims, semantic properties, behavioral properties, LLM agent behavior, custom requirements
+**What We Miss**: Grice's mbopms, semantic properties, behavioral properties, LLM agent behavior, custom requirements
 
 **Critical Gap**: We test security but miss conversational quality, semantic correctness, and behavioral properties.
 
@@ -31,7 +31,7 @@
 
 ### What We DON'T Test ❌
 
-1. **Grice's Maxims** - Zero coverage
+1. **Grice's Mbopms** - Zero coverage
    - Quality (truthfulness, evidence-based)
    - Quantity (right amount of information)
    - Relation (relevance) - partially tested
@@ -60,9 +60,9 @@
    - No domain-specific quality criteria
    - No user-defined quality standards
 
-## Grice's Maxims: Complete Gap
+## Grice's Mbopms: Complete Gap
 
-### Maxim of Quality (Truthfulness)
+### Mbopm of Quality (Truthfulness)
 **What to test:**
 - Does response contain false information?
 - Are claims supported by evidence?
@@ -79,7 +79,7 @@
 
 **Should test:**
 ```python
-def test_grice_quality_maxim():
+def test_grice_quality_mbopm():
     """Test that responses are truthful and evidence-based."""
     # Query with verifiable facts
     # Check if response is accurate
@@ -88,7 +88,7 @@ def test_grice_quality_maxim():
     # Verify confidence calibration
 ```
 
-### Maxim of Quantity (Right Amount)
+### Mbopm of Quantity (Right Amount)
 **What to test:**
 - Is response too brief for complex queries?
 - Is response too verbose for simple queries?
@@ -105,7 +105,7 @@ def test_grice_quality_maxim():
 
 **Should test:**
 ```python
-def test_grice_quantity_maxim():
+def test_grice_quantity_mbopm():
     """Test that responses provide right amount of information."""
     # Simple query → concise response
     # Complex query → detailed response
@@ -114,7 +114,7 @@ def test_grice_quantity_maxim():
     # Test adaptation to user expertise
 ```
 
-### Maxim of Relation (Relevance)
+### Mbopm of Relation (Relevance)
 **What to test:**
 - Is response relevant to the query?
 - Does it address the question?
@@ -131,7 +131,7 @@ def test_grice_quantity_maxim():
 
 **Should test:**
 ```python
-def test_grice_relation_maxim():
+def test_grice_relation_mbopm():
     """Test that responses are relevant to queries."""
     # Direct question → direct answer
     # Check for topic drift
@@ -140,7 +140,7 @@ def test_grice_relation_maxim():
     # Test multi-part query handling
 ```
 
-### Maxim of Manner (Clarity)
+### Mbopm of Manner (Clarity)
 **What to test:**
 - Is response clear?
 - Is it well-organized?
@@ -157,7 +157,7 @@ def test_grice_relation_maxim():
 
 **Should test:**
 ```python
-def test_grice_manner_maxim():
+def test_grice_manner_mbopm():
     """Test that responses are clear and well-organized."""
     # Check for clarity
     # Verify organization
@@ -503,13 +503,13 @@ def test_self_correction():
 
 ### Perplexity Research Found:
 
-1. **Grice's Maxims Testing**
+1. **Grice's Mbopms Testing**
    - Quality: Test for false information, unsupported claims, hallucinations
    - Quantity: Test for appropriate detail level, verbosity, comprehensiveness
    - Relation: Test for relevance, topic focus, tangents
    - Manner: Test for clarity, organization, ambiguity, orderliness
 
-2. **Augmented Maxims for Human-AI**
+2. **Augmented Mbopms for Human-AI**
    - Benevolence: Test for harmful content handling
    - Transparency: Test for knowledge boundary recognition, uncertainty acknowledgment
 
@@ -525,9 +525,9 @@ def test_self_correction():
 
 ### Firecrawl Research Found:
 
-1. **Conversational Maxims for Human-AI Interactions**
+1. **Conversational Mbopms for Human-AI Interactions**
    - Prescriptive guidance on assessing conversational quality
-   - Reinterpreted maxims tailored to human-LLM contexts
+   - Reinterpreted mbopms tailored to human-LLM contexts
    - Actionable design considerations by interaction stage
 
 2. **Evaluation Frameworks**
@@ -552,7 +552,7 @@ def test_self_correction():
 
 | Aspect | Current | Ideal |
 |--------|---------|-------|
-| **Grice's Maxims** | ❌ None | ✅ All 4 + augmented |
+| **Grice's Mbopms** | ❌ None | ✅ All 4 + augmented |
 | **Semantic Properties** | ⚠️ Partial | ✅ Comprehensive |
 | **Behavioral Properties** | ⚠️ Partial | ✅ Comprehensive |
 | **LLM Agent Behavior** | ❌ None | ✅ Comprehensive |
@@ -561,12 +561,12 @@ def test_self_correction():
 
 ## Specific Gaps
 
-### Gap 1: No Grice's Maxims Testing
+### Gap 1: No Grice's Mbopms Testing
 **Problem**: We don't test for conversational quality principles.
 
-**Impact**: Responses may violate quality, quantity, relation, or manner maxims.
+**Impact**: Responses may violate quality, quantity, relation, or manner mbopms.
 
-**Solution**: Add Grice's maxims tests using LLM judges and MCP research.
+**Solution**: Add Grice's mbopms tests using LLM judges and MCP research.
 
 ### Gap 2: Limited Semantic Property Testing
 **Problem**: We test basic semantic similarity but not semantic properties.
@@ -598,15 +598,15 @@ def test_self_correction():
 
 ## Recommendations
 
-### 1. Add Grice's Maxims Tests
+### 1. Add Grice's Mbopms Tests
 ```python
-# tests/test_grice_maxims.py
-- test_grice_quality_maxim (truthfulness, evidence)
-- test_grice_quantity_maxim (right amount)
-- test_grice_relation_maxim (relevance) - enhance existing
-- test_grice_manner_maxim (clarity, organization)
-- test_grice_benevolence_maxim (harmful content)
-- test_grice_transparency_maxim (knowledge boundaries)
+# tests/test_grice_mbopms.py
+- test_grice_quality_mbopm (truthfulness, evidence)
+- test_grice_quantity_mbopm (right amount)
+- test_grice_relation_mbopm (relevance) - enhance existing
+- test_grice_manner_mbopm (clarity, organization)
+- test_grice_benevolence_mbopm (harmful content)
+- test_grice_transparency_mbopm (knowledge boundaries)
 ```
 
 ### 2. Add Semantic Property Tests
@@ -652,7 +652,7 @@ def test_self_correction():
 
 **Current State**: 
 - ✅ Basic quality metrics (relevance, accuracy, completeness)
-- ❌ No Grice's maxims testing
+- ❌ No Grice's mbopms testing
 - ❌ Limited semantic property testing
 - ❌ No behavioral property testing
 - ❌ No LLM agent behavior testing
@@ -660,7 +660,7 @@ def test_self_correction():
 - ❌ No MCP research for quality patterns
 
 **Ideal State**:
-- ✅ Grice's maxims testing (all 4 + augmented)
+- ✅ Grice's mbopms testing (all 4 + augmented)
 - ✅ Comprehensive semantic property testing
 - ✅ Comprehensive behavioral property testing
 - ✅ LLM agent behavior testing
@@ -669,5 +669,5 @@ def test_self_correction():
 
 **Gap**: We test security/adversarial but miss conversational quality, semantic correctness, behavioral properties, and agent behavior.
 
-**Key Insight**: MCP tools revealed comprehensive frameworks for testing Grice's maxims, semantic properties, and behavioral properties that we're not using. We should research first, then implement.
+**Key Insight**: MCP tools revealed comprehensive frameworks for testing Grice's mbopms, semantic properties, and behavioral properties that we're not using. We should research first, then implement.
 

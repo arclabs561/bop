@@ -14,12 +14,12 @@ import pytest_asyncio
 # Get deployment URL from environment or use default
 # Try Tailscale hostname first, fallback to direct hostname
 # Server runs on port 8080 (Fly.io PORT env var), not 8000
-TAILSCALE_HOST = os.getenv("BOP_TAILSCALE_HOST", "bop-wispy-voice-3017-1.tailf8f94.ts.net")
+TAILSCALE_HOST = os.getenv("BOP_TAILSCALE_HOST", "pran-wispy-voice-3017-1.tailf8f94.ts.net")
 DEPLOYED_PORT = os.getenv("BOP_DEPLOYED_PORT", "8080")
 
 # Try to get Tailscale IP dynamically if not set
 def get_tailscale_ip():
-    """Get Tailscale IP for bop-wispy-voice-3017-1."""
+    """Get Tailscale IP for pran-wispy-voice-3017-1."""
     import subprocess
     try:
         result = subprocess.run(
@@ -34,7 +34,7 @@ def get_tailscale_ip():
             peers = data.get("Peer", {})
             for peer in peers.values():
                 dns_name = peer.get("DNSName", "")
-                if "bop-wispy-voice-3017-1" in dns_name:
+                if "pran-wispy-voice-3017-1" in dns_name:
                     ips = peer.get("TailscaleIPs", [])
                     if ips:
                         return ips[0]

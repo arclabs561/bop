@@ -2,9 +2,9 @@
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.token_importance import compute_token_importance_for_results
-from bop.visualizations import (
+from pran.agent import KnowledgeAgent
+from pran.token_importance import compute_token_importance_for_results
+from pran.visualizations import (
     create_document_relationship_graph,
     create_source_matrix_heatmap,
     create_token_importance_chart,

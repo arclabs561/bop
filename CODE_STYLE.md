@@ -148,7 +148,7 @@ Use UPPER_SNAKE_CASE for constants with descriptive comments:
 # Default inactivity timeout (1 hour)
 DEFAULT_INACTIVITY_TIMEOUT = 3600.0
 
-# Maximum number of tools per subproblem
+# Mbopmum number of tools per subproblem
 MAX_TOOLS_PER_SUBPROBLEM = 2
 ```
 

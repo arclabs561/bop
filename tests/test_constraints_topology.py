@@ -2,9 +2,9 @@
 
 import pytest
 
-from bop.constraints import PYSAT_AVAILABLE
-from bop.context_topology import ContextNode
-from bop.orchestrator import StructuredOrchestrator
+from pran.constraints import PYSAT_AVAILABLE
+from pran.context_topology import ContextNode
+from pran.orchestrator import StructuredOrchestrator
 
 
 @pytest.mark.skipif(not PYSAT_AVAILABLE, reason="PySAT not available")

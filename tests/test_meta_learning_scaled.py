@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional
 
 import pytest
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 
 # ============================================================================
 # Dataset Loading and Augmentation
@@ -264,7 +264,7 @@ async def test_scaled_augmented_queries_meta_learning():
 
 
 @pytest.mark.asyncio
-async def test_scaled_bop_evaluates_meta_learning():
+async def test_scaled_pran_evaluates_meta_learning():
     """Scaled: Use BOP itself to evaluate meta-learning effectiveness."""
     queries = [
         "What is d-separation?",

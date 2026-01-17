@@ -18,7 +18,7 @@ Continuously used MCP tools to research, discover, and implement comprehensive q
 - ✅ Scrape Hypothesis documentation
 - ✅ Find conversational AI testing patterns
 - ✅ OWASP session management patterns
-- ✅ Grice's maxims resources
+- ✅ Grice's mbopms resources
 
 ### Tavily
 - ✅ Search for property-based testing resources
@@ -40,7 +40,7 @@ Continuously used MCP tools to research, discover, and implement comprehensive q
 
 ## Complete Test Suite Created
 
-### Grice's Maxims Tests (7 tests)
+### Grice's Mbopms Tests (7 tests)
 - Quality, Quantity, Relation, Manner
 - Benevolence, Transparency
 - Comprehensive
@@ -56,7 +56,7 @@ Continuously used MCP tools to research, discover, and implement comprehensive q
 
 ### Property-Based Tests (27 tests)
 - Quality properties (10 tests)
-- Grice's maxims properties (5 tests)
+- Grice's mbopms properties (5 tests)
 - Semantic properties (2 tests)
 - Behavioral properties (4 tests)
 - Advanced invariants (6 tests)
@@ -150,7 +150,7 @@ Continuously used MCP tools to research, discover, and implement comprehensive q
    - Metamorphic testing properties
 
 3. ✅ **Comprehensive Coverage**
-   - Grice's maxims
+   - Grice's mbopms
    - Semantic properties
    - Behavioral properties
    - LLM agent behavior
@@ -167,20 +167,20 @@ Continuously used MCP tools to research, discover, and implement comprehensive q
 **Before**:
 - Basic quality metrics
 - No property-based testing
-- No Grice's maxims testing
+- No Grice's mbopms testing
 - Limited semantic/behavioral testing
 
 **After**:
 - ✅ 53 comprehensive quality/semantic/behavioral tests
 - ✅ 27 property-based tests with Hypothesis
-- ✅ 7 Grice's maxims tests
+- ✅ 7 Grice's mbopms tests
 - ✅ 4 metamorphic tests
 - ✅ Custom strategies for realistic inputs
 - ✅ Edge cases discovered and documented
 
 ## Files Created
 
-1. `test_grice_maxims.py` - 7 tests
+1. `test_grice_mbopms.py` - 7 tests
 2. `test_semantic_properties.py` - 4 tests
 3. `test_behavioral_properties.py` - 4 tests
 4. `test_llm_agent_behavior.py` - 4 tests

@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 
 
 @pytest.mark.asyncio
@@ -222,7 +222,7 @@ async def test_generate_response_with_length():
     """Test response generation with length constraint."""
     agent = KnowledgeAgent(enable_quality_feedback=False)
 
-    with patch("bop.agent.LLMService") as mock_llm_class:
+    with patch("pran.agent.LLMService") as mock_llm_class:
         mock_llm = MagicMock()
         # Return a very long response
         long_response = "word " * 1000

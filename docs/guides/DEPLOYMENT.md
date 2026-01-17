@@ -359,7 +359,7 @@ The web interface includes:
 3. **Rotate Keys Regularly** - Update secrets periodically
 4. **Monitor Access** - Check logs for unauthorized attempts
 5. **Use HTTPS** - Always use HTTPS for public URLs
-6. **Remove Public IPs** - For maximum security, use private deployment
+6. **Remove Public IPs** - For mbopmum security, use private deployment
 
 ## Quick Reference
 

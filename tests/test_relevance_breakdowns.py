@@ -1,6 +1,6 @@
 """Tests for relevance score breakdowns."""
 
-from bop.provenance import (
+from pran.provenance import (
     _compute_relevance_breakdown,
     _compute_semantic_similarity,
     match_claim_to_sources,

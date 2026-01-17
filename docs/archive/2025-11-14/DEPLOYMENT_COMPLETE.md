@@ -100,7 +100,7 @@ curl -H "X-API-Key: a03zsJxmWd5rZeIHDN20ZjkM_qbmfKCIEf-bP8ABTdc" \
    - Set: `flyctl secrets set TAILSCALE_AUTHKEY=tskey-auth-xxx -a bop-wispy-voice-3017`
    - Redeploy: `flyctl deploy -a bop-wispy-voice-3017`
 
-2. **Remove Public IPs** (for maximum security):
+2. **Remove Public IPs** (for mbopmum security):
    ```bash
    flyctl ips list -a bop-wispy-voice-3017
    flyctl ips release -a bop-wispy-voice-3017 <ip-address>

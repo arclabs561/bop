@@ -2,9 +2,9 @@
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.orchestrator import StructuredOrchestrator
-from bop.research import ResearchAgent
+from pran.agent import KnowledgeAgent
+from pran.orchestrator import StructuredOrchestrator
+from pran.research import ResearchAgent
 
 
 @pytest.mark.asyncio

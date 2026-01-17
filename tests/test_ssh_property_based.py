@@ -7,12 +7,12 @@ from typing import Any, Dict, List
 from hypothesis import HealthCheck, assume, given, settings
 from hypothesis import strategies as st
 
-from bop.adaptive_quality import AdaptiveQualityManager
-from bop.information_bottleneck import (
+from pran.adaptive_quality import AdaptiveQualityManager
+from pran.information_bottleneck import (
     compute_mutual_information_estimate,
     filter_with_information_bottleneck,
 )
-from bop.quality_feedback import QualityFeedbackLoop
+from pran.quality_feedback import QualityFeedbackLoop
 
 
 @given(

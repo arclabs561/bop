@@ -83,7 +83,7 @@ Successfully integrated information-theoretic uncertainty quantification into BO
 **Solution**: Multi-strategy extraction function that:
 - Prioritizes node confidence (most reliable)
 - Falls back to credibility, epistemic uncertainty, relevance scores
-- Defaults to uniform distribution (maximum uncertainty)
+- Defaults to uniform distribution (mbopmum uncertainty)
 
 ### 2. Heuristic vs JSD Blending
 

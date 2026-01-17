@@ -2,7 +2,7 @@
 
 import pytest
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 
 
 @pytest.mark.asyncio

@@ -5,11 +5,11 @@ from pathlib import Path
 
 import pytest
 
-from bop.adaptive_quality import AdaptiveQualityManager
-from bop.agent import KnowledgeAgent
-from bop.orchestrator import StructuredOrchestrator
-from bop.quality_feedback import QualityFeedbackLoop
-from bop.research import ResearchAgent
+from pran.adaptive_quality import AdaptiveQualityManager
+from pran.agent import KnowledgeAgent
+from pran.orchestrator import StructuredOrchestrator
+from pran.quality_feedback import QualityFeedbackLoop
+from pran.research import ResearchAgent
 
 
 @pytest.mark.asyncio

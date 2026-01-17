@@ -6,15 +6,15 @@ import pytest
 
 pytestmark = pytest.mark.asyncio
 
-from bop.llm import LLMService
-from bop.schemas import CHAIN_OF_THOUGHT
+from pran.llm import LLMService
+from pran.schemas import CHAIN_OF_THOUGHT
 
 
 async def test_llm_service_initialization():
     """Test LLM service initialization."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent"):
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent"):
                 service = LLMService(backend="openai")
                 assert service is not None
                 assert service.model is not None
@@ -30,8 +30,8 @@ async def test_llm_service_missing_api_key():
 async def test_generate_response():
     """Test response generation."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent") as mock_agent_class:
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent") as mock_agent_class:
                 mock_agent = AsyncMock()
                 mock_result = MagicMock()
                 mock_result.data = "Test response"
@@ -48,8 +48,8 @@ async def test_generate_response():
 async def test_hydrate_schema():
     """Test schema hydration."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent") as mock_agent_class:
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent") as mock_agent_class:
                 mock_agent = AsyncMock()
                 mock_result = MagicMock()
                 mock_result.data = {"input_analysis": "test", "steps": ["step1"]}
@@ -66,8 +66,8 @@ async def test_hydrate_schema():
 async def test_decompose_query():
     """Test query decomposition."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent") as mock_agent_class:
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent") as mock_agent_class:
                 mock_agent = AsyncMock()
                 mock_result = MagicMock()
                 mock_result.data = ["subproblem1", "subproblem2"]
@@ -75,7 +75,7 @@ async def test_decompose_query():
                 mock_agent_class.return_value = mock_agent
 
                 service = LLMService(backend="openai")
-                from bop.schemas import DECOMPOSE_AND_SYNTHESIZE
+                from pran.schemas import DECOMPOSE_AND_SYNTHESIZE
 
                 decomposition = await service.decompose_query("Test query", DECOMPOSE_AND_SYNTHESIZE)
 
@@ -86,8 +86,8 @@ async def test_decompose_query():
 async def test_synthesize_tool_results():
     """Test tool result synthesis."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent") as mock_agent_class:
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent") as mock_agent_class:
                 mock_agent = AsyncMock()
                 mock_result = MagicMock()
                 mock_result.data = "Synthesized result"

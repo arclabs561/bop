@@ -3,7 +3,7 @@
 import tempfile
 from pathlib import Path
 
-from bop.session_manager import (
+from pran.session_manager import (
     HierarchicalSessionManager,
 )
 

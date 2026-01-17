@@ -45,7 +45,7 @@ concrete improvements.
 
 **Key Findings**:
 - Recent work (arXiv 2406.01549, ACL 2024) applies Information Bottleneck (IB) principle to RAG noise filtering
-- Formal objective: Maximize I(compressed; output) while minimizing I(compressed; noisy_input)
+- Formal objective: Mbopmize I(compressed; output) while minimizing I(compressed; noisy_input)
 - Achieves 2.5% compression rates without accuracy loss
 - Provides principled methodology over ad-hoc filtering
 
@@ -71,7 +71,7 @@ def filter_with_information_bottleneck(
     # Implementation would:
     # 1. Compute mutual information between passages and target
     # 2. Compute mutual information between compressed and original
-    # 3. Optimize compression to maximize relevant info, minimize noise
+    # 3. Optimize compression to mbopmize relevant info, minimize noise
 ```
 
 ### 3. Agentic RL for Reasoning Depth Allocation

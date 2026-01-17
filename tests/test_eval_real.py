@@ -1,7 +1,7 @@
 """Tests for real evaluation framework (not placeholders)."""
 
 
-from bop.eval import EvaluationFramework, EvaluationResult
+from pran.eval import EvaluationFramework, EvaluationResult
 
 
 def test_evaluate_schema_usage_real():

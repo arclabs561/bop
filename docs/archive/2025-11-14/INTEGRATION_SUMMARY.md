@@ -12,7 +12,7 @@ Implements:
 - **Euler Characteristic**: Single-number summary of knowledge structure
 - **D-Separation Analysis**: Checks conditional independence in context graphs
 - **Fisher Information Estimation**: Measures structure for compression assessment
-- **Attractor Basin Identification**: Maximal cliques as stable knowledge structures
+- **Attractor Basin Identification**: Mbopmal cliques as stable knowledge structures
 
 ### 2. Enhanced Orchestrator (`orchestrator.py`)
 
@@ -49,7 +49,7 @@ Now implements:
 - **Context injection** = Clique complex construction
 - **Forced injection** = Large cliques (NP-complete to verify coherence)
 - **MCP queries** = Incremental clique discovery (greedy, tractable)
-- **Attractor basins** = Maximal cliques (stable knowledge structures)
+- **Attractor basins** = Mbopmal cliques (stable knowledge structures)
 
 ### Serial Scaling Constraints
 

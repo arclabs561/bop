@@ -7,7 +7,7 @@ import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
-from bop.server import app, verify_api_key
+from pran.server import app, verify_api_key
 
 
 class TestServerEndpoints:
@@ -21,7 +21,7 @@ class TestServerEndpoints:
     @pytest.fixture
     def mock_agent(self):
         """Mock agent for testing."""
-        with patch("bop.server.agent") as mock:
+        with patch("pran.server.agent") as mock:
             agent = MagicMock()
             agent.chat = AsyncMock(return_value={
                 "response": "Test response",
@@ -53,7 +53,7 @@ class TestServerEndpoints:
     @pytest.mark.asyncio
     async def test_chat_endpoint_without_api_key(self, client, mock_agent):
         """Test chat endpoint without API key when not required."""
-        with patch("bop.server.REQUIRED_API_KEY", ""):
+        with patch("pran.server.REQUIRED_API_KEY", ""):
             response = client.post(
                 "/chat",
                 json={"message": "test", "research": False}
@@ -64,8 +64,8 @@ class TestServerEndpoints:
     @pytest.mark.asyncio
     async def test_chat_endpoint_with_api_key(self, client, mock_agent):
         """Test chat endpoint with valid API key."""
-        with patch("bop.server.REQUIRED_API_KEY", "test-key"):
-            with patch("bop.server.agent", mock_agent):
+        with patch("pran.server.REQUIRED_API_KEY", "test-key"):
+            with patch("pran.server.agent", mock_agent):
                 response = client.post(
                     "/chat",
                     json={"message": "test", "research": False},
@@ -77,7 +77,7 @@ class TestServerEndpoints:
     @pytest.mark.asyncio
     async def test_chat_endpoint_invalid_api_key(self, client):
         """Test chat endpoint rejects invalid API key."""
-        with patch("bop.server.REQUIRED_API_KEY", "test-key"):
+        with patch("pran.server.REQUIRED_API_KEY", "test-key"):
             response = client.post(
                 "/chat",
                 json={"message": "test", "research": False},
@@ -89,7 +89,7 @@ class TestServerEndpoints:
     @pytest.mark.asyncio
     async def test_chat_endpoint_missing_api_key(self, client):
         """Test chat endpoint requires API key when configured."""
-        with patch("bop.server.REQUIRED_API_KEY", "test-key"):
+        with patch("pran.server.REQUIRED_API_KEY", "test-key"):
             response = client.post(
                 "/chat",
                 json={"message": "test", "research": False}
@@ -99,7 +99,7 @@ class TestServerEndpoints:
     @pytest.mark.asyncio
     async def test_constraints_status_endpoint(self, client):
         """Test constraints status endpoint."""
-        with patch("bop.server.REQUIRED_API_KEY", ""):
+        with patch("pran.server.REQUIRED_API_KEY", ""):
             response = client.get("/constraints/status")
             # May require API key or return 503 if not initialized
             assert response.status_code in [200, 401, 503]
@@ -107,7 +107,7 @@ class TestServerEndpoints:
     @pytest.mark.asyncio
     async def test_metrics_endpoint(self, client):
         """Test metrics endpoint."""
-        with patch("bop.server.REQUIRED_API_KEY", ""):
+        with patch("pran.server.REQUIRED_API_KEY", ""):
             response = client.get("/metrics")
             # May require API key or return 503 if not initialized
             assert response.status_code in [200, 401, 503]
@@ -119,21 +119,21 @@ class TestAPIKeyAuthentication:
     @pytest.mark.asyncio
     async def test_verify_api_key_no_key_required(self):
         """Test API key verification when no key is required."""
-        with patch("bop.server.REQUIRED_API_KEY", ""):
+        with patch("pran.server.REQUIRED_API_KEY", ""):
             result = await verify_api_key(api_key=None)
             assert result is True
 
     @pytest.mark.asyncio
     async def test_verify_api_key_valid_key(self):
         """Test API key verification with valid key."""
-        with patch("bop.server.REQUIRED_API_KEY", "test-key"):
+        with patch("pran.server.REQUIRED_API_KEY", "test-key"):
             result = await verify_api_key(api_key="test-key")
             assert result is True
 
     @pytest.mark.asyncio
     async def test_verify_api_key_invalid_key(self):
         """Test API key verification rejects invalid key."""
-        with patch("bop.server.REQUIRED_API_KEY", "test-key"):
+        with patch("pran.server.REQUIRED_API_KEY", "test-key"):
             with pytest.raises(HTTPException) as exc_info:
                 await verify_api_key(api_key="wrong-key")
             assert exc_info.value.status_code == 401
@@ -142,7 +142,7 @@ class TestAPIKeyAuthentication:
     @pytest.mark.asyncio
     async def test_verify_api_key_missing_key(self):
         """Test API key verification requires key when configured."""
-        with patch("bop.server.REQUIRED_API_KEY", "test-key"):
+        with patch("pran.server.REQUIRED_API_KEY", "test-key"):
             with pytest.raises(HTTPException) as exc_info:
                 await verify_api_key(api_key=None)
             assert exc_info.value.status_code == 401
@@ -321,8 +321,8 @@ class TestDeploymentVerification:
         """Test chat endpoint returns correct format."""
         client = TestClient(app)
 
-        with patch("bop.server.REQUIRED_API_KEY", ""):
-            with patch("bop.server.agent") as mock_agent:
+        with patch("pran.server.REQUIRED_API_KEY", ""):
+            with patch("pran.server.agent") as mock_agent:
                 agent = MagicMock()
                 agent.chat = AsyncMock(return_value={
                     "response": "Test response",

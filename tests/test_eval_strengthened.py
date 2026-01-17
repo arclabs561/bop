@@ -2,14 +2,14 @@
 
 import pytest
 
-from bop.eval import EvaluationFramework, EvaluationResult
+from pran.eval import EvaluationFramework, EvaluationResult
 
 
 def test_evaluate_schema_usage_validates_content():
     """Test that schema evaluation validates field content, not just presence."""
     framework = EvaluationFramework()
 
-    from bop.schemas import get_schema
+    from pran.schemas import get_schema
     schema = get_schema("chain_of_thought")
     if not schema:
         pytest.skip("chain_of_thought schema not found")
@@ -38,7 +38,7 @@ def test_evaluate_schema_usage_validates_field_types():
     """Test that schema evaluation validates field types match expected."""
     framework = EvaluationFramework()
 
-    from bop.schemas import get_schema
+    from pran.schemas import get_schema
     schema = get_schema("chain_of_thought")
     if not schema:
         pytest.skip("chain_of_thought schema not found")
@@ -195,7 +195,7 @@ def test_evaluation_framework_validates_required_fields():
     """Test that evaluation framework validates all required fields are present."""
     framework = EvaluationFramework()
 
-    from bop.schemas import get_schema
+    from pran.schemas import get_schema
     schema = get_schema("chain_of_thought")
     if not schema:
         pytest.skip("chain_of_thought schema not found")

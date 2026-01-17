@@ -138,7 +138,7 @@ class KnowledgeAgent:
         # File-based scratchpad for persistent memory (optional, like Manus's todo.md)
         # Enables TODO list and notes to persist across context resets
         self.enable_scratchpad = os.getenv("BOP_ENABLE_SCRATCHPAD", "false").lower() == "true"
-        self.scratchpad_dir = Path(os.getenv("BOP_SCRATCHPAD_DIR", ".bop_scratchpad"))
+        self.scratchpad_dir = Path(os.getenv("BOP_SCRATCHPAD_DIR", ".pran_scratchpad"))
         if self.enable_scratchpad:
             self.scratchpad_dir.mkdir(parents=True, exist_ok=True)
             # Load existing TODO list from scratchpad if available

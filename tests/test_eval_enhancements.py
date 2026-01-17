@@ -4,14 +4,14 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from bop.eval import EvaluationFramework
-from bop.schemas import get_schema
+from pran.eval import EvaluationFramework
+from pran.schemas import get_schema
 
 
 def test_eval_constraint_solver_budget_optimization():
     """Evaluate that constraint solver optimizes for budget."""
     try:
-        from bop.constraints import ConstraintSolver, ToolConstraint, ToolType
+        from pran.constraints import ConstraintSolver, ToolConstraint, ToolType
     except ImportError:
         pytest.skip("PySAT not available")
 
@@ -44,7 +44,7 @@ def test_eval_constraint_solver_budget_optimization():
 def test_eval_constraint_solver_cardinality():
     """Evaluate that cardinality constraints work correctly."""
     try:
-        from bop.constraints import ConstraintSolver, ToolConstraint, ToolType
+        from pran.constraints import ConstraintSolver, ToolConstraint, ToolType
     except ImportError:
         pytest.skip("PySAT not available")
 
@@ -96,7 +96,7 @@ async def test_eval_llm_decomposition_quality():
 @pytest.mark.asyncio
 async def test_eval_orchestrator_decomposition_integration():
     """Evaluate orchestrator integration with LLM decomposition."""
-    from bop.orchestrator import StructuredOrchestrator
+    from pran.orchestrator import StructuredOrchestrator
 
     orchestrator = StructuredOrchestrator()
 
@@ -130,7 +130,7 @@ async def test_eval_orchestrator_decomposition_integration():
 def test_eval_constraint_solver_complex_scenario():
     """Evaluate constraint solver with complex real-world scenario."""
     try:
-        from bop.constraints import ConstraintSolver, ToolConstraint, ToolType
+        from pran.constraints import ConstraintSolver, ToolConstraint, ToolType
     except ImportError:
         pytest.skip("PySAT not available")
 

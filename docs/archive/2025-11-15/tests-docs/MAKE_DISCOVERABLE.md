@@ -51,7 +51,7 @@ python tests/run_all_tests.py --category quality
 python tests/run_all_tests.py --pattern integration
 
 # Specific files
-python tests/run_all_tests.py --files test_grice_maxims.py
+python tests/run_all_tests.py --files test_grice_mbopms.py
 ```
 
 ### Query Tests
@@ -69,7 +69,7 @@ cat tests/TEST_ANNOTATIONS.json | jq '.[] | select(.category == "quality")'
 ## Test Organization
 
 ### Categories
-1. **Quality** - Grice's maxims, semantic, behavioral properties
+1. **Quality** - Grice's mbopms, semantic, behavioral properties
 2. **Property-Based** - Hypothesis property tests
 3. **Integration** - Component interaction tests
 4. **Performance** - Latency, throughput, memory

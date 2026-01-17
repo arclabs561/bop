@@ -12,7 +12,7 @@ import os
 
 import pytest
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 
 # Skip tests if API keys are not available
 pytestmark = pytest.mark.skipif(

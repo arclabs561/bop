@@ -3,7 +3,7 @@
 
 set -e
 
-APP_URL="${BOP_APP_URL:-https://bop-wispy-voice-3017.fly.dev}"
+APP_URL="${BOP_APP_URL:-https://pran-wispy-voice-3017.fly.dev}"
 API_KEY="${BOP_API_KEY:-a03zsJxmWd5rZeIHDN20ZjkM_qbmfKCIEf-bP8ABTdc}"
 
 REPORT_FILE="redteam_report_$(date +%Y%m%d_%H%M%S).txt"

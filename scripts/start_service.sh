@@ -27,7 +27,7 @@ echo "   - Metrics: http://localhost:8000/metrics"
 echo ""
 
 # Check if constraint solver is available
-if uv run python -c "from bop.constraints import PYSAT_AVAILABLE; exit(0 if PYSAT_AVAILABLE else 1)" 2>/dev/null; then
+if uv run python -c "from pran.constraints import PYSAT_AVAILABLE; exit(0 if PYSAT_AVAILABLE else 1)" 2>/dev/null; then
     echo "✅ Constraint solver available"
     USE_CONSTRAINTS="--constraints"
 else
@@ -40,5 +40,5 @@ echo "Starting server..."
 echo ""
 
 # Start server
-uv run bop serve --host 0.0.0.0 --port 8000 $USE_CONSTRAINTS
+uv run pran serve --host 0.0.0.0 --port 8000 $USE_CONSTRAINTS
 

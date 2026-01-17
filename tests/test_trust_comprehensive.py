@@ -1,6 +1,6 @@
 """Comprehensive tests for trust and uncertainty features."""
 
-from bop.context_topology import ContextNode, ContextTopology
+from pran.context_topology import ContextNode, ContextTopology
 
 
 def test_trust_propagation_network():

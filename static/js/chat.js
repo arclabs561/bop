@@ -1,7 +1,7 @@
 // Modern chat interface JavaScript
 
 const API_BASE = window.location.origin;
-const API_KEY = localStorage.getItem('bop_api_key') || '';
+const API_KEY = localStorage.getItem('pran_api_key') || '';
 
 let isSending = false;
 

@@ -9,9 +9,9 @@ echo "=========================================="
 # Step 1: Start server
 echo ""
 echo "1️⃣  Starting server..."
-uv run python -m bop.server > /tmp/bop-server-cycle.log 2>&1 &
+uv run python -m pran.server > /tmp/pran-server-cycle.log 2>&1 &
 SERVER_PID=$!
-echo $SERVER_PID > /tmp/bop-server-cycle.pid
+echo $SERVER_PID > /tmp/pran-server-cycle.pid
 
 # Wait for server
 echo "   Waiting for server..."
@@ -47,7 +47,7 @@ uv run python scripts/check_contrast.py 2>&1 || echo "   ⚠️  Contrast check 
 echo ""
 echo "6️⃣  Cleaning up..."
 kill $SERVER_PID 2>/dev/null || true
-rm /tmp/bop-server-cycle.pid 2>/dev/null || true
+rm /tmp/pran-server-cycle.pid 2>/dev/null || true
 
 echo ""
 echo "✅ Improvement cycle complete!"

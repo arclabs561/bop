@@ -8,7 +8,7 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 from tests.test_annotations import annotate_test
 
 

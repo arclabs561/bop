@@ -80,7 +80,7 @@ Continuously expanded MCP tool usage to discover additional patterns, frameworks
 ## Complete Test Suite (77 tests total)
 
 ### LLM-Judged Tests (25 tests)
-- 7 Grice's maxims tests
+- 7 Grice's mbopms tests
 - 4 semantic property tests
 - 4 behavioral property tests
 - 4 LLM agent behavior tests
@@ -88,7 +88,7 @@ Continuously expanded MCP tool usage to discover additional patterns, frameworks
 
 ### Property-Based Tests (32 tests)
 - 10 quality property tests
-- 5 Grice's maxims property tests
+- 5 Grice's mbopms property tests
 - 4 behavioral property-based tests
 - 6 advanced property invariant tests
 - 3 custom strategy tests
@@ -175,7 +175,7 @@ Continuously expanded MCP tool usage to discover additional patterns, frameworks
 - 77 tests (added integration, performance, safety, benchmark)
 
 ### Coverage Areas
-- ✅ Quality evaluation (Grice's maxims, semantic, behavioral)
+- ✅ Quality evaluation (Grice's mbopms, semantic, behavioral)
 - ✅ Property-based testing (invariants, metamorphic)
 - ✅ Integration testing (component interactions)
 - ✅ Performance testing (latency, throughput, memory)
@@ -185,7 +185,7 @@ Continuously expanded MCP tool usage to discover additional patterns, frameworks
 ## Files Created
 
 ### Test Files (15 files total)
-1. `test_grice_maxims.py` - 7 tests
+1. `test_grice_mbopms.py` - 7 tests
 2. `test_semantic_properties.py` - 4 tests
 3. `test_behavioral_properties.py` - 4 tests
 4. `test_llm_agent_behavior.py` - 4 tests

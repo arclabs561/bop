@@ -257,7 +257,7 @@ assert len(tiers["summary"]) <= 150  # Fails if mutation changes > to >=
 1. **Identify critical logic**: Look for comparisons, thresholds, limits
 2. **Test boundaries**: Test exactly at threshold values
 3. **Test both sides**: Test above and below thresholds
-4. **Test edge cases**: Empty lists, zero values, maximum values
+4. **Test edge cases**: Empty lists, zero values, mbopmum values
 
 ### When Analyzing Surviving Mutations
 

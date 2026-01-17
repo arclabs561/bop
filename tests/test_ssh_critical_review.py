@@ -7,13 +7,13 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from bop.adaptive_quality import AdaptiveQualityManager
-from bop.information_bottleneck import (
+from pran.adaptive_quality import AdaptiveQualityManager
+from pran.information_bottleneck import (
     filter_with_information_bottleneck,
 )
-from bop.orchestrator import StructuredOrchestrator
-from bop.quality_feedback import QualityFeedbackLoop
-from bop.research import ResearchAgent
+from pran.orchestrator import StructuredOrchestrator
+from pran.quality_feedback import QualityFeedbackLoop
+from pran.research import ResearchAgent
 
 
 def test_ib_filtering_actually_uses_relevance_breakdown():
@@ -219,7 +219,7 @@ def test_logical_depth_computation_consistency():
 
     Same node with same trust/coherence/verification should give same depth.
     """
-    from bop.context_topology import ContextNode, ContextTopology
+    from pran.context_topology import ContextNode, ContextTopology
 
     topology = ContextTopology()
 
@@ -328,12 +328,12 @@ async def test_ib_filtering_integration_actually_called():
 
     The llm.py synthesize_tool_results should call IB filtering when enabled.
     """
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     llm_service = LLMService()
 
     # Mock the filter function
-    with patch('bop.llm.filter_with_information_bottleneck') as mock_filter:
+    with patch('pran.llm.filter_with_information_bottleneck') as mock_filter:
         mock_filter.return_value = (
             [{"result": "Filtered result"}],
             {"compression_ratio": 0.5, "avg_mi": 0.7, "removed_count": 1}
@@ -364,10 +364,10 @@ async def test_adaptive_depth_early_stopping_actually_stops():
     """
     import tempfile
 
-    from bop.adaptive_quality import AdaptiveQualityManager
-    from bop.orchestrator import StructuredOrchestrator
-    from bop.quality_feedback import QualityFeedbackLoop
-    from bop.research import ResearchAgent
+    from pran.adaptive_quality import AdaptiveQualityManager
+    from pran.orchestrator import StructuredOrchestrator
+    from pran.quality_feedback import QualityFeedbackLoop
+    from pran.research import ResearchAgent
 
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "test_history.json"

@@ -14,7 +14,7 @@ Property-based tests for topology invariants:
 - Betti numbers non-negative
 - Fisher Information positive
 - D-separation symmetry
-- Attractor basins maximality
+- Attractor basins mbopmality
 - Confidence bounds
 - Path trust decay
 - Node ID uniqueness

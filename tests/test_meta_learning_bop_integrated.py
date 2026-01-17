@@ -8,7 +8,7 @@ from typing import Any, Dict, List
 
 import pytest
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 from datasets.load_external_datasets import load_fever, load_hotpotqa
 
 # ============================================================================
@@ -22,7 +22,7 @@ class BOPSelfEvaluator:
         self.agent = agent
         self.evaluation_results = []
 
-    async def evaluate_meta_learning_with_bop_research(
+    async def evaluate_meta_learning_with_pran_research(
         self,
         query: str,
         use_meta_learning: bool = True,
@@ -135,7 +135,7 @@ Respond with JSON: {{"accumulation_working": 0.0-1.0, "diverse": 0.0-1.0, "helpf
 # ============================================================================
 
 @pytest.mark.asyncio
-async def test_bop_integrated_hotpotqa_meta_learning():
+async def test_pran_integrated_hotpotqa_meta_learning():
     """BOP-integrated: Test meta-learning on HotpotQA dataset using BOP's research."""
     try:
         hotpot_data = load_hotpotqa(split="dev", max_samples=5)
@@ -161,7 +161,7 @@ async def test_bop_integrated_hotpotqa_meta_learning():
         queries = [item.get("question", "") for item in hotpot_data if item.get("question")]
 
         for query in queries[:3]:  # Limit for speed
-            await evaluator.evaluate_meta_learning_with_bop_research(query)
+            await evaluator.evaluate_meta_learning_with_pran_research(query)
             await asyncio.sleep(0.2)
 
         # BOP should have used its own research capabilities
@@ -170,7 +170,7 @@ async def test_bop_integrated_hotpotqa_meta_learning():
 
 
 @pytest.mark.asyncio
-async def test_bop_integrated_fever_meta_learning():
+async def test_pran_integrated_fever_meta_learning():
     """BOP-integrated: Test meta-learning on FEVER dataset using BOP's fact verification."""
     try:
         fever_data = load_fever(split="dev", max_samples=5)
@@ -211,7 +211,7 @@ async def test_bop_integrated_fever_meta_learning():
 
 
 @pytest.mark.asyncio
-async def test_bop_integrated_self_evaluation_workflow():
+async def test_pran_integrated_self_evaluation_workflow():
     """BOP-integrated: Complete self-evaluation workflow using BOP's capabilities."""
     queries = [
         "What is d-separation?",
@@ -240,7 +240,7 @@ async def test_bop_integrated_self_evaluation_workflow():
         accumulation_analysis = await evaluator.evaluate_experience_accumulation(queries)
 
         # Use BOP research to evaluate meta-learning
-        meta_eval = await evaluator.evaluate_meta_learning_with_bop_research(
+        meta_eval = await evaluator.evaluate_meta_learning_with_pran_research(
             "What is meta-learning?",
             use_meta_learning=True,
         )
@@ -251,7 +251,7 @@ async def test_bop_integrated_self_evaluation_workflow():
 
 
 @pytest.mark.asyncio
-async def test_bop_integrated_multi_component_evaluation():
+async def test_pran_integrated_multi_component_evaluation():
     """BOP-integrated: Evaluate meta-learning across all BOP components."""
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
@@ -290,7 +290,7 @@ async def test_bop_integrated_multi_component_evaluation():
 
 
 @pytest.mark.asyncio
-async def test_bop_integrated_meta_learning_research_integration():
+async def test_pran_integrated_meta_learning_research_integration():
     """BOP-integrated: Test how meta-learning integrates with research orchestration."""
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
@@ -330,7 +330,7 @@ async def test_bop_integrated_meta_learning_research_integration():
 
 
 @pytest.mark.asyncio
-async def test_bop_integrated_adaptive_meta_learning_synergy():
+async def test_pran_integrated_adaptive_meta_learning_synergy():
     """BOP-integrated: Test synergy between adaptive learning and meta-learning."""
     queries = [
         ("What is trust?", "factual"),

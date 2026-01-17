@@ -5,7 +5,7 @@ import time
 
 import pytest
 
-from bop.constraints import PYSAT_AVAILABLE, ConstraintSolver, create_default_constraints
+from pran.constraints import PYSAT_AVAILABLE, ConstraintSolver, create_default_constraints
 
 
 @pytest.mark.skipif(not PYSAT_AVAILABLE, reason="PySAT not available")

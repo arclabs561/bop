@@ -82,7 +82,7 @@ Implemented **comprehensive security improvements** across authentication, autho
 - Configurable limits via environment variables
 
 **Headers Added**:
-- `X-RateLimit-Limit: 30` - Maximum requests per window
+- `X-RateLimit-Limit: 30` - Mbopmum requests per window
 - `X-RateLimit-Remaining: 29` - Remaining requests
 - `X-RateLimit-Window: 60` - Window size in seconds
 - `X-RateLimit-Reset: 1234567890` - Reset timestamp (on 429)
@@ -290,7 +290,7 @@ Implemented **comprehensive security improvements** across authentication, autho
 **Implementation**: `src/bop/middleware.py` - `RequestLoggingMiddleware`
 
 **Features**:
-- 1MB maximum body size for logging
+- 1MB mbopmum body size for logging
 - Body truncation for large requests
 - Dangerous content detection in logged bodies
 - Sensitive field redaction in logs
@@ -355,7 +355,7 @@ Implemented **comprehensive security improvements** across authentication, autho
 
 ### New Environment Variables
 - `BOP_RATE_LIMIT_WINDOW=60` - Rate limit window in seconds
-- `BOP_RATE_LIMIT_MAX=30` - Maximum requests per window
+- `BOP_RATE_LIMIT_MAX=30` - Mbopmum requests per window
 - `BOP_LOG_REQUEST_BODY=false` - Log request bodies (default: false)
 - `BOP_LOG_REQUEST_HEADERS=false` - Log request headers (default: false)
 - `BOP_CORS_ORIGINS=""` - CORS allowed origins (default: empty - no CORS)

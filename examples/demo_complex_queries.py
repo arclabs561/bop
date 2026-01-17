@@ -10,11 +10,11 @@ from pathlib import Path
 from datetime import datetime, timezone
 import time
 
-from bop.agent import KnowledgeAgent
-from bop.session_manager import HierarchicalSessionManager
-from bop.session_replay import SessionReplayManager
-from bop.unified_storage import UnifiedSessionStorage
-from bop.adaptive_quality import AdaptiveQualityManager
+from pran.agent import KnowledgeAgent
+from pran.session_manager import HierarchicalSessionManager
+from pran.session_replay import SessionReplayManager
+from pran.unified_storage import UnifiedSessionStorage
+from pran.adaptive_quality import AdaptiveQualityManager
 
 
 def print_section(title: str, width: int = 80):

@@ -11,7 +11,7 @@ from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.table import Table
 
-# .env is auto-loaded by src/bop/__init__.py when package is imported
+# .env is auto-loaded by src/pran/__init__.py when package is imported
 from .agent import KnowledgeAgent
 from .display_helpers import create_trust_table
 from .eval import EvaluationFramework
@@ -807,7 +807,7 @@ def validate_env(
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Show all optional variables"),
 ) -> None:
     """Validate environment variable setup and .env file loading."""
-    from bop import get_env_info, validate_env_setup
+    from pran import get_env_info, validate_env_setup
 
     console.print(Panel.fit("[bold cyan]BOP Environment Validation[/bold cyan]", border_style="cyan"))
 
@@ -886,7 +886,7 @@ def serve(
     console.print(f"  [cyan]http://{host}:{port}[/cyan]")
     console.print(f"  [cyan]http://{host}:{port}/docs[/cyan] (API documentation)")
     console.print("\n[dim]For Tailscale access, use your Tailscale IP address[/dim]")
-    console.print("[dim]For Fly.io, use your app URL (e.g., https://bop.fly.dev)[/dim]\n")
+    console.print("[dim]For Fly.io, use your app URL (e.g., https://pran.fly.dev)[/dim]\n")
 
     from .server import app
     uvicorn.run(app, host=host, port=port, log_level="info")
@@ -934,7 +934,7 @@ def ingest(
                 console.print(f"[dim]Date Range: {dr.get('earliest')} to {dr.get('latest')}[/dim]")
 
         console.print("\n[bold green]Content ready for BOP![/bold green]")
-        console.print(f"[dim]Query with: bop chat --content-dir {output_dir}[/dim]")
+        console.print(f"[dim]Query with: pran chat --content-dir {output_dir}[/dim]")
 
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")

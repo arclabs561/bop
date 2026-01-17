@@ -2,8 +2,8 @@
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.schemas import list_schemas
+from pran.agent import KnowledgeAgent
+from pran.schemas import list_schemas
 
 
 @pytest.mark.asyncio

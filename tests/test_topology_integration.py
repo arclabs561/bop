@@ -2,9 +2,9 @@
 
 import pytest
 
-from bop.context_topology import ContextNode, ContextTopology
-from bop.orchestrator import StructuredOrchestrator
-from bop.research import ResearchAgent
+from pran.context_topology import ContextNode, ContextTopology
+from pran.orchestrator import StructuredOrchestrator
+from pran.research import ResearchAgent
 
 
 @pytest.mark.asyncio

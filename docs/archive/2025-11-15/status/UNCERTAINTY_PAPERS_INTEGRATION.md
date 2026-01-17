@@ -141,7 +141,7 @@ def compute_epistemic_uncertainty_jsd(
     U_epistemic = (1/|S|) Σ JS(p_i || p̄)
     """
     if mean_prediction is None:
-        mean_prediction = np.mean(predictions, axis=0)
+        mean_prediction = np.mean(predictions, bops=0)
     
     jsds = [compute_jsd(p, mean_prediction) for p in predictions]
     return float(np.mean(jsds))
@@ -192,7 +192,7 @@ def compute_clique_uncertainty(self, nodes: Set[str]) -> Dict[str, float]:
         return {"epistemic": 0.5, "aleatoric": 0.3, "total": 0.5}
     
     predictions = np.array(predictions)
-    mean_pred = np.mean(predictions, axis=0)
+    mean_pred = np.mean(predictions, bops=0)
     
     # Compute uncertainties
     epistemic = compute_epistemic_uncertainty_jsd(predictions, mean_pred)
@@ -384,7 +384,7 @@ def aggregate_with_aleatoric_weighting(
     
     weighted_pred = np.sum(
         [w * p for w, p in zip(weights, predictions)],
-        axis=0
+        bops=0
     )
     
     return weighted_pred

@@ -2,7 +2,7 @@
 
 import pytest
 
-from bop.context_topology import ContextNode, ContextTopology
+from pran.context_topology import ContextNode, ContextTopology
 
 
 def test_add_edge_without_nodes():

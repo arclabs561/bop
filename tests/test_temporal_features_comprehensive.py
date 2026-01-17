@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 from datasets import load_all_datasets, load_dataset
 
 

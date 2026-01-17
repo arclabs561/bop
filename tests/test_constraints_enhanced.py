@@ -23,7 +23,7 @@ class TestConstraintSolverEnhanced:
 
     def test_max_tools_cardinality_constraint(self):
         """Test that max_tools constraint is enforced."""
-        from bop.constraints import ConstraintSolver, ToolConstraint, ToolType
+        from pran.constraints import ConstraintSolver, ToolConstraint, ToolType
 
         solver = ConstraintSolver()
         constraints = [
@@ -45,7 +45,7 @@ class TestConstraintSolverEnhanced:
 
     def test_budget_constraint(self):
         """Test that budget constraint is enforced."""
-        from bop.constraints import ConstraintSolver, ToolConstraint, ToolType
+        from pran.constraints import ConstraintSolver, ToolConstraint, ToolType
 
         solver = ConstraintSolver()
         constraints = [
@@ -75,7 +75,7 @@ class TestConstraintSolverEnhanced:
 
     def test_min_information_constraint(self):
         """Test that min_information constraint is enforced."""
-        from bop.constraints import ConstraintSolver, ToolConstraint, ToolType
+        from pran.constraints import ConstraintSolver, ToolConstraint, ToolType
 
         solver = ConstraintSolver()
         constraints = [
@@ -105,7 +105,7 @@ class TestConstraintSolverEnhanced:
 
     def test_combined_constraints(self):
         """Test combining multiple constraints."""
-        from bop.constraints import ConstraintSolver, ToolConstraint, ToolType
+        from pran.constraints import ConstraintSolver, ToolConstraint, ToolType
 
         solver = ConstraintSolver()
         constraints = [
@@ -138,7 +138,7 @@ class TestConstraintSolverEnhanced:
 
     def test_impossible_constraints(self):
         """Test that impossible constraints return None."""
-        from bop.constraints import ConstraintSolver, ToolConstraint, ToolType
+        from pran.constraints import ConstraintSolver, ToolConstraint, ToolType
 
         solver = ConstraintSolver()
         constraints = [
@@ -162,7 +162,7 @@ class TestConstraintSolverEnhanced:
 
     def test_cardinality_with_dependencies(self):
         """Test cardinality constraint with dependency constraints."""
-        from bop.constraints import ConstraintSolver, ToolConstraint, ToolType
+        from pran.constraints import ConstraintSolver, ToolConstraint, ToolType
 
         solver = ConstraintSolver()
         constraints = [
@@ -185,7 +185,7 @@ class TestConstraintSolverEnhanced:
 
     def test_budget_with_conflicts(self):
         """Test budget constraint with conflict constraints."""
-        from bop.constraints import ConstraintSolver, ToolConstraint, ToolType
+        from pran.constraints import ConstraintSolver, ToolConstraint, ToolType
 
         solver = ConstraintSolver()
         constraints = [

@@ -4,7 +4,7 @@ import tempfile
 import time
 from pathlib import Path
 
-from bop.session_manager import HierarchicalSessionManager
+from pran.session_manager import HierarchicalSessionManager
 
 
 def test_rapid_session_creation():

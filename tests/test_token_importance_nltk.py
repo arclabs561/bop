@@ -2,7 +2,7 @@
 
 import pytest
 
-from bop.token_importance import NLTK_AVAILABLE, extract_key_terms
+from pran.token_importance import NLTK_AVAILABLE, extract_key_terms
 
 
 def test_nltk_available():

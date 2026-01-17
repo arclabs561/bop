@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from bop.llm_capabilities import (
+from pran.llm_capabilities import (
     AnthropicCapabilityAdapter,
     BaseCapabilityAdapter,
     GoogleCapabilityAdapter,
@@ -183,7 +183,7 @@ class TestLLMServiceIntegration:
         """Test that LLMService exposes capability properties."""
         # This would require actual LLM service initialization
         # For now, we test the adapter directly
-        from bop.llm import LLMService
+        from pran.llm import LLMService
 
         # Mock the service to avoid requiring API keys
         service = Mock(spec=LLMService)

@@ -9,10 +9,10 @@ from pathlib import Path
 
 import pytest
 
-from bop.adaptive_quality import AdaptiveQualityManager
-from bop.quality_feedback import QualityFeedbackLoop
-from bop.semantic_eval import SemanticEvaluator
-from bop.session_manager import HierarchicalSessionManager
+from pran.adaptive_quality import AdaptiveQualityManager
+from pran.quality_feedback import QualityFeedbackLoop
+from pran.semantic_eval import SemanticEvaluator
+from pran.session_manager import HierarchicalSessionManager
 from tests.test_annotations import annotate_test
 
 

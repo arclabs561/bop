@@ -8,17 +8,17 @@ This test validates that all provenance features integrate correctly:
 - Error handling
 """
 
-from bop.provenance import (
+from pran.provenance import (
     _compute_relevance_breakdown,
     _compute_semantic_similarity,
     build_provenance_map,
     match_claim_to_sources,
 )
-from bop.provenance_viz import (
+from pran.provenance_viz import (
     create_relevance_breakdown_display,
     format_clickable_source,
 )
-from bop.query_refinement import (
+from pran.query_refinement import (
     create_query_refinement_panel,
     refine_query_from_provenance,
 )
@@ -96,7 +96,7 @@ def test_integration_relevance_components():
     assert 0.0 <= semantic_sim <= 1.0
 
     # Compute word overlap (simplified)
-    from bop.provenance import match_claim_to_sources
+    from pran.provenance import match_claim_to_sources
     research_results = [
         {
             "tool": "test_source",

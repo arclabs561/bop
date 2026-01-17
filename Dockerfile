@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY . .
 
 # Build BOP CLI
-RUN cargo build --release -p bop-cli
+RUN cargo build --release -p pran-cli
 
 # ============================================================
 # Stage 2: Runtime Image
@@ -35,7 +35,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy binary from builder
-COPY --from=builder /build/target/release/bop /usr/local/bin/bop
+COPY --from=builder /build/target/release/pran /usr/local/bin/pran
 
 # Create data directory
 RUN mkdir -p /data && chmod 755 /data
@@ -47,4 +47,4 @@ RUN useradd -m -u 1000 -s /bin/bash agent && \
 USER agent
 
 # Default: show version
-CMD ["bop", "--version"]
+CMD ["pran", "--version"]

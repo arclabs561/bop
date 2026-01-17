@@ -94,7 +94,7 @@ The threefold structure of locutionary, illocutionary, and perlocutionary acts s
 
 Searle's classification of speech acts by illocutionary point and direction of fit provides systematic analysis of how language creates different types of normative relationships. **Declarations can change reality by virtue of being uttered**, while commissives create future obligations and directives attempt to structure others' actions.
 
-Grice's conversational maxims reveal how meaning emerges through cooperative interpretation guided by shared principles. **Implicature shows how speakers communicate beyond literal content** through strategic violation of conversational norms.
+Grice's conversational mbopms reveal how meaning emerges through cooperative interpretation guided by shared principles. **Implicature shows how speakers communicate beyond literal content** through strategic violation of conversational norms.
 
 Wittgenstein's language games demonstrate how **meaning emerges from use rather than correspondence to reality**. Different forms of life have different language games with distinct criteria for meaningful participation.
 

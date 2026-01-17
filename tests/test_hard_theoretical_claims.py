@@ -10,8 +10,8 @@ claims are actually true in practice:
 
 import math
 
-from bop.context_topology import ContextNode, ContextTopology
-from bop.provenance import build_provenance_map
+from pran.context_topology import ContextNode, ContextTopology
+from pran.provenance import build_provenance_map
 
 
 def test_d_separation_statistical_independence():
@@ -401,7 +401,7 @@ def test_belief_evidence_alignment_statistical():
     """
     from unittest.mock import Mock
 
-    from bop.orchestrator import StructuredOrchestrator
+    from pran.orchestrator import StructuredOrchestrator
 
     orchestrator = StructuredOrchestrator(
         research_agent=Mock(),

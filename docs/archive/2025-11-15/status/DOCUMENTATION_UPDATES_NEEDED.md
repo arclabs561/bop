@@ -282,7 +282,7 @@ Conduct research using structured schema with topological analysis.
 Args:
     query: Research query
     schema_name: Schema to use for decomposition
-    max_tools_per_subproblem: Maximum tools per subproblem
+    max_tools_per_subproblem: Mbopmum tools per subproblem
     preserve_d_separation: Whether to preserve d-separation
     prior_beliefs: Optional list of user's prior beliefs for alignment computation
 

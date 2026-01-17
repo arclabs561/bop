@@ -2,8 +2,8 @@
 
 import pytest
 
-from bop.constraints import PYSAT_AVAILABLE, create_default_constraints
-from bop.orchestrator import StructuredOrchestrator
+from pran.constraints import PYSAT_AVAILABLE, create_default_constraints
+from pran.orchestrator import StructuredOrchestrator
 
 
 @pytest.mark.skipif(not PYSAT_AVAILABLE, reason="PySAT not available")

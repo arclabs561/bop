@@ -9,8 +9,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.meta_learning import ExperienceStore, MetaLearner
+from pran.agent import KnowledgeAgent
+from pran.meta_learning import ExperienceStore, MetaLearner
 
 # ============================================================================
 # Multi-Turn Conversation Tests with LLM Judges
@@ -27,7 +27,7 @@ async def test_multiturn_meta_learning_conversation_judge():
     3. Third turn: System should accumulate and use multiple experiences
     4. LLM judge evaluates improvement across turns
     """
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
@@ -108,7 +108,7 @@ async def test_multiturn_experience_accumulation_judge():
     """
     Multi-turn: LLM judge evaluates if experiences accumulate correctly across turns.
     """
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
@@ -181,7 +181,7 @@ async def test_multiturn_context_injection_effectiveness_judge():
     """
     Multi-turn: LLM judge evaluates if context injection becomes more effective over turns.
     """
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
@@ -248,7 +248,7 @@ async def test_multiturn_reflection_quality_progression_judge():
     """
     Multi-turn: LLM judge evaluates if reflection quality improves over time.
     """
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"

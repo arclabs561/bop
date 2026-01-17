@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from bop.cache import (
+from pran.cache import (
     CacheEntry,
     PersistentCache,
     cache_llm_response,
@@ -206,7 +206,7 @@ class TestCacheHelpers:
         """Test caching tool results."""
         # Override global cache instance
         cache = PersistentCache(cache_dir=temp_cache_dir)
-        monkeypatch.setattr("bop.cache._cache_instance", cache)
+        monkeypatch.setattr("pran.cache._cache_instance", cache)
 
         # Cache a tool result
         result = {"tool": "perplexity", "query": "test", "result": "data"}
@@ -220,7 +220,7 @@ class TestCacheHelpers:
     def test_cache_llm_response(self, temp_cache_dir, monkeypatch):
         """Test caching LLM responses."""
         cache = PersistentCache(cache_dir=temp_cache_dir)
-        monkeypatch.setattr("bop.cache._cache_instance", cache)
+        monkeypatch.setattr("pran.cache._cache_instance", cache)
 
         # Cache LLM response
         response = "This is a test response"
@@ -234,7 +234,7 @@ class TestCacheHelpers:
     def test_cache_token_context(self, temp_cache_dir, monkeypatch):
         """Test caching token contexts."""
         cache = PersistentCache(cache_dir=temp_cache_dir)
-        monkeypatch.setattr("bop.cache._cache_instance", cache)
+        monkeypatch.setattr("pran.cache._cache_instance", cache)
 
         # Cache token context
         context = {"tokens": ["test", "context"], "importance": [0.5, 0.3]}

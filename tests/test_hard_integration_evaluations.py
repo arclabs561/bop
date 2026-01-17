@@ -8,9 +8,9 @@ from unittest.mock import patch
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.context_topology import ContextNode, ContextTopology
-from bop.provenance import build_provenance_map
+from pran.agent import KnowledgeAgent
+from pran.context_topology import ContextNode, ContextTopology
+from pran.provenance import build_provenance_map
 
 
 @pytest.mark.asyncio

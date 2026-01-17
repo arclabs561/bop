@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 
 # Cache is used internally, no direct import needed
 

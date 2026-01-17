@@ -15,11 +15,11 @@ from pathlib import Path
 
 import pytest
 
-from bop.adaptive_quality import AdaptiveQualityManager
-from bop.agent import KnowledgeAgent
-from bop.llm import LLMService
-from bop.quality_feedback import QualityFeedbackLoop
-from bop.session_manager import HierarchicalSessionManager, Session
+from pran.adaptive_quality import AdaptiveQualityManager
+from pran.agent import KnowledgeAgent
+from pran.llm import LLMService
+from pran.quality_feedback import QualityFeedbackLoop
+from pran.session_manager import HierarchicalSessionManager, Session
 from tests.test_annotations import annotate_test
 
 

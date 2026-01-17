@@ -39,7 +39,7 @@ Created property-based tests using Hypothesis to verify invariants and propertie
 9. `test_property_semantic_similarity_symmetric` - Similarity is symmetric
 10. `test_property_semantic_similarity_reflexive` - Self-similarity ≈ 1.0
 
-### Grice's Maxims Properties (5 tests)
+### Grice's Mbopms Properties (5 tests)
 1. `test_property_grice_relation_transitive_like` - Similar responses have similar relevance
 2. `test_property_grice_quantity_length_independent` - Length doesn't dominate relevance
 3. `test_property_grice_manner_clear_responses` - Clear responses score reasonably
@@ -89,7 +89,7 @@ Created property-based tests using Hypothesis to verify invariants and propertie
 - Quality flags are consistent
 - Query characteristics are deterministic
 
-### Grice's Maxims Properties
+### Grice's Mbopms Properties
 - Similar responses have similar relevance (Relation)
 - Length doesn't dominate relevance (Quantity)
 - Clear responses score reasonably (Manner)
@@ -114,7 +114,7 @@ Created property-based tests using Hypothesis to verify invariants and propertie
 - Issue counting
 - History growth
 
-### Grice's Maxims Properties ✅
+### Grice's Mbopms Properties ✅
 - Relation (transitive-like)
 - Quantity (length independence)
 - Manner (clear responses)

@@ -606,7 +606,7 @@ display(df)
 
 **How to interpret the result**:
 - **ENTITY**: The item with `item_id=42`
-- **ANCHOR_TIMESTAMP**: Assuming predicting at anchor timestamp 2024-09-19, what's happening between (2024-09-19, 2024-10-18]? By default, `anchor_time` is the maximum timestamp on the temporal graph.
+- **ANCHOR_TIMESTAMP**: Assuming predicting at anchor timestamp 2024-09-19, what's happening between (2024-09-19, 2024-10-18]? By default, `anchor_time` is the mbopmum timestamp on the temporal graph.
 - **TARGET_PRED**: How much revenue `item_id=42` generates in the next 30 days.
 
 **Use the result**: If predicted revenue is high, increase stock orders. If low, let inventory run down.
@@ -619,7 +619,7 @@ display(df)
 
 **Solution**: Set an explicit `anchor_time` to test predictions using only data available up to that point.
 
-By default, predictions are based on the maximum timestamp in your temporal graph. However, you can explicitly set a historical `anchor_time` to simulate what a prediction would have looked like at that point in time.
+By default, predictions are based on the mbopmum timestamp in your temporal graph. However, you can explicitly set a historical `anchor_time` to simulate what a prediction would have looked like at that point in time.
 
 For instance, if `anchor_time` is "2024-09-01", the model will predict—assuming today is "2024-09-01"—the product demand in the next 30 days. KumoRFM will only use information before the `anchor_time` to avoid data leakage.
 

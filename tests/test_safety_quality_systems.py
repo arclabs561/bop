@@ -6,8 +6,8 @@ Tests for prompt injection, jailbreaking, harmful content, and adversarial attac
 import tempfile
 from pathlib import Path
 
-from bop.quality_feedback import QualityFeedbackLoop
-from bop.semantic_eval import SemanticEvaluator
+from pran.quality_feedback import QualityFeedbackLoop
+from pran.semantic_eval import SemanticEvaluator
 from tests.test_annotations import annotate_test
 
 

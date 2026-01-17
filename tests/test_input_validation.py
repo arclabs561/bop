@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from bop.input_validation import (
+from pran.input_validation import (
     sanitize_json_input,
     sanitize_string,
     validate_cache_key,

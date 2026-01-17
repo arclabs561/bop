@@ -2,8 +2,8 @@
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.orchestrator import StructuredOrchestrator
+from pran.agent import KnowledgeAgent
+from pran.orchestrator import StructuredOrchestrator
 
 
 def test_agent_initialization_backwards_compatible():
@@ -67,7 +67,7 @@ async def test_research_response_structure():
 
 def test_orchestrator_backwards_compatible():
     """Test that orchestrator still works with old method signatures."""
-    from bop.research import ResearchAgent
+    from pran.research import ResearchAgent
 
     StructuredOrchestrator(
         ResearchAgent(),
@@ -169,7 +169,7 @@ async def test_quality_feedback_integration():
 
 def test_orchestrator_prior_beliefs_optional():
     """Test that orchestrator works with or without prior_beliefs."""
-    from bop.research import ResearchAgent
+    from pran.research import ResearchAgent
 
     orchestrator = StructuredOrchestrator(ResearchAgent(), None)
 
@@ -205,7 +205,7 @@ async def test_response_length_adaptation_optional():
 
 def test_display_helpers_import():
     """Test that display helpers can be imported and used."""
-    from bop.display_helpers import (
+    from pran.display_helpers import (
         format_clique_clusters,
         format_source_credibility,
         format_trust_summary,
@@ -224,17 +224,17 @@ def test_display_helpers_import():
 
 def test_all_imports_work():
     """Test that all modules can be imported without errors."""
-    import bop.agent
-    import bop.cli
-    import bop.context_topology
-    import bop.display_helpers
-    import bop.llm
-    import bop.orchestrator
-    import bop.quality_feedback
+    import pran.agent
+    import pran.cli
+    import pran.context_topology
+    import pran.display_helpers
+    import pran.llm
+    import pran.orchestrator
+    import pran.quality_feedback
 
     # Web module has optional dependencies, test with try/except
     try:
-        import bop.web
+        import pran.web
     except ImportError:
         # manus is optional, so this is OK
         pass

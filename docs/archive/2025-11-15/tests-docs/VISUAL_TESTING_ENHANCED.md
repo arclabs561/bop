@@ -40,27 +40,27 @@ The visual testing suite has been enhanced to incorporate BOP's core principles,
 
 ### Grice's Cooperative Principles
 
-1. **Quality Maxim**
+1. **Quality Mbopm**
    - Truthful, evidence-based responses (no hallucinations)
    - Visual tests verify response completeness and evidence indicators
 
-2. **Quantity Maxim**
+2. **Quantity Mbopm**
    - Right amount of information (not too brief, not too verbose)
    - Visual tests check response length appropriateness
 
-3. **Relation Maxim**
+3. **Relation Mbopm**
    - Relevant to query and context
    - Visual tests verify contextual appropriateness
 
-4. **Manner Maxim**
+4. **Manner Mbopm**
    - Clear, organized, unambiguous communication
    - Visual tests check for clarity, organization, and visual hierarchy
 
-5. **Benevolence Maxim**
+5. **Benevolence Mbopm**
    - No harmful content, ethical considerations
    - Visual tests verify ethical UI design
 
-6. **Transparency Maxim**
+6. **Transparency Mbopm**
    - Acknowledge knowledge boundaries and limitations
    - Visual tests verify error handling and boundary acknowledgment
 
@@ -103,7 +103,7 @@ The visual testing suite has been enhanced to incorporate BOP's core principles,
 ## Test Suites
 
 ### 1. Original Tests (`test_e2e_visual.mjs`)
-- Enhanced with BOP principles and Grice's maxims
+- Enhanced with BOP principles and Grice's mbopms
 - Basic visual validation with principles context
 
 ### 2. Enhanced Tests (`test_e2e_visual_enhanced.mjs`)
@@ -157,8 +157,8 @@ The enhanced tests use 5 evaluation personas:
    - Evaluates from BOP theoretical perspective
    - Focuses on d-separation, information geometry, topological structure
 
-2. **Grice Maxims Evaluator**
-   - Evaluates from Grice's maxims perspective
+2. **Grice Mbopms Evaluator**
+   - Evaluates from Grice's mbopms perspective
    - Focuses on quality, quantity, relation, manner, transparency
 
 3. **Semantic Properties Analyst**

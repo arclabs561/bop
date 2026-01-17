@@ -28,7 +28,7 @@ Used MCP tools (Perplexity Reason) to research:
 ### 1. MUSE Tool Selection (`src/bop/uncertainty_tool_selection.py`)
 
 **Features:**
-- Greedy strategy: Maximizes diversity (epistemic uncertainty)
+- Greedy strategy: Mbopmizes diversity (epistemic uncertainty)
 - Conservative strategy: Minimizes total uncertainty
 - Source credibility filtering: `min_credibility` threshold (default: 0.3)
 - Uses credibility as confidence scores

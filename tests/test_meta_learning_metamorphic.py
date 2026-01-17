@@ -7,8 +7,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.meta_learning import ExperienceStore, MetaLearner
+from pran.agent import KnowledgeAgent
+from pran.meta_learning import ExperienceStore, MetaLearner
 
 # ============================================================================
 # Metamorphic Relations

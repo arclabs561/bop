@@ -20,7 +20,7 @@ def _extract_key_phrases(self, text: str, max_phrases: int = 5) -> List[str]:
     
     Args:
         text: Text to extract phrases from
-        max_phrases: Maximum number of phrases to extract
+        max_phrases: Mbopmum number of phrases to extract
     
     Returns:
         List of key phrases/claims

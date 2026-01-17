@@ -26,7 +26,7 @@ def temp_metrics_dir():
 @pytest.fixture
 def agent_with_observability(temp_metrics_dir):
     """Create agent with observability enabled."""
-    from src.bop.agent import KnowledgeAgent
+    from src.pran.agent import KnowledgeAgent
     agent = KnowledgeAgent(enable_system_reminders=True)
     return agent
 
@@ -216,7 +216,7 @@ def test_improved_heuristic_summarization(agent_with_observability):
 
     # Test summarization (would be called internally)
     # We'll test the key term extraction part
-    from src.bop.token_importance import extract_key_terms
+    from src.pran.token_importance import extract_key_terms
 
     all_text = " ".join(msg.get("content", "") for msg in old_messages)
     key_terms = extract_key_terms(all_text, max_terms=10)
@@ -230,7 +230,7 @@ def test_observability_disabled(agent_with_observability):
     """Test that observability can be disabled."""
     os.environ["BOP_ENABLE_OBSERVABILITY"] = "false"
 
-    from src.bop.agent import KnowledgeAgent
+    from src.pran.agent import KnowledgeAgent
     agent = KnowledgeAgent()
 
     assert agent._metrics is None

@@ -4,8 +4,8 @@ from unittest.mock import patch
 
 import pytest
 
-from bop.constraints import PYSAT_AVAILABLE, ConstraintSolver, ToolType, create_default_constraints
-from bop.orchestrator import StructuredOrchestrator
+from pran.constraints import PYSAT_AVAILABLE, ConstraintSolver, ToolType, create_default_constraints
+from pran.orchestrator import StructuredOrchestrator
 
 
 @pytest.mark.skipif(not PYSAT_AVAILABLE, reason="PySAT not available")

@@ -2,8 +2,8 @@
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.validation import (
+from pran.agent import KnowledgeAgent
+from pran.validation import (
     IntrospectionLogger,
     ResponseValidator,
     ValidationIssue,

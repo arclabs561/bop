@@ -12,8 +12,8 @@ from rich.panel import Panel
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from bop.semantic_eval import SemanticEvaluator
-from bop.agent import KnowledgeAgent
+from pran.semantic_eval import SemanticEvaluator
+from pran.agent import KnowledgeAgent
 from datasets import load_all_datasets, get_dataset_by_domain
 
 console = Console()

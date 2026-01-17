@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 
 
 @pytest.mark.asyncio
@@ -187,7 +187,7 @@ async def test_temporal_api_response_structure():
     # This test simulates what the server.py /chat endpoint returns
     from datetime import datetime
 
-    from bop.server import ChatResponse
+    from pran.server import ChatResponse
 
     # Create a mock response with temporal data
     now = datetime.now(timezone.utc)
@@ -223,8 +223,8 @@ async def test_temporal_api_response_structure():
 @pytest.mark.asyncio
 async def test_temporal_orchestrator_tool_timestamps():
     """Test that orchestrator adds timestamps to tool results."""
-    from bop.orchestrator import StructuredOrchestrator
-    from bop.research import ResearchAgent
+    from pran.orchestrator import StructuredOrchestrator
+    from pran.research import ResearchAgent
 
     # Create orchestrator without LLM service to avoid initialization errors
     orchestrator = StructuredOrchestrator(

@@ -3,7 +3,7 @@
 import pytest
 from fastapi import FastAPI, HTTPException, status
 
-from bop.error_handling import (
+from pran.error_handling import (
     create_error_response,
     handle_exception,
     sanitize_error_message,

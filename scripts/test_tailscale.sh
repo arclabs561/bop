@@ -42,7 +42,7 @@ else
 fi
 
 # Test Fly.io app (if deployed)
-APP_NAME="bop-wispy-voice-3017"
+APP_NAME="pran-wispy-voice-3017"
 if flyctl apps list 2>/dev/null | grep -q "$APP_NAME"; then
     echo ""
     echo "🔍 Checking Fly.io app status..."

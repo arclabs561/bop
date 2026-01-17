@@ -55,7 +55,7 @@ BOP's web UI has been enhanced with sophisticated knowledge display features bas
 - Responsive design for mobile devices
 
 ### 6. Multi-Document Synthesis
-**From Document**: "Source matrix method provides visual organization: create a grid with sources on one axis and key themes on the other"
+**From Document**: "Source matrix method provides visual organization: create a grid with sources on one bops and key themes on the other"
 
 **Implementation**:
 - Source matrix visualization (claims × sources)
@@ -103,7 +103,7 @@ Heatmap-style table showing:
 - Scores from 0.0 to 1.0
 
 **Source Agreement Clusters**:
-- Top 3 cliques (maximal agreement groups)
+- Top 3 cliques (mbopmal agreement groups)
 - Shows which sources agree
 - Displays trust score for each cluster
 

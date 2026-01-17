@@ -3,9 +3,9 @@
 import tempfile
 from pathlib import Path
 
-from bop.adaptive_quality import AdaptiveQualityManager
-from bop.information_bottleneck import filter_with_information_bottleneck
-from bop.quality_feedback import QualityFeedbackLoop
+from pran.adaptive_quality import AdaptiveQualityManager
+from pran.information_bottleneck import filter_with_information_bottleneck
+from pran.quality_feedback import QualityFeedbackLoop
 
 
 def test_metamorphic_ib_filtering_adding_results():

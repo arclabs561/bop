@@ -4,7 +4,7 @@ import tempfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from bop.knowledge_tracking import KnowledgeTracker
+from pran.knowledge_tracking import KnowledgeTracker
 
 
 def test_persistence_save_and_load():

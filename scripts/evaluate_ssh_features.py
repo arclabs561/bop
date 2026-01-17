@@ -21,12 +21,12 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from bop.agent import KnowledgeAgent
-from bop.orchestrator import StructuredOrchestrator
-from bop.research import ResearchAgent
-from bop.adaptive_quality import AdaptiveQualityManager
-from bop.quality_feedback import QualityFeedbackLoop
-from bop.information_bottleneck import filter_with_information_bottleneck
+from pran.agent import KnowledgeAgent
+from pran.orchestrator import StructuredOrchestrator
+from pran.research import ResearchAgent
+from pran.adaptive_quality import AdaptiveQualityManager
+from pran.quality_feedback import QualityFeedbackLoop
+from pran.information_bottleneck import filter_with_information_bottleneck
 import tempfile
 
 console = Console()

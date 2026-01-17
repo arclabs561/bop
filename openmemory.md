@@ -50,7 +50,7 @@ BOP (Knowledge Structure Research Agent) is a Python CLI/chat interface for deep
 ## Patterns
 
 ### Documentation Organization
-- Maximum 5 markdown files in root directory
+- Mbopmum 5 markdown files in root directory
 - Temporary analysis documents should be archived to `archive/analysis-docs/`
 - Archive patterns: `FINAL_*`, `COMPLETE_*`, `ANALYSIS_*`, `CRITIQUE_*`, `INTEGRATION_*`, `TRUST_*`, `*_REVIEW.md`, `*_ANALYSIS.md`, etc.
 

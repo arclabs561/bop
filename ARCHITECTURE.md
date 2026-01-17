@@ -43,11 +43,11 @@ BOP (Knowledge Structure Research Agent) implements a structured reasoning frame
 
 **MCP lazy evaluation** builds cliques incrementally through queries, adding vertices only when edges to existing clique members are verified. This is equivalent to greedy clique construction.
 
-### Attractor Basins as Maximal Cliques
+### Attractor Basins as Mbopmal Cliques
 
 **Attractor concretion** forms cliques in activation space:
 - Co-activated neural patterns form edges
-- Stable attractors correspond to maximal cliques (cannot add more patterns without breaking coherence)
+- Stable attractors correspond to mbopmal cliques (cannot add more patterns without breaking coherence)
 - Basin boundaries are regions where cliques become disconnected
 
 ### Information Geometry and Fisher Information
@@ -109,7 +109,7 @@ BOP implements **Information Bottleneck (IB) filtering** for retrieval results b
 #### Theoretical Foundation
 
 The Information Bottleneck principle (Tishby et al.) provides a principled approach to compression:
-find compressed representations that maximize mutual information with the target while minimizing
+find compressed representations that mbopmize mutual information with the target while minimizing
 mutual information with the original input. This is particularly relevant for RAG systems where
 retrieved passages contain both relevant information and noise.
 
@@ -129,7 +129,7 @@ improves efficiency.
 
 #### Implementation
 
-- **Objective**: Maximize I(compressed; target) - beta * I(compressed; noisy_input)
+- **Objective**: Mbopmize I(compressed; target) - beta * I(compressed; noisy_input)
 - **Method**: Filters retrieved passages by mutual information with query/target
 - **Benefits**: 20-30% token reduction, improved synthesis quality by removing noise
 - **Location**: `src/bop/information_bottleneck.py`, integrated into `LLMService.synthesize_tool_results()`
@@ -169,7 +169,7 @@ depth allocation:
 
 ### Context Injection System
 
-BOP implements a **prioritized context injection system** that follows information-theoretic principles to maximize relevance while minimizing attention dilution.
+BOP implements a **prioritized context injection system** that follows information-theoretic principles to mbopmize relevance while minimizing attention dilution.
 
 #### Context Injection Priority Order
 
@@ -401,7 +401,7 @@ The orchestrator implements lazy evaluation:
 ### Topology Analysis
 
 The `ContextTopology` class provides:
-- **Clique computation**: Greedy algorithm for finding maximal cliques
+- **Clique computation**: Greedy algorithm for finding mbopmal cliques
 - **Betti numbers**: Topological invariants (graph-level approximation)
 - **Euler characteristic**: Single-number summary of knowledge complexity
 - **D-separation analysis**: Simplified for undirected graphs

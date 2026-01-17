@@ -7,7 +7,7 @@ These tests ensure provenance features support BOP's core purpose:
 - Supporting clique complex analysis
 """
 
-from bop.provenance import build_provenance_map
+from pran.provenance import build_provenance_map
 
 
 def test_provenance_preserves_d_separation_structure():
@@ -338,7 +338,7 @@ def test_provenance_query_refinement_preserves_structure():
     - Should not create false dependencies
     - Should respect existing knowledge structure
     """
-    from bop.query_refinement import refine_query_from_provenance
+    from pran.query_refinement import refine_query_from_provenance
 
     provenance_data = {
         "D-separation determines conditional independence": {
@@ -387,7 +387,7 @@ def test_provenance_token_matching_reflects_semantic_structure():
     - Low-quality matches = weak/no relationship
     - Matches should align with knowledge structure
     """
-    from bop.provenance import compute_token_matches
+    from pran.provenance import compute_token_matches
 
     query = "d-separation conditional independence"
     document = "D-separation is a graphical criterion for determining conditional independence in directed acyclic graphs."

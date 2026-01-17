@@ -6,12 +6,12 @@ import pytest
 
 pytestmark = pytest.mark.asyncio
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 
 
 async def test_agent_chat_async():
     """Test async chat functionality."""
-    with patch("bop.agent.LLMService") as mock_llm_class:
+    with patch("pran.agent.LLMService") as mock_llm_class:
         mock_llm = MagicMock()
         mock_llm.generate_response = AsyncMock(return_value="Test response")
         mock_llm.hydrate_schema = AsyncMock(return_value={})
@@ -27,7 +27,7 @@ async def test_agent_chat_async():
 
 async def test_agent_chat_with_schema():
     """Test chat with schema."""
-    with patch("bop.agent.LLMService") as mock_llm_class:
+    with patch("pran.agent.LLMService") as mock_llm_class:
         mock_llm = MagicMock()
         mock_llm.generate_response = AsyncMock(return_value="Schema response")
         mock_llm.hydrate_schema = AsyncMock(return_value={"steps": ["step1"]})
@@ -42,7 +42,7 @@ async def test_agent_chat_with_schema():
 
 async def test_agent_chat_with_research():
     """Test chat with research."""
-    with patch("bop.agent.LLMService") as mock_llm_class:
+    with patch("pran.agent.LLMService") as mock_llm_class:
         mock_llm = MagicMock()
         mock_llm.generate_response = AsyncMock(return_value="Research response")
         mock_llm_class.return_value = mock_llm
@@ -73,7 +73,7 @@ async def test_agent_chat_no_llm():
 
 async def test_agent_chat_error_handling():
     """Test error handling in chat."""
-    with patch("bop.agent.LLMService") as mock_llm_class:
+    with patch("pran.agent.LLMService") as mock_llm_class:
         mock_llm = MagicMock()
         mock_llm.generate_response = AsyncMock(side_effect=Exception("LLM error"))
         mock_llm_class.return_value = mock_llm

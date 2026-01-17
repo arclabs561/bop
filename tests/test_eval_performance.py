@@ -2,8 +2,8 @@
 
 import time
 
-from bop.context_topology import ContextNode, ContextTopology
-from bop.eval import EvaluationFramework
+from pran.context_topology import ContextNode, ContextTopology
+from pran.eval import EvaluationFramework
 
 
 def test_eval_large_test_case_set():

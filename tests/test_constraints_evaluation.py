@@ -5,8 +5,8 @@ import time
 
 import pytest
 
-from bop.constraints import PYSAT_AVAILABLE, ConstraintSolver, create_default_constraints
-from bop.orchestrator import StructuredOrchestrator
+from pran.constraints import PYSAT_AVAILABLE, ConstraintSolver, create_default_constraints
+from pran.orchestrator import StructuredOrchestrator
 
 
 @pytest.mark.skipif(not PYSAT_AVAILABLE, reason="PySAT not available")
@@ -155,7 +155,7 @@ class TestOrchestratorConstraintEvaluation:
 
     async def test_cost_comparison(self):
         """Compare costs between constraint and heuristic selection."""
-        from bop.constraints import create_default_constraints
+        from pran.constraints import create_default_constraints
 
         query = "Research topic"
         constraints = create_default_constraints()
@@ -211,7 +211,7 @@ class TestOrchestratorConstraintEvaluation:
 
     async def test_information_gain_comparison(self):
         """Compare information gain between constraint and heuristic selection."""
-        from bop.constraints import create_default_constraints
+        from pran.constraints import create_default_constraints
 
         query = "Deep research topic"
         constraints = create_default_constraints()

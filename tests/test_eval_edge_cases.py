@@ -2,7 +2,7 @@
 
 import pytest
 
-from bop.eval import EvaluationFramework, EvaluationResult
+from pran.eval import EvaluationFramework, EvaluationResult
 
 
 def test_evaluate_schema_usage_partial_coverage():
@@ -10,7 +10,7 @@ def test_evaluate_schema_usage_partial_coverage():
     framework = EvaluationFramework()
 
     # Get actual schema to test with real fields
-    from bop.schemas import get_schema
+    from pran.schemas import get_schema
     schema = get_schema("chain_of_thought")
     if not schema:
         pytest.skip("chain_of_thought schema not found")

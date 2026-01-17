@@ -14,14 +14,14 @@ from rich.table import Table
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from bop.agent import KnowledgeAgent
-from bop.provenance import build_provenance_map
-from bop.provenance_viz import (
+from pran.agent import KnowledgeAgent
+from pran.provenance import build_provenance_map
+from pran.provenance_viz import (
     create_provenance_heatmap,
     create_relevance_breakdown_display,
     format_clickable_source,
 )
-from bop.query_refinement import (
+from pran.query_refinement import (
     refine_query_from_provenance,
     suggest_followup_queries,
     create_query_refinement_panel,

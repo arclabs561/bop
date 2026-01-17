@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def _find_repo_root() -> Path:
     """Find the repository root directory."""
     current = Path(__file__).resolve()
-    # Go up from src/bop/__init__.py to find repo root
+    # Go up from src/pran/__init__.py to find repo root
     for parent in current.parents:
         if (parent / ".git").exists() or (parent / ".env").exists() or (parent / "pyproject.toml").exists():
             return parent
@@ -118,7 +118,7 @@ _is_valid, _issues = validate_env_setup(verbose=False)
 if not _is_valid:
     logger.warning(
         f"Missing required environment variables: {', '.join(_issues['missing_required'])}. "
-        f"Run 'bop validate-env' for details."
+        f"Run 'pran validate-env' for details."
     )
 
 __version__ = "0.1.0"

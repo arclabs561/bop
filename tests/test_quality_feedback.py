@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.quality_feedback import QualityFeedbackLoop
+from pran.agent import KnowledgeAgent
+from pran.quality_feedback import QualityFeedbackLoop
 
 
 def test_quality_feedback_initialization():

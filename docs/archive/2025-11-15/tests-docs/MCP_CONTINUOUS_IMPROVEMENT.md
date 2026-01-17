@@ -92,7 +92,7 @@ The user requested to "keep using them" - referring to MCP tools. This document 
 
 ### Property-Based Tests (21 tests)
 - Quality properties (10 tests)
-- Grice's maxims properties (5 tests)
+- Grice's mbopms properties (5 tests)
 - Semantic properties (2 tests)
 - Behavioral properties (4 tests)
 

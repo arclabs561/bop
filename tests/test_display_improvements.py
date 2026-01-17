@@ -2,15 +2,15 @@
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.context_topology import ContextNode
-from bop.display_helpers import (
+from pran.agent import KnowledgeAgent
+from pran.context_topology import ContextNode
+from pran.display_helpers import (
     create_trust_table,
     format_clique_clusters,
     format_source_credibility,
     format_trust_summary,
 )
-from bop.orchestrator import StructuredOrchestrator
+from pran.orchestrator import StructuredOrchestrator
 
 
 @pytest.mark.asyncio

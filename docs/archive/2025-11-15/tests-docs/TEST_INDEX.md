@@ -7,7 +7,7 @@ Comprehensive index of all tests, evaluations, and run files for discoverability
 ### Quality & Semantic Evaluation Tests
 
 #### LLM-Judged Tests (25 tests)
-- **`test_grice_maxims.py`** (7 tests) - Grice's maxims: Quality, Quantity, Relation, Manner, Benevolence, Transparency
+- **`test_grice_mbopms.py`** (7 tests) - Grice's mbopms: Quality, Quantity, Relation, Manner, Benevolence, Transparency
 - **`test_semantic_properties.py`** (4 tests) - Semantic properties: Consistency, Coherence, Correctness, Appropriateness
 - **`test_behavioral_properties.py`** (4 tests) - Behavioral properties: Flow, Turn-taking, Context, Intent
 - **`test_llm_agent_behavior.py`** (4 tests) - LLM agent behaviors: Tool selection, Reasoning, Errors, Correction
@@ -15,7 +15,7 @@ Comprehensive index of all tests, evaluations, and run files for discoverability
 
 #### Property-Based Tests (40+ tests)
 - **`test_quality_property_based.py`** (10 tests) - Quality property invariants using Hypothesis
-- **`test_grice_property_based.py`** (5 tests) - Grice's maxims property-based tests
+- **`test_grice_property_based.py`** (5 tests) - Grice's mbopms property-based tests
 - **`test_behavioral_property_based.py`** (4 tests) - Behavioral property-based tests
 - **`test_advanced_property_invariants.py`** (6 tests) - Advanced invariants: Triangle inequality, Subadditivity, Compositionality
 - **`test_custom_property_strategies.py`** (3 tests) - Custom Hypothesis strategies for realistic inputs
@@ -87,7 +87,7 @@ pytest tests/ -v
 ### Run by Category
 ```bash
 # Quality & semantic tests
-pytest tests/test_grice_maxims.py tests/test_semantic_properties.py tests/test_behavioral_properties.py tests/test_llm_agent_behavior.py -v
+pytest tests/test_grice_mbopms.py tests/test_semantic_properties.py tests/test_behavioral_properties.py tests/test_llm_agent_behavior.py -v
 
 # Property-based tests
 pytest tests/test_quality_property_based.py tests/test_grice_property_based.py tests/test_behavioral_property_based.py -v
@@ -222,13 +222,13 @@ cat tests/TEST_ANNOTATIONS.json
 
 ### Most Important Tests
 1. **Integration**: `test_integration_quality_systems.py`
-2. **Quality**: `test_quality_property_based.py`, `test_grice_maxims.py`
+2. **Quality**: `test_quality_property_based.py`, `test_grice_mbopms.py`
 3. **Performance**: `test_performance_quality_systems.py`
 4. **Safety**: `test_safety_quality_systems.py`
 5. **Benchmark**: `test_benchmark_quality_metrics.py`
 
 ### Test Coverage
-- ✅ Quality evaluation (Grice's maxims, semantic, behavioral)
+- ✅ Quality evaluation (Grice's mbopms, semantic, behavioral)
 - ✅ Property-based testing (invariants, metamorphic)
 - ✅ Integration testing (component interactions)
 - ✅ Performance testing (latency, throughput, memory)

@@ -7,8 +7,8 @@ Tests the integration of JSD-based uncertainty into ContextTopology and Orchestr
 import numpy as np
 import pytest
 
-from bop.context_topology import ContextNode, ContextTopology
-from bop.uncertainty import (
+from pran.context_topology import ContextNode, ContextTopology
+from pran.uncertainty import (
     compute_epistemic_uncertainty_jsd,
     extract_prediction_from_result,
 )
@@ -160,8 +160,8 @@ class TestOrchestratorIntegration:
     @pytest.mark.asyncio
     async def test_pipeline_uncertainty_tracking(self):
         """Should track uncertainty at each pipeline stage."""
-        from bop.orchestrator import PipelineUncertainty, StructuredOrchestrator
-        from bop.research import ResearchAgent
+        from pran.orchestrator import PipelineUncertainty, StructuredOrchestrator
+        from pran.research import ResearchAgent
 
         # Create orchestrator (may not have LLM service)
         research_agent = ResearchAgent()

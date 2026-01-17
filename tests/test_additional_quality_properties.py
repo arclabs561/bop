@@ -8,8 +8,8 @@ import tempfile
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.llm import LLMService
+from pran.agent import KnowledgeAgent
+from pran.llm import LLMService
 from tests.test_annotations import annotate_test
 
 

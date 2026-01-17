@@ -9,8 +9,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.meta_learning import ExperienceStore, MetaLearner
+from pran.agent import KnowledgeAgent
+from pran.meta_learning import ExperienceStore, MetaLearner
 
 # ============================================================================
 # Edge Cases
@@ -648,7 +648,7 @@ async def test_meta_learning_different_query_types():
 @pytest.mark.asyncio
 async def test_llm_judge_reflection_generalizability():
     """LLM-as-judge: Evaluate if reflections extract generalizable principles."""
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         store_path = Path(tmpdir) / "experiences.json"
@@ -703,7 +703,7 @@ Respond with JSON: {{"generalizable": 0.0-1.0, "actionable": 0.0-1.0, "transfera
 @pytest.mark.asyncio
 async def test_llm_judge_experience_ranking():
     """LLM-as-judge: Evaluate if experiences are ranked by relevance correctly."""
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         store_path = Path(tmpdir) / "experiences.json"
@@ -767,7 +767,7 @@ Respond with JSON: {{"correct_ordering": 0.0-1.0, "relevance": 0.0-1.0}}
 @pytest.mark.asyncio
 async def test_llm_judge_meta_learning_improvement():
     """LLM-as-judge: Evaluate if meta-learning improves system over time."""
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"

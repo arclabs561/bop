@@ -3,7 +3,7 @@
 
 import pytest
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 
 
 def test_agent_initialization():

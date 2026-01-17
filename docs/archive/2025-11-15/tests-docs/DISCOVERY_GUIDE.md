@@ -57,17 +57,17 @@ pytest tests/ -k "integration" -v
 ### By File
 ```bash
 # Specific test file
-python tests/run_all_tests.py --files test_grice_maxims.py
+python tests/run_all_tests.py --files test_grice_mbopms.py
 
 # Multiple files
-python tests/run_all_tests.py --files test_grice_maxims.py test_semantic_properties.py
+python tests/run_all_tests.py --files test_grice_mbopms.py test_semantic_properties.py
 ```
 
 ## Test Categories
 
 | Category | Description | Test Files |
 |----------|-------------|------------|
-| **quality** | Grice's maxims, semantic, behavioral | 8 files |
+| **quality** | Grice's mbopms, semantic, behavioral | 8 files |
 | **property** | Property-based tests (Hypothesis) | 6 files |
 | **integration** | Component interaction tests | 1 file |
 | **performance** | Latency, throughput, memory | 1 file |
@@ -85,7 +85,7 @@ python tests/run_all_tests.py --files test_grice_maxims.py test_semantic_propert
 
 ### LLM-Judged Tests (25 tests)
 Tests requiring LLM evaluation:
-- `test_grice_maxims.py`
+- `test_grice_mbopms.py`
 - `test_semantic_properties.py`
 - `test_behavioral_properties.py`
 - `test_llm_agent_behavior.py`
@@ -165,7 +165,7 @@ cat tests/TEST_ANNOTATIONS.json
 
 ### Most Important Tests
 1. **Integration**: `test_integration_quality_systems.py`
-2. **Quality**: `test_quality_property_based.py`, `test_grice_maxims.py`
+2. **Quality**: `test_quality_property_based.py`, `test_grice_mbopms.py`
 3. **Performance**: `test_performance_quality_systems.py`
 4. **Safety**: `test_safety_quality_systems.py`
 5. **Benchmark**: `test_benchmark_quality_metrics.py`

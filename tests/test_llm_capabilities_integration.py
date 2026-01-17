@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from bop.llm import LLMService
+from pran.llm import LLMService
 
 
 class TestLLMServiceCapabilities:
@@ -14,9 +14,9 @@ class TestLLMServiceCapabilities:
     async def test_capability_info(self):
         """Test that capability info is accessible."""
         # Mock LLM service to avoid requiring API keys
-        with patch('bop.llm.LLMService._detect_backend', return_value='openai'):
-            with patch('bop.llm.LLMService._create_model') as mock_create:
-                with patch('bop.llm.Agent') as mock_agent:
+        with patch('pran.llm.LLMService._detect_backend', return_value='openai'):
+            with patch('pran.llm.LLMService._create_model') as mock_create:
+                with patch('pran.llm.Agent') as mock_agent:
                     mock_model = Mock()
                     mock_model.model_name = "gpt-4o"
                     mock_create.return_value = mock_model
@@ -36,9 +36,9 @@ class TestLLMServiceCapabilities:
     @pytest.mark.asyncio
     async def test_compute_similarity_fallback(self):
         """Test similarity computation with fallback."""
-        with patch('bop.llm.LLMService._detect_backend', return_value='openai'):
-            with patch('bop.llm.LLMService._create_model') as mock_create:
-                with patch('bop.llm.Agent') as mock_agent:
+        with patch('pran.llm.LLMService._detect_backend', return_value='openai'):
+            with patch('pran.llm.LLMService._create_model') as mock_create:
+                with patch('pran.llm.Agent') as mock_agent:
                     mock_model = Mock()
                     mock_model.model_name = "gpt-4o"
                     mock_create.return_value = mock_model
@@ -65,9 +65,9 @@ class TestLLMServiceCapabilities:
 
     def test_capability_properties(self):
         """Test capability property access."""
-        with patch('bop.llm.LLMService._detect_backend', return_value='openai'):
-            with patch('bop.llm.LLMService._create_model') as mock_create:
-                with patch('bop.llm.Agent') as mock_agent:
+        with patch('pran.llm.LLMService._detect_backend', return_value='openai'):
+            with patch('pran.llm.LLMService._create_model') as mock_create:
+                with patch('pran.llm.Agent') as mock_agent:
                     mock_model = Mock()
                     mock_model.model_name = "gpt-4o"
                     mock_create.return_value = mock_model
@@ -92,9 +92,9 @@ class TestLLMServiceCapabilities:
         ]
 
         for backend, model_name, should_support_vision in test_cases:
-            with patch('bop.llm.LLMService._detect_backend', return_value=backend):
-                with patch('bop.llm.LLMService._create_model') as mock_create:
-                    with patch('bop.llm.Agent') as mock_agent:
+            with patch('pran.llm.LLMService._detect_backend', return_value=backend):
+                with patch('pran.llm.LLMService._create_model') as mock_create:
+                    with patch('pran.llm.Agent') as mock_agent:
                         mock_model = Mock()
                         mock_model.model_name = model_name
                         mock_create.return_value = mock_model
@@ -112,9 +112,9 @@ class TestLLMServiceCapabilities:
 
     def test_custom_input_params(self):
         """Test custom input parameters for different backends."""
-        with patch('bop.llm.LLMService._detect_backend', return_value='openai'):
-            with patch('bop.llm.LLMService._create_model') as mock_create:
-                with patch('bop.llm.Agent') as mock_agent:
+        with patch('pran.llm.LLMService._detect_backend', return_value='openai'):
+            with patch('pran.llm.LLMService._create_model') as mock_create:
+                with patch('pran.llm.Agent') as mock_agent:
                     mock_model = Mock()
                     mock_create.return_value = mock_model
                     mock_agent_instance = Mock()
@@ -139,12 +139,12 @@ class TestOrchestratorIntegration:
     @pytest.mark.asyncio
     async def test_belief_alignment_with_capabilities(self):
         """Test that orchestrator uses capabilities for belief alignment."""
-        from bop.orchestrator import StructuredOrchestrator
-        from bop.research import ResearchAgent
+        from pran.orchestrator import StructuredOrchestrator
+        from pran.research import ResearchAgent
 
-        with patch('bop.llm.LLMService._detect_backend', return_value='openai'):
-            with patch('bop.llm.LLMService._create_model') as mock_create:
-                with patch('bop.llm.Agent') as mock_agent:
+        with patch('pran.llm.LLMService._detect_backend', return_value='openai'):
+            with patch('pran.llm.LLMService._create_model') as mock_create:
+                with patch('pran.llm.Agent') as mock_agent:
                     mock_model = Mock()
                     mock_model.model_name = "gpt-4o"
                     mock_create.return_value = mock_model

@@ -3,8 +3,8 @@
 
 set -e
 
-APP_NAME="${FLY_APP_NAME:-bop-wispy-voice-3017}"
-VOLUME_NAME="${VOLUME_NAME:-bop_cache}"
+APP_NAME="${FLY_APP_NAME:-pran-wispy-voice-3017}"
+VOLUME_NAME="${VOLUME_NAME:-pran_cache}"
 VOLUME_SIZE="${VOLUME_SIZE:-1}"  # GB
 REGION="${REGION:-iad}"
 

@@ -5,7 +5,7 @@ Tests for calibration improvement using uncertainty metrics.
 import numpy as np
 import pytest
 
-from bop.calibration_improvement import (
+from pran.calibration_improvement import (
     _compute_brier_score,
     _compute_ece,
     calibrate_confidence_with_uncertainty,

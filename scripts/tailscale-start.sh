@@ -40,7 +40,7 @@ if [ -n "$TAILSCALE_AUTHKEY" ]; then
     echo "🔑 Authenticating Tailscale..."
     tailscale up \
         --authkey="$TAILSCALE_AUTHKEY" \
-        --hostname="${FLY_APP_NAME:-bop-wispy-voice-3017}" \
+        --hostname="${FLY_APP_NAME:-pran-wispy-voice-3017}" \
         --accept-routes \
         --accept-dns=false \
         --advertise-exit-node=false &
@@ -60,15 +60,15 @@ if [ -n "$TAILSCALE_AUTHKEY" ]; then
     fi
 else
     echo "⚠️  TAILSCALE_AUTHKEY not set, skipping Tailscale setup"
-    echo "💡 Set it with: flyctl secrets set TAILSCALE_AUTHKEY=tskey-... -a bop-wispy-voice-3017"
+    echo "💡 Set it with: flyctl secrets set TAILSCALE_AUTHKEY=tskey-... -a pran-wispy-voice-3017"
 fi
 
 # Start the BOP server
 echo "🌐 Starting BOP web server on port ${PORT:-8080}..."
 echo "📦 Python path: $PYTHONPATH"
 echo "📦 Working directory: $(pwd)"
-echo "📦 Checking if bop.server module exists..."
-uv run python -c "import sys; sys.path.insert(0, '/app/src'); from bop.server import app; print('✅ Server module loads successfully')" || echo "⚠️  Server module check failed (non-critical)"
+echo "📦 Checking if pran.server module exists..."
+uv run python -c "import sys; sys.path.insert(0, '/app/src'); from pran.server import app; print('✅ Server module loads successfully')" || echo "⚠️  Server module check failed (non-critical)"
 echo "🚀 Launching Uvicorn..."
-exec uv run python -m uvicorn bop.server:app --host 0.0.0.0 --port ${PORT:-8080} --log-level info
+exec uv run python -m uvicorn pran.server:app --host 0.0.0.0 --port ${PORT:-8080} --log-level info
 

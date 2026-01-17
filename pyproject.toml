@@ -1,5 +1,5 @@
 [project]
-name = "bop"
+name = "pran"
 version = "0.1.0"
 description = "Knowledge Structure Research Agent"
 readme = "README.md"
@@ -55,7 +55,7 @@ planning-full = [
 ]
 
 [project.scripts]
-bop = "bop.cli:app"
+pran = "pran.cli:app"
 
 [build-system]
 requires = ["hatchling"]
@@ -89,7 +89,7 @@ markers = [
 ]
 
 [tool.mutmut]
-paths_to_mutate = ["src/bop/agent.py"]
+paths_to_mutate = ["src/pran/agent.py"]
 backup = false
 runner = "PYTHONPATH=.:src uv run pytest tests/test_agent.py tests/test_agent_integration.py tests/test_agent_comprehensive.py tests/test_mutation_agent.py -x --ignore=tests/test_adaptive_quality.py"
 tests_dir = ["tests"]

@@ -30,7 +30,7 @@ python tests/run_all_tests.py --list
 ## Test Organization
 
 ### By Category
-- **Quality** - Grice's maxims, semantic properties, behavioral properties
+- **Quality** - Grice's mbopms, semantic properties, behavioral properties
 - **Property-Based** - Hypothesis-based property tests
 - **Integration** - Component interaction tests
 - **Performance** - Latency, throughput, memory tests

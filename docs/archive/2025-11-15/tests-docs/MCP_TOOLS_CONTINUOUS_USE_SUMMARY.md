@@ -33,7 +33,7 @@ The user requested to continue using MCP tools to improve quality, semantic, and
 ## Continuous Improvement Process
 
 ### Iteration 1: Initial Research
-- Discovered Grice's maxims testing
+- Discovered Grice's mbopms testing
 - Found semantic property testing
 - Identified behavioral property testing
 
@@ -60,14 +60,14 @@ The user requested to continue using MCP tools to improve quality, semantic, and
 ## Tests Created (All Iterations)
 
 ### LLM-Judged Tests (19 tests)
-- 7 Grice's maxims tests
+- 7 Grice's mbopms tests
 - 4 semantic property tests
 - 4 behavioral property tests
 - 4 LLM agent behavior tests
 
 ### Property-Based Tests (32 tests)
 - 10 quality property tests
-- 5 Grice's maxims property tests
+- 5 Grice's mbopms property tests
 - 4 behavioral property tests
 - 6 advanced property invariant tests
 - 3 custom strategy tests
@@ -134,7 +134,7 @@ Property-based tests found real edge cases:
 ## Files Created
 
 ### Test Files
-1. `test_grice_maxims.py` - 7 tests
+1. `test_grice_mbopms.py` - 7 tests
 2. `test_semantic_properties.py` - 4 tests
 3. `test_behavioral_properties.py` - 4 tests
 4. `test_llm_agent_behavior.py` - 4 tests
@@ -165,7 +165,7 @@ Property-based tests found real edge cases:
 **MCP tools enabled comprehensive quality testing** through continuous research and discovery.
 
 **Key Achievement**: 51 comprehensive tests covering:
-- Grice's maxims
+- Grice's mbopms
 - Semantic properties
 - Behavioral properties
 - LLM agent behavior

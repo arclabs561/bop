@@ -18,9 +18,9 @@ from rich.panel import Panel
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from bop.agent import KnowledgeAgent
-from bop.provenance import build_provenance_map
-from bop.query_refinement import suggest_followup_queries, refine_query_from_provenance
+from pran.agent import KnowledgeAgent
+from pran.provenance import build_provenance_map
+from pran.query_refinement import suggest_followup_queries, refine_query_from_provenance
 
 console = Console()
 

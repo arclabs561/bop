@@ -101,7 +101,7 @@ All provenance features are validated through hard tests:
 2. **Clique Coherence**: Verified that nodes in cliques are highly correlated
 3. **Trust Calibration**: Computed Expected Calibration Error (ECE) for trust scores
 4. **Information Geometry**: Verified that relevance scores correlate with Fisher Information
-5. **Attractor Basin Identification**: Verified that convergent sources form maximal cliques
+5. **Attractor Basin Identification**: Verified that convergent sources form mbopmal cliques
 
 ## Integration with Core Components
 

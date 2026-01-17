@@ -4,10 +4,10 @@ from unittest.mock import patch
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.provenance import build_provenance_map
-from bop.provenance_viz import create_relevance_breakdown_display, format_clickable_source
-from bop.query_refinement import refine_query_from_provenance, suggest_followup_queries
+from pran.agent import KnowledgeAgent
+from pran.provenance import build_provenance_map
+from pran.provenance_viz import create_relevance_breakdown_display, format_clickable_source
+from pran.query_refinement import refine_query_from_provenance, suggest_followup_queries
 
 
 @pytest.mark.asyncio

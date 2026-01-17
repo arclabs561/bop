@@ -27,7 +27,7 @@ import sys
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from bop.agent import KnowledgeAgent
+from pran.agent import KnowledgeAgent
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel

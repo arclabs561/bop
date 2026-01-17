@@ -8,10 +8,10 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from bop.agent import KnowledgeAgent
-from bop.context_topology import ContextTopology, ContextNode
-from bop.orchestrator import StructuredOrchestrator, ToolType
-from bop.schemas import get_schema
+from pran.agent import KnowledgeAgent
+from pran.context_topology import ContextTopology, ContextNode
+from pran.orchestrator import StructuredOrchestrator, ToolType
+from pran.schemas import get_schema
 
 
 async def test_basic_topology():
@@ -76,7 +76,7 @@ async def test_orchestrator():
     """Test orchestrator with a real query."""
     print("\n=== Testing Orchestrator ===")
     
-    from bop.research import ResearchAgent
+    from pran.research import ResearchAgent
     
     research_agent = ResearchAgent()
     orchestrator = StructuredOrchestrator(research_agent)

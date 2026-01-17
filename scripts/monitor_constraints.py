@@ -14,10 +14,10 @@ from datetime import datetime
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from bop.agent import KnowledgeAgent
-from bop.orchestrator import StructuredOrchestrator
-from bop.research import ResearchAgent
-from bop.constraints import PYSAT_AVAILABLE, create_default_constraints
+from pran.agent import KnowledgeAgent
+from pran.orchestrator import StructuredOrchestrator
+from pran.research import ResearchAgent
+from pran.constraints import PYSAT_AVAILABLE, create_default_constraints
 
 
 class ConstraintMonitor:

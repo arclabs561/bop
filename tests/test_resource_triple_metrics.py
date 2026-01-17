@@ -2,8 +2,8 @@
 
 import pytest
 
-from bop.orchestrator import StructuredOrchestrator
-from bop.research import ResearchAgent
+from pran.orchestrator import StructuredOrchestrator
+from pran.research import ResearchAgent
 
 
 @pytest.mark.asyncio

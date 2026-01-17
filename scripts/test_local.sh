@@ -30,7 +30,7 @@ echo "✅ TAILSCALE_AUTHKEY found"
 # Start server in background
 echo ""
 echo "🚀 Starting BOP server..."
-uv run python -m uvicorn bop.server:app --host 0.0.0.0 --port 8080 &
+uv run python -m uvicorn pran.server:app --host 0.0.0.0 --port 8080 &
 SERVER_PID=$!
 
 # Wait for server to start

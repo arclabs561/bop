@@ -3,8 +3,8 @@
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from bop.agent import KnowledgeAgent
-from bop.validation import validate_response
+from pran.agent import KnowledgeAgent
+from pran.validation import validate_response
 
 
 @given(

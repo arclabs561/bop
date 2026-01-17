@@ -2,7 +2,7 @@
 
 import pytest
 
-from bop.llm import LLMService
+from pran.llm import LLMService
 
 
 @pytest.mark.asyncio
@@ -44,7 +44,7 @@ def test_connective_phrases_guidance():
     # We verify this by checking the code exists
     import inspect
 
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     source = inspect.getsource(LLMService.generate_response)
     # Check that narrative guidance is mentioned in the code

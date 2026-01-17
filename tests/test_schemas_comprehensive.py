@@ -1,6 +1,6 @@
 """Comprehensive tests for all schemas."""
 
-from bop.schemas import (
+from pran.schemas import (
     get_schema,
     hydrate_schema,
     list_schemas,

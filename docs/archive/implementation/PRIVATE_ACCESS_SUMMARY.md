@@ -128,7 +128,7 @@ flyctl ips release6 -a bop-wispy-voice-3017 <ip-address>
 3. **Redeploy**: `flyctl deploy -a bop-wispy-voice-3017`
 4. **Verify**: Check logs and Tailscale status
 5. **Access**: Use Tailscale hostname or IP
-6. **Remove public IPs**: For maximum security
+6. **Remove public IPs**: For mbopmum security
 
 ## Security Comparison
 
@@ -138,5 +138,5 @@ flyctl ips release6 -a bop-wispy-voice-3017 <ip-address>
 | Fly Proxy | ❌ Not needed | ✅ WireGuard | ❌ None | Low |
 | API Key | ✅ Required | ✅ HTTPS | ✅ Per-request | Low |
 
-**Recommendation**: Use Tailscale for maximum security and privacy.
+**Recommendation**: Use Tailscale for mbopmum security and privacy.
 

@@ -55,7 +55,7 @@ python tests/run_all_tests.py --pattern safety
 
 ### Run Specific Files
 ```bash
-python tests/run_all_tests.py --files test_grice_maxims.py
+python tests/run_all_tests.py --files test_grice_mbopms.py
 ```
 
 ### List Categories

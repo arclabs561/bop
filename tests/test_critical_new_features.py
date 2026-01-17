@@ -4,9 +4,9 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.orchestrator import StructuredOrchestrator
-from bop.research import ResearchAgent
+from pran.agent import KnowledgeAgent
+from pran.orchestrator import StructuredOrchestrator
+from pran.research import ResearchAgent
 
 # ============================================================================
 # 1. Source References Tests (CRITICAL - 0 tests currently)
@@ -254,7 +254,7 @@ async def test_cli_show_details_flag_execution():
     agent.llm_service = None  # Use fallback
 
     # Mock the chat function to capture flag usage
-    with patch('bop.cli.KnowledgeAgent') as mock_agent_class:
+    with patch('pran.cli.KnowledgeAgent') as mock_agent_class:
         mock_agent = Mock()
         mock_agent.chat = Mock(return_value={
             "response": "Test response",
@@ -270,7 +270,7 @@ async def test_cli_show_details_flag_execution():
         # We'll test the flag parameter exists instead
         import inspect
 
-        from bop.cli import chat
+        from pran.cli import chat
         sig = inspect.signature(chat)
         assert 'show_details' in sig.parameters
         # Verify it's a boolean parameter (Typer uses OptionInfo for defaults)

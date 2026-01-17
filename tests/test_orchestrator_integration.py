@@ -4,14 +4,14 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from bop.context_topology import ContextNode
-from bop.orchestrator import StructuredOrchestrator
+from pran.context_topology import ContextNode
+from pran.orchestrator import StructuredOrchestrator
 
 
 @pytest.mark.asyncio
 async def test_orchestrator_with_llm_decomposition():
     """Test orchestrator uses LLM for query decomposition."""
-    with patch("bop.orchestrator.LLMService") as mock_llm_class:
+    with patch("pran.orchestrator.LLMService") as mock_llm_class:
         mock_llm = MagicMock()
         mock_llm.decompose_query = AsyncMock(return_value=["sub1", "sub2", "sub3"])
         mock_llm.synthesize_tool_results = AsyncMock(return_value="Synthesized")
@@ -233,7 +233,7 @@ async def test_orchestrator_max_tools_per_subproblem():
 @pytest.mark.asyncio
 async def test_orchestrator_synthesis_with_llm():
     """Test that LLM is used for synthesis when available."""
-    with patch("bop.orchestrator.LLMService") as mock_llm_class:
+    with patch("pran.orchestrator.LLMService") as mock_llm_class:
         mock_llm = MagicMock()
         mock_llm.decompose_query = AsyncMock(return_value=["sub1"])
         mock_llm.synthesize_tool_results = AsyncMock(return_value="Tool synthesis")

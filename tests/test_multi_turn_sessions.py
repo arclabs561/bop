@@ -12,8 +12,8 @@ from pathlib import Path
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.session_manager import HierarchicalSessionManager
+from pran.agent import KnowledgeAgent
+from pran.session_manager import HierarchicalSessionManager
 from tests.test_annotations import annotate_test
 
 # Annotate all tests in this module
@@ -322,7 +322,7 @@ def test_multi_turn_replay():
     )
     with tempfile.TemporaryDirectory() as tmpdir:
         manager = HierarchicalSessionManager(sessions_dir=Path(tmpdir))
-        from bop.session_replay import SessionReplayManager
+        from pran.session_replay import SessionReplayManager
         replay = SessionReplayManager(manager)
 
         # Create multi-turn session

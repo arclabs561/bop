@@ -2,7 +2,7 @@
 
 import pytest
 
-from bop.provenance_viz import format_clickable_source
+from pran.provenance_viz import format_clickable_source
 
 
 def test_format_clickable_source_returns_tuple():

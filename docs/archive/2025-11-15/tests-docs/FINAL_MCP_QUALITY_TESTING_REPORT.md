@@ -21,7 +21,7 @@
 - Scrape Hypothesis documentation
 - Find conversational AI patterns
 - OWASP patterns
-- Grice's maxims resources
+- Grice's mbopms resources
 
 ### Tavily (6+ calls)
 - Property-based testing resources
@@ -44,7 +44,7 @@
 ## Complete Test Suite
 
 ### LLM-Judged Tests (19 tests)
-1. **Grice's Maxims** (7 tests)
+1. **Grice's Mbopms** (7 tests)
    - Quality, Quantity, Relation, Manner
    - Benevolence, Transparency
    - Comprehensive
@@ -63,7 +63,7 @@
    - Score ranges, flag consistency, determinism
    - Empty/identical handling, similarity properties
 
-2. **Grice's Maxims Properties** (5 tests)
+2. **Grice's Mbopms Properties** (5 tests)
    - Relation transitive-like, Quantity length independence
    - Manner clarity, Quality placeholders, Consistency symmetry
 
@@ -125,7 +125,7 @@
 - Property-based testing patterns
 - Conversational AI testing methodologies
 - OWASP session management patterns
-- Grice's maxims resources
+- Grice's mbopms resources
 
 ### From Tavily
 - Property-based testing resources
@@ -167,13 +167,13 @@
 - Security/adversarial testing
 - Limited semantic evaluation
 - No property-based testing
-- No Grice's maxims testing
+- No Grice's mbopms testing
 - No metamorphic testing
 
 ### After
 - ✅ 51 comprehensive quality/semantic/behavioral tests
 - ✅ 32 property-based tests with Hypothesis
-- ✅ 7 Grice's maxims tests
+- ✅ 7 Grice's mbopms tests
 - ✅ 4 metamorphic tests
 - ✅ Custom strategies for realistic inputs
 - ✅ 16+ property invariants tested
@@ -182,7 +182,7 @@
 ## Files Created
 
 ### Test Files (10 files)
-1. `test_grice_maxims.py` - 7 tests
+1. `test_grice_mbopms.py` - 7 tests
 2. `test_semantic_properties.py` - 4 tests
 3. `test_behavioral_properties.py` - 4 tests
 4. `test_llm_agent_behavior.py` - 4 tests
@@ -267,7 +267,7 @@
 - Edge case discovery (4 documented cases)
 
 **Result**: 51 comprehensive tests covering:
-- Grice's maxims
+- Grice's mbopms
 - Semantic properties
 - Behavioral properties
 - LLM agent behavior

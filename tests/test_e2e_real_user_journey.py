@@ -8,9 +8,9 @@ from unittest.mock import patch
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.provenance_viz import create_relevance_breakdown_display, format_clickable_source
-from bop.query_refinement import refine_query_from_provenance
+from pran.agent import KnowledgeAgent
+from pran.provenance_viz import create_relevance_breakdown_display, format_clickable_source
+from pran.query_refinement import refine_query_from_provenance
 
 
 @pytest.mark.asyncio
@@ -340,7 +340,7 @@ async def test_real_user_journey_error_recovery():
     agent = KnowledgeAgent(enable_quality_feedback=True)
 
     # Simulate error in provenance building
-    with patch('bop.provenance.build_provenance_map', side_effect=Exception("Provenance error")):
+    with patch('pran.provenance.build_provenance_map', side_effect=Exception("Provenance error")):
         # Should still work without provenance
         response = await agent.chat(
             message="What is d-separation?",

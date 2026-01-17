@@ -1,7 +1,7 @@
 """Advanced edge case tests for topology."""
 
 
-from bop.context_topology import ContextNode, ContextTopology
+from pran.context_topology import ContextNode, ContextTopology
 
 
 def test_topology_large_graph_performance():

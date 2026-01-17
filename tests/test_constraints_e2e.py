@@ -9,10 +9,10 @@ import logging
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.constraints import PYSAT_AVAILABLE, ConstraintSolver, create_default_constraints
-from bop.orchestrator import StructuredOrchestrator
-from bop.research import ResearchAgent
+from pran.agent import KnowledgeAgent
+from pran.constraints import PYSAT_AVAILABLE, ConstraintSolver, create_default_constraints
+from pran.orchestrator import StructuredOrchestrator
+from pran.research import ResearchAgent
 
 logger = logging.getLogger(__name__)
 
@@ -166,8 +166,8 @@ async def test_prompt_robustness_various_types():
 def test_integration_points_verification():
     """Verify all integration points are connected."""
     # Check 1: Imports
-    from bop.constraints import create_default_constraints
-    from bop.orchestrator import CONSTRAINTS_AVAILABLE, StructuredOrchestrator
+    from pran.constraints import create_default_constraints
+    from pran.orchestrator import CONSTRAINTS_AVAILABLE, StructuredOrchestrator
 
     assert CONSTRAINTS_AVAILABLE is True
 
@@ -243,7 +243,7 @@ async def test_constraint_solver_logging():
     handler = logging.StreamHandler(log_capture)
     handler.setLevel(logging.INFO)
 
-    logger = logging.getLogger("bop.orchestrator")
+    logger = logging.getLogger("pran.orchestrator")
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
 

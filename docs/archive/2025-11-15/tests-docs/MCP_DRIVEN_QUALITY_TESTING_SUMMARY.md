@@ -7,7 +7,7 @@ Used MCP tools extensively to research, discover, and implement comprehensive qu
 ## MCP Tools Used
 
 ### Perplexity (Deep Research)
-- Grice's maxims testing methodologies
+- Grice's mbopms testing methodologies
 - Semantic property testing approaches
 - Behavioral property testing frameworks
 - LLM agent evaluation techniques
@@ -15,7 +15,7 @@ Used MCP tools extensively to research, discover, and implement comprehensive qu
 - Specific invariants (symmetry, reflexivity, idempotency, monotonicity)
 
 ### Firecrawl
-- Conversational maxims for human-AI interactions
+- Conversational mbopms for human-AI interactions
 - OWASP session management patterns
 - Evaluation frameworks
 - Hypothesis property-based testing examples
@@ -29,7 +29,7 @@ Used MCP tools extensively to research, discover, and implement comprehensive qu
 
 ### Kagi
 - Comprehensive quality testing resources
-- Grice maxims automated testing
+- Grice mbopms automated testing
 - Semantic consistency testing
 - Behavioral property testing
 
@@ -41,14 +41,14 @@ Used MCP tools extensively to research, discover, and implement comprehensive qu
 
 ## Tests Created
 
-### Grice's Maxims Tests (7 tests)
+### Grice's Mbopms Tests (7 tests)
 - Quality (truthfulness, evidence)
 - Quantity (right amount)
 - Relation (relevance)
 - Manner (clarity, organization)
 - Benevolence (harmful content)
 - Transparency (knowledge boundaries)
-- Comprehensive (all maxims)
+- Comprehensive (all mbopms)
 
 ### Semantic Property Tests (4 tests)
 - Semantic consistency (across responses)
@@ -70,7 +70,7 @@ Used MCP tools extensively to research, discover, and implement comprehensive qu
 
 ### Property-Based Tests (21 tests)
 - Quality properties (10 tests)
-- Grice's maxims properties (5 tests)
+- Grice's mbopms properties (5 tests)
 - Semantic properties (2 tests)
 - Behavioral properties (4 tests)
 
@@ -78,7 +78,7 @@ Used MCP tools extensively to research, discover, and implement comprehensive qu
 
 ## Key Discoveries from MCP Research
 
-### Grice's Maxims
+### Grice's Mbopms
 - Quality: Test for false information, unsupported claims, hallucinations, confidence calibration
 - Quantity: Test for appropriate detail level, verbosity, comprehensiveness, expertise adaptation
 - Relation: Test for relevance, topic focus, tangents (we partially do this)
@@ -110,7 +110,7 @@ Used MCP tools extensively to research, discover, and implement comprehensive qu
 
 | Aspect | Before | After |
 |--------|--------|-------|
-| **Grice's Maxims** | ❌ None | ✅ 7 tests + 5 property tests |
+| **Grice's Mbopms** | ❌ None | ✅ 7 tests + 5 property tests |
 | **Semantic Properties** | ⚠️ Partial | ✅ 4 tests + 2 property tests |
 | **Behavioral Properties** | ⚠️ Partial | ✅ 4 tests + 4 property tests |
 | **LLM Agent Behavior** | ❌ None | ✅ 4 tests |
@@ -133,12 +133,12 @@ Used MCP tools extensively to research, discover, and implement comprehensive qu
 
 ### Quality Assessment
 - **Before**: Basic relevance/accuracy/completeness
-- **After**: Grice's maxims, semantic properties, behavioral properties, agent behavior
+- **After**: Grice's mbopms, semantic properties, behavioral properties, agent behavior
 
 ## Key Insights
 
 1. **MCP Tools Revealed Patterns We Missed**
-   - Grice's maxims testing methodologies
+   - Grice's mbopms testing methodologies
    - Semantic property testing approaches
    - Behavioral property testing frameworks
    - Property-based testing strategies
@@ -168,12 +168,12 @@ Used MCP tools extensively to research, discover, and implement comprehensive qu
 
 ## Files Created
 
-1. `test_grice_maxims.py` - 7 Grice's maxims tests
+1. `test_grice_mbopms.py` - 7 Grice's mbopms tests
 2. `test_semantic_properties.py` - 4 semantic property tests
 3. `test_behavioral_properties.py` - 4 behavioral property tests
 4. `test_llm_agent_behavior.py` - 4 LLM agent behavior tests
 5. `test_quality_property_based.py` - 10 quality property tests
-6. `test_grice_property_based.py` - 5 Grice's maxims property tests
+6. `test_grice_property_based.py` - 5 Grice's mbopms property tests
 7. `test_behavioral_property_based.py` - 4 behavioral property tests
 8. `QUALITY_SEMANTIC_BEHAVIORAL_COMPREHENSIVE_CRITIQUE.md` - Full analysis
 9. `QUALITY_SEMANTIC_BEHAVIORAL_FINAL_CRITIQUE.md` - Summary
@@ -183,7 +183,7 @@ Used MCP tools extensively to research, discover, and implement comprehensive qu
 ## Conclusion
 
 **MCP tools enabled comprehensive quality testing** that we wouldn't have discovered manually. Research-first approach revealed:
-- Grice's maxims testing methodologies
+- Grice's mbopms testing methodologies
 - Semantic property testing approaches
 - Behavioral property testing frameworks
 - Property-based testing strategies

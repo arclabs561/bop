@@ -6,11 +6,11 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from bop.adaptive_quality import AdaptiveQualityManager
-from bop.information_bottleneck import filter_with_information_bottleneck
-from bop.orchestrator import StructuredOrchestrator
-from bop.quality_feedback import QualityFeedbackLoop
-from bop.research import ResearchAgent
+from pran.adaptive_quality import AdaptiveQualityManager
+from pran.information_bottleneck import filter_with_information_bottleneck
+from pran.orchestrator import StructuredOrchestrator
+from pran.quality_feedback import QualityFeedbackLoop
+from pran.research import ResearchAgent
 
 
 def test_ib_filtering_beta_unused_critical():
@@ -178,7 +178,7 @@ def test_logical_depth_edge_cases():
     - Node with zero trust/coherence
     - Node with very high verification count
     """
-    from bop.context_topology import ContextNode, ContextTopology
+    from pran.context_topology import ContextNode, ContextTopology
 
     topology = ContextTopology()
 
@@ -223,7 +223,7 @@ async def test_early_stopping_quality_estimation_heuristic():
     This may not accurately reflect actual quality, leading to incorrect
     early stopping decisions.
     """
-    from bop.orchestrator import StructuredOrchestrator
+    from pran.orchestrator import StructuredOrchestrator
 
     orchestrator = StructuredOrchestrator(
         research_agent=ResearchAgent(use_mcp=False),

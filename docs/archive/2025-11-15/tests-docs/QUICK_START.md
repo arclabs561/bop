@@ -28,7 +28,7 @@ python tests/run_all_tests.py --category quality
 python tests/run_all_tests.py --pattern integration
 
 # Specific files
-python tests/run_all_tests.py --files test_grice_maxims.py
+python tests/run_all_tests.py --files test_grice_mbopms.py
 ```
 
 ## Run Evaluations (1 minute)

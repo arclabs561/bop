@@ -24,7 +24,7 @@ from pydantic import BaseModel, Field, field_validator
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 
-# .env is auto-loaded by src/bop/__init__.py when package is imported
+# .env is auto-loaded by src/pran/__init__.py when package is imported
 from .agent import KnowledgeAgent
 from .constraints import PYSAT_AVAILABLE
 from .error_handling import get_request_id, handle_exception

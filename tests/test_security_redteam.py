@@ -11,7 +11,7 @@ import pytest
 import requests
 
 # Test configuration
-APP_URL = os.getenv("BOP_APP_URL", "https://bop-wispy-voice-3017.fly.dev")
+APP_URL = os.getenv("BOP_APP_URL", "https://pran-wispy-voice-3017.fly.dev")
 API_KEY = os.getenv("BOP_API_KEY", "a03zsJxmWd5rZeIHDN20ZjkM_qbmfKCIEf-bP8ABTdc")
 INVALID_API_KEY = "invalid-key-12345"
 MISSING_API_KEY = None

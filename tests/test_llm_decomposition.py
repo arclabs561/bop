@@ -4,16 +4,16 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from bop.llm import LLMService
-from bop.schemas import get_schema
+from pran.llm import LLMService
+from pran.schemas import get_schema
 
 
 @pytest.mark.asyncio
 async def test_decompose_query_decompose_and_synthesize():
     """Test decomposition for decompose_and_synthesize schema."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIModel"):
-            with patch("bop.llm.Agent"):
+        with patch("pran.llm.OpenAIModel"):
+            with patch("pran.llm.Agent"):
                 service = LLMService()
 
                 # Mock the agent to return structured subproblems
@@ -45,8 +45,8 @@ async def test_decompose_query_decompose_and_synthesize():
 async def test_decompose_query_other_schema():
     """Test decomposition for other schemas."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent"):
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent"):
                 service = LLMService(backend="openai")
 
                 with patch.object(service, 'agent') as mock_agent:
@@ -71,8 +71,8 @@ async def test_decompose_query_other_schema():
 async def test_decompose_query_fallback():
     """Test that decomposition falls back if LLM fails."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent"):
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent"):
                 service = LLMService(backend="openai")
 
                 # Mock agent to raise exception
@@ -95,8 +95,8 @@ async def test_decompose_query_fallback():
 async def test_decompose_query_invalid_response():
     """Test handling of invalid LLM response."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent"):
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent"):
                 service = LLMService(backend="openai")
 
                 with patch.object(service, 'agent') as mock_agent:
@@ -120,8 +120,8 @@ async def test_decompose_query_invalid_response():
 async def test_decompose_query_empty_response():
     """Test handling of empty LLM response."""
     with patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"}):
-        with patch("bop.llm.OpenAIChatModel"):
-            with patch("bop.llm.Agent"):
+        with patch("pran.llm.OpenAIChatModel"):
+            with patch("pran.llm.Agent"):
                 service = LLMService(backend="openai")
 
                 with patch.object(service, 'agent') as mock_agent:
@@ -143,8 +143,8 @@ async def test_decompose_query_empty_response():
 @pytest.mark.asyncio
 async def test_decompose_query_without_llm_service():
     """Test orchestrator decomposition without LLM service."""
-    from bop.orchestrator import StructuredOrchestrator
-    from bop.schemas import get_schema
+    from pran.orchestrator import StructuredOrchestrator
+    from pran.schemas import get_schema
 
     orchestrator = StructuredOrchestrator()
     orchestrator.llm_service = None  # No LLM service
@@ -169,8 +169,8 @@ async def test_decompose_query_without_llm_service():
 @pytest.mark.asyncio
 async def test_decompose_query_with_llm_service():
     """Test orchestrator decomposition with LLM service."""
-    from bop.orchestrator import StructuredOrchestrator
-    from bop.schemas import get_schema
+    from pran.orchestrator import StructuredOrchestrator
+    from pran.schemas import get_schema
 
     orchestrator = StructuredOrchestrator()
 
@@ -202,8 +202,8 @@ async def test_decompose_query_with_llm_service():
 @pytest.mark.asyncio
 async def test_decompose_query_llm_error_fallback():
     """Test that orchestrator falls back when LLM decomposition fails."""
-    from bop.orchestrator import StructuredOrchestrator
-    from bop.schemas import get_schema
+    from pran.orchestrator import StructuredOrchestrator
+    from pran.schemas import get_schema
 
     orchestrator = StructuredOrchestrator()
 

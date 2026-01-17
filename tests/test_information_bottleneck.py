@@ -1,6 +1,6 @@
 """Tests for Information Bottleneck filtering."""
 
-from bop.information_bottleneck import (
+from pran.information_bottleneck import (
     compute_mutual_information_estimate,
     filter_with_information_bottleneck,
 )

@@ -37,7 +37,7 @@ def temp_dirs():
 @pytest.fixture
 def agent(temp_dirs):
     """Create agent with all features enabled."""
-    from src.bop.agent import KnowledgeAgent
+    from src.pran.agent import KnowledgeAgent
     return KnowledgeAgent(enable_system_reminders=True)
 
 
@@ -89,7 +89,7 @@ async def test_metrics_persistence_across_sessions(agent, temp_dirs):
     agent._save_metrics()
 
     # Create new agent (should load metrics)
-    from src.bop.agent import KnowledgeAgent
+    from src.pran.agent import KnowledgeAgent
     agent2 = KnowledgeAgent(enable_system_reminders=True)
 
     # Should have loaded historical metrics
@@ -112,7 +112,7 @@ def test_scratchpad_persistence_across_sessions(agent, temp_dirs):
     assert scratchpad_file.exists()
 
     # Create new agent (should load from scratchpad)
-    from src.bop.agent import KnowledgeAgent
+    from src.pran.agent import KnowledgeAgent
     agent2 = KnowledgeAgent(enable_system_reminders=True)
     agent2.enable_scratchpad = True
     agent2.scratchpad_dir = temp_dirs["scratchpad"]
@@ -186,7 +186,7 @@ def test_improved_heuristic_summarization(agent):
     # Test the summarization logic (would be called in compaction)
     from collections import Counter
 
-    from src.bop.token_importance import extract_key_terms
+    from src.pran.token_importance import extract_key_terms
 
     all_key_terms = []
     for msg in old_messages:

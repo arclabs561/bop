@@ -2,8 +2,8 @@
 
 import pytest
 
-from bop.context_topology import ContextNode
-from bop.orchestrator import StructuredOrchestrator, ToolType
+from pran.context_topology import ContextNode
+from pran.orchestrator import StructuredOrchestrator, ToolType
 
 
 def test_topology_aware_tool_selection_empty_topology():

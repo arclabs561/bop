@@ -12,7 +12,7 @@ import numpy as np
 
 # Type hint for ContextNode (avoid circular import)
 try:
-    from bop.context_topology import ContextNode
+    from pran.context_topology import ContextNode
 except ImportError:
     ContextNode = Any
 

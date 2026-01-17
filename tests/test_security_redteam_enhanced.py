@@ -22,7 +22,7 @@ import pytest
 import requests
 
 # Test configuration
-APP_NAME = os.getenv("FLY_APP_NAME", "bop-wispy-voice-3017")
+APP_NAME = os.getenv("FLY_APP_NAME", "pran-wispy-voice-3017")
 APP_URL = os.getenv("BOP_APP_URL", f"https://{APP_NAME}.fly.dev")
 API_KEY = os.getenv("BOP_API_KEY", "")
 INVALID_API_KEY = "invalid-key-12345"
@@ -612,7 +612,7 @@ class TestVolumePersistenceSecurity:
         assert exit_code == 0, "Failed to list volumes"
 
         # Check for encryption
-        if "bop_cache" in stdout:
+        if "pran_cache" in stdout:
             assert "encrypted" in stdout.lower() or "true" in stdout.lower(), \
                 "Volumes should be encrypted"
 

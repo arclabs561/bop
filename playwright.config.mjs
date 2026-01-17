@@ -72,7 +72,7 @@ export default defineConfig({
   
   // Web server configuration (optional - can start server here)
   // webServer: {
-  //   command: 'uv run bop serve',
+  //   command: 'uv run pran serve',
   //   url: 'http://localhost:8000/health',
   //   reuseExistingServer: !process.env.CI,
   // },

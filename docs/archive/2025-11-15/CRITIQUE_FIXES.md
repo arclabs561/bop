@@ -137,7 +137,7 @@ Added comprehensive edge case tests:
 
 3. **Fisher Information**: Heuristic estimate, not true Fisher Information Matrix
 
-4. **Clique Finding**: Greedy algorithm, may miss some maximal cliques (NP-complete problem)
+4. **Clique Finding**: Greedy algorithm, may miss some mbopmal cliques (NP-complete problem)
 
 These limitations are now clearly documented in code comments and docstrings.
 

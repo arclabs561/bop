@@ -1,7 +1,7 @@
 """Tests for context topology analysis."""
 
 
-from bop.context_topology import ContextNode, ContextTopology
+from pran.context_topology import ContextNode, ContextTopology
 
 
 def test_add_node():

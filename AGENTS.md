@@ -185,7 +185,7 @@ result = await research_agent.deep_research("What is d-separation?")
 **Theoretical Foundation**:
 - **MCP Lazy Evaluation**: Preserves d-separation by avoiding collider bias
 - **Context Topology**: Clique complexes for coherent context sets
-- **Attractor Basins**: Maximal cliques as stable knowledge structures
+- **Attractor Basins**: Mbopmal cliques as stable knowledge structures
 - **Information Geometry**: Fisher Information for structure quality
 - **Serial Scaling**: Dependent reasoning chains with depth constraints
 

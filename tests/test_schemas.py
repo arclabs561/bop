@@ -1,7 +1,7 @@
 """Tests for reasoning schemas."""
 
 
-from bop.schemas import (
+from pran.schemas import (
     CHAIN_OF_THOUGHT,
     get_schema,
     hydrate_schema,

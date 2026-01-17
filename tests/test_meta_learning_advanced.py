@@ -11,8 +11,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.meta_learning import ExperienceStore, MetaLearner
+from pran.agent import KnowledgeAgent
+from pran.meta_learning import ExperienceStore, MetaLearner
 
 # ============================================================================
 # Stress Tests
@@ -116,7 +116,7 @@ async def test_multiturn_topic_evolution_judge():
     Scenario: Conversation starts broad, narrows, then expands again.
     System should use relevant experiences at each stage.
     """
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
@@ -191,7 +191,7 @@ async def test_multiturn_error_recovery_judge():
 
     Scenario: First response has issues, system reflects, second response improves.
     """
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
@@ -264,7 +264,7 @@ async def test_multiturn_experience_relevance_judge():
     """
     Multi-turn: LLM judge evaluates if experiences remain relevant as conversation evolves.
     """
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"
@@ -671,7 +671,7 @@ async def test_deep_integration_quality_meta_learning():
 @pytest.mark.asyncio
 async def test_llm_judge_reflection_depth():
     """LLM-as-judge: Evaluate if reflections show sufficient depth and insight."""
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         store_path = Path(tmpdir) / "experiences.json"
@@ -726,7 +726,7 @@ Respond with JSON: {{"beyond_surface": 0.0-1.0, "identifies_patterns": 0.0-1.0, 
 @pytest.mark.asyncio
 async def test_llm_judge_experience_diversity():
     """LLM-as-judge: Evaluate if experiences capture diverse insights."""
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         store_path = Path(tmpdir) / "experiences.json"

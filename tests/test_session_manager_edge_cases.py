@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from bop.session_manager import (
+from pran.session_manager import (
     FileSessionStorage,
     HierarchicalSessionManager,
     LRUSessionCache,
@@ -251,7 +251,7 @@ def test_unified_storage_edge_cases():
     """Test edge cases in unified storage."""
     with tempfile.TemporaryDirectory() as tmpdir:
         manager = HierarchicalSessionManager(sessions_dir=Path(tmpdir))
-        from bop.unified_storage import UnifiedSessionStorage
+        from pran.unified_storage import UnifiedSessionStorage
         unified = UnifiedSessionStorage(manager)
 
         # Get history with no sessions
@@ -268,7 +268,7 @@ def test_replay_edge_cases():
     """Test edge cases in experience replay."""
     with tempfile.TemporaryDirectory() as tmpdir:
         manager = HierarchicalSessionManager(sessions_dir=Path(tmpdir))
-        from bop.session_replay import SessionReplayManager
+        from pran.session_replay import SessionReplayManager
         replay = SessionReplayManager(manager)
 
         # Replay non-existent session

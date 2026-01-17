@@ -251,7 +251,7 @@ problem.set_initial_value(query_answered(main_topic), False)
 problem.add_goal(GE(has_information(main_topic), 0.7))
 problem.add_goal(query_answered(main_topic))
 
-# Quality metric: Minimize cost (maximize remaining budget)
+# Quality metric: Minimize cost (mbopmize remaining budget)
 problem.add_quality_metric(MinimizeExpressionOnFinalState(Minus(FluentExp(api_budget))))
 
 # Solve

@@ -93,7 +93,7 @@ pytest tests/test_comprehensive_evaluation_frameworks.py -v
 - **Coherence** - Logical coherence
 
 ### Quality Metrics
-- **Grice's Maxims** - Quality, Quantity, Relation, Manner, Benevolence, Transparency
+- **Grice's Mbopms** - Quality, Quantity, Relation, Manner, Benevolence, Transparency
 - **Semantic Properties** - Consistency, Coherence, Correctness, Appropriateness
 - **Behavioral Properties** - Flow, Turn-taking, Context, Intent
 

@@ -11,9 +11,9 @@ from pathlib import Path
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from bop.agent import KnowledgeAgent
-from bop.provenance_viz import create_relevance_breakdown_display, format_clickable_source
-from bop.query_refinement import refine_query_from_provenance, create_query_refinement_panel
+from pran.agent import KnowledgeAgent
+from pran.provenance_viz import create_relevance_breakdown_display, format_clickable_source
+from pran.query_refinement import refine_query_from_provenance, create_query_refinement_panel
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table

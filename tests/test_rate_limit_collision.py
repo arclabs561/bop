@@ -4,7 +4,7 @@ import hashlib
 
 from fastapi.testclient import TestClient
 
-from src.bop.server import app
+from src.pran.server import app
 
 
 def test_rate_limit_uses_hashed_api_key():

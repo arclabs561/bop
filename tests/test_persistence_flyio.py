@@ -12,7 +12,7 @@ import pytest
 import requests
 
 # Test configuration
-APP_NAME = os.getenv("FLY_APP_NAME", "bop-wispy-voice-3017")
+APP_NAME = os.getenv("FLY_APP_NAME", "pran-wispy-voice-3017")
 APP_URL = os.getenv("BOP_APP_URL", f"https://{APP_NAME}.fly.dev")
 API_KEY = os.getenv("BOP_API_KEY", "")
 TEST_DEPLOYMENT = os.getenv("TEST_DEPLOYMENT", "0") == "1"

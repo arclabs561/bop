@@ -1,7 +1,7 @@
 """Test trust and uncertainty integration with topology."""
 
 
-from bop.context_topology import ContextNode, ContextTopology
+from pran.context_topology import ContextNode, ContextTopology
 
 
 def test_trust_aware_clique_computation():

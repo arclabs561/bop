@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from bop.session_manager import HierarchicalSessionManager, Session
-from bop.unified_storage import UnifiedSessionStorage
+from pran.session_manager import HierarchicalSessionManager, Session
+from pran.unified_storage import UnifiedSessionStorage
 from tests.test_annotations import annotate_test
 
 

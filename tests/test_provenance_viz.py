@@ -1,6 +1,6 @@
 """Tests for provenance visualization helpers."""
 
-from bop.provenance_viz import (
+from pran.provenance_viz import (
     create_provenance_heatmap,
     create_provenance_summary,
     format_clickable_source,

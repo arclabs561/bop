@@ -21,8 +21,8 @@ from rich.markdown import Markdown
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from bop.agent import KnowledgeAgent
-from bop.quality_feedback import QualityFeedbackLoop
+from pran.agent import KnowledgeAgent
+from pran.quality_feedback import QualityFeedbackLoop
 
 console = Console()
 

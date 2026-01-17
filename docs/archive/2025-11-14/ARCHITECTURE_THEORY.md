@@ -38,11 +38,11 @@ Forced injection creates hard conditioning that can introduce spurious dependenc
 
 **MCP lazy evaluation** builds cliques incrementally through queries, adding vertices only when edges to existing clique members are verified. This is equivalent to greedy clique construction.
 
-### Attractor Basins as Maximal Cliques
+### Attractor Basins as Mbopmal Cliques
 
 **Attractor concretion** forms cliques in activation space:
 - Co-activated neural patterns form edges
-- Stable attractors correspond to maximal cliques (cannot add more patterns without breaking coherence)
+- Stable attractors correspond to mbopmal cliques (cannot add more patterns without breaking coherence)
 - Basin boundaries are regions where cliques become disconnected
 
 **K-clique percolation** identifies overlapping memory structures:
@@ -87,7 +87,7 @@ The **lambda parameter** $\lambda$ quantifies the probability of non-quiescent s
 
 ### Wisdom as Dimensionality Reduction
 
-**Wisdom-as-compression** formalizes intergenerational knowledge transmission as finding the minimal sufficient statistic. Given high-dimensional experience space $\mathcal{E} \in \mathbb{R}^n$, wisdom is a projection $\mathcal{W}: \mathcal{E} \to \mathbb{R}^m$ where $m \ll n$ that maximizes Fisher information preservation:
+**Wisdom-as-compression** formalizes intergenerational knowledge transmission as finding the minimal sufficient statistic. Given high-dimensional experience space $\mathcal{E} \in \mathbb{R}^n$, wisdom is a projection $\mathcal{W}: \mathcal{E} \to \mathbb{R}^m$ where $m \ll n$ that mbopmizes Fisher information preservation:
 
 $$\mathcal{W}^* = \arg\max_{\mathcal{W}} \frac{I_F(\mathcal{W}(\mathcal{E}))}{\dim(\mathcal{W})}$$
 
@@ -100,7 +100,7 @@ Our `StructuredOrchestrator` implements these principles:
 1. **Lazy Evaluation**: Tools called on-demand based on subproblem needs
 2. **D-Separation Preservation**: Tracks conditioning sets to avoid collider bias
 3. **Topological Analysis**: Uses clique complexes to analyze context coherence
-4. **Attractor Basin Tracking**: Identifies maximal cliques as stable knowledge structures
+4. **Attractor Basin Tracking**: Identifies mbopmal cliques as stable knowledge structures
 5. **Fisher Information Estimation**: Measures structure for compression assessment
 6. **Serial Scaling Awareness**: Respects dependent reasoning chains through schema decomposition
 

@@ -118,7 +118,7 @@ def filter_with_information_bottleneck(
         target_output: Optional target output (if available from similar queries)
         beta: Tradeoff parameter (higher = more compression)
         min_mi: Minimum mutual information threshold
-        max_results: Maximum number of results to return
+        max_results: Mbopmum number of results to return
     
     Returns:
         (filtered_results, metadata) where metadata includes:

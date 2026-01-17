@@ -5,7 +5,7 @@ Tests for .env auto-loading and validation.
 import os
 from unittest.mock import patch
 
-from bop import get_env_info, validate_env_setup
+from pran import get_env_info, validate_env_setup
 
 
 class TestEnvLoading:
@@ -78,16 +78,16 @@ class TestEnvFileLoading:
     """Test .env file loading behavior."""
 
     def test_env_file_auto_loaded(self):
-        """Test that .env is automatically loaded when bop is imported."""
-        # This test verifies that importing bop loads .env
+        """Test that .env is automatically loaded when pran is imported."""
+        # This test verifies that importing pran loads .env
         # We can't easily test the actual loading without creating a real .env file,
         # but we can verify the function exists and works
 
         # Re-import to trigger loading
         import importlib
 
-        import bop
-        importlib.reload(bop)
+        import pran
+        importlib.reload(pran)
 
         # Check that validation function works
         is_valid, issues = validate_env_setup(verbose=False)
@@ -103,7 +103,7 @@ class TestEnvValidationCLI:
 
     def test_validate_env_command_exists(self):
         """Test that validate-env command exists in CLI."""
-        from bop.cli import app, validate_env
+        from pran.cli import app, validate_env
 
         # Check that function exists and is callable
         assert callable(validate_env)

@@ -7,7 +7,7 @@ This script demonstrates:
 - Fallback behavior when NLTK unavailable
 """
 
-from bop.token_importance import extract_key_terms, NLTK_AVAILABLE
+from pran.token_importance import extract_key_terms, NLTK_AVAILABLE
 from rich.console import Console
 from rich.table import Table
 

@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for bop-wispy-voice-3017 on 2025-11-14T16:41:13-05:00
+# fly.toml app configuration file generated for pran-wispy-voice-3017 on 2025-11-14T16:41:13-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'bop-wispy-voice-3017'
+app = 'pran-wispy-voice-3017'
 primary_region = 'iad'
 
 [build]
@@ -12,7 +12,7 @@ primary_region = 'iad'
 [env]
   BOP_USE_CONSTRAINTS = 'true'
   PORT = '8080'
-  FLY_APP_NAME = 'bop-wispy-voice-3017'
+  FLY_APP_NAME = 'pran-wispy-voice-3017'
 
 [processes]
   app = "/usr/local/bin/tailscale-start.sh"
@@ -42,7 +42,7 @@ primary_region = 'iad'
   memory_mb = 512
 
 # Persistent storage for caching (tool results, LLM responses, sessions)
-# Volume: bop_cache (1GB) created in region iad
+# Volume: pran_cache (1GB) created in region iad
 [[mounts]]
-  source = "bop_cache"
+  source = "pran_cache"
   destination = "/data"

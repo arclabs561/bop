@@ -6,8 +6,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.meta_learning import ExperienceStore, MetaLearner
+from pran.agent import KnowledgeAgent
+from pran.meta_learning import ExperienceStore, MetaLearner
 
 
 def test_experience_store_initialization():
@@ -363,7 +363,7 @@ async def test_agent_integration_reflection():
 @pytest.mark.asyncio
 async def test_llm_judge_reflection_quality():
     """LLM-as-judge: Evaluate reflection quality."""
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         store_path = Path(tmpdir) / "experiences.json"
@@ -435,7 +435,7 @@ Respond with JSON: {{"worked_well": 0.0-1.0, "improvements": 0.0-1.0, "generaliz
 @pytest.mark.asyncio
 async def test_llm_judge_experience_relevance():
     """LLM-as-judge: Evaluate experience relevance for context injection."""
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         store_path = Path(tmpdir) / "experiences.json"
@@ -516,7 +516,7 @@ Respond with JSON: {{"relevance": 0.0-1.0, "helpful": 0.0-1.0, "appropriate": 0.
 @pytest.mark.asyncio
 async def test_llm_judge_context_injection_effectiveness():
     """LLM-as-judge: Evaluate if context injection improves responses."""
-    from bop.llm import LLMService
+    from pran.llm import LLMService
 
     with tempfile.TemporaryDirectory() as tmpdir:
         history_path = Path(tmpdir) / "history.json"

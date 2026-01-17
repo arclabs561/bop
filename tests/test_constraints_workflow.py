@@ -2,10 +2,10 @@
 
 import pytest
 
-from bop.agent import KnowledgeAgent
-from bop.constraints import PYSAT_AVAILABLE
-from bop.orchestrator import StructuredOrchestrator
-from bop.schemas import list_schemas
+from pran.agent import KnowledgeAgent
+from pran.constraints import PYSAT_AVAILABLE
+from pran.orchestrator import StructuredOrchestrator
+from pran.schemas import list_schemas
 
 
 @pytest.mark.skipif(not PYSAT_AVAILABLE, reason="PySAT not available")

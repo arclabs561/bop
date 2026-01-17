@@ -6,7 +6,7 @@ Includes: triangle inequality, subadditivity, compositionality, order invariance
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from bop.semantic_eval import SemanticEvaluator
+from pran.semantic_eval import SemanticEvaluator
 from tests.test_annotations import annotate_test
 
 

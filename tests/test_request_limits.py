@@ -4,7 +4,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from bop.request_limits import RequestSizeLimitMiddleware
+from pran.request_limits import RequestSizeLimitMiddleware
 
 
 @pytest.fixture
