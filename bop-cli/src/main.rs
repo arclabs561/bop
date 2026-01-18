@@ -672,7 +672,7 @@ async fn cmd_ops(action: OpsAction, json_output: bool) -> Result<()> {
 }
 
 async fn cmd_curate(db_path: &std::path::Path, stale_days: i64, json_output: bool) -> Result<()> {
-    use bop_core::{CurationAgent, KnowledgeStore};
+    use bop_core::{storage::KnowledgeStore, CurationAgent};
 
     let store = KnowledgeStore::open(db_path)?;
     let agent = CurationAgent::new(store).with_stale_days(stale_days);

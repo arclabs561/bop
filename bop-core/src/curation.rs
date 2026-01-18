@@ -9,9 +9,8 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use chrono::{DateTime, Utc, Duration};
 use anyhow::Result;
-use std::collections::HashMap;
 
-use crate::storage::{KnowledgeStore, KnowledgeItem};
+use crate::storage::KnowledgeStore;
 use hop_core::deduplication::{DuplicateDetector, SemanticDuplicateDetector};
 
 /// Curation statistics

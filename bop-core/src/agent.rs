@@ -9,8 +9,9 @@ use crate::llm::{LlmClient, LlmProvider, Message};
 use crate::mcp::McpClient;
 use crate::session::Session;
 use crate::Result;
-use axi::Agent as BopAgent;
-use axi::ModelAdapter;
+use axi::agent::Model;
+
+type BopAgent = axi::Agent<()>;
 
 /// Agent configuration
 #[derive(Debug, Clone)]
@@ -147,33 +148,36 @@ impl Agent {
         use axi::adapters::{
             anthropic::AnthropicAdapter,
             ollama::OllamaAdapter,
-            openai::OpenAiAdapter,
+            openai::GenericOpenAiAdapter,
+            openrouter::OpenRouterAdapter,
         };
         use axi::RunOutcome;
 
         let provider = self.llm.provider();
-        let adapter: Box<dyn ModelAdapter> = match provider {
+        let adapter: Box<dyn Model> = match provider {
             LlmProvider::Anthropic { api_key, model } => {
                 Box::new(AnthropicAdapter::new(api_key.clone(), model.clone()))
             }
             LlmProvider::OpenAI { api_key, model } => {
-                Box::new(OpenAiAdapter::new(api_key.clone(), model.clone()))
+                Box::new(
+                    GenericOpenAiAdapter::new("https://api.openai.com/v1", model.clone())
+                        .with_api_key(api_key.clone()),
+                )
             }
             LlmProvider::Local { model, base_url } => {
                 Box::new(OllamaAdapter::new(base_url.clone(), model.clone()))
             }
             LlmProvider::OpenRouter { api_key, model } => {
-                Box::new(OpenAiAdapter::new(api_key.clone(), model.clone())
-                    .with_base_url("https://openrouter.ai/api/v1"))
+                Box::new(OpenRouterAdapter::new(api_key.clone(), model.clone()))
             }
         };
 
-        let mut bop_agent = self.bop_agent.take().unwrap_or_else(|| {
+        let bop_agent = self.bop_agent.take().unwrap_or_else(|| {
             BopAgent::new((), &self.config.system_prompt)
         });
 
         // Map history to bop messages
-        for msg in &self.history {
+        for _msg in &self.history {
             // bop::agent::Message mapping logic
         }
         
@@ -189,7 +193,7 @@ impl Agent {
                 Ok(output)
             }
             Ok(RunOutcome::Deferred(_)) => Err(anyhow::anyhow!("deferred").into()),
-            Err(e) => Err(anyhow::anyhow!(e).into()),
+            Err(e) => Err(anyhow::anyhow!(e.to_string()).into()),
         }
     }
 

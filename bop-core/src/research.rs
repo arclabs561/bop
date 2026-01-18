@@ -32,6 +32,7 @@ impl ResearchAgent {
             system_prompt: RESEARCH_SYSTEM_PROMPT.into(),
             max_turns: 20,
             tool_use_enabled: true,
+            ..AgentConfig::default()
         };
         Self {
             inner: Agent::with_config(provider, config),

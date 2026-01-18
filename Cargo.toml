@@ -27,10 +27,9 @@ anyhow = "1.0"
 
 # Utilities
 secrecy = "0.10"
-prep = { path = "../prep" }
 cerno-fuse = { path = "../cerno/cerno-fuse" }
 cerno-rerank = { path = "../cerno/cerno-rerank" }
-lattix-core = { path = "../lattix/crates/lattix-core" }
+lattix = { path = "../lattix" }
 jin = { path = "../jin" }
 hyp = { path = "../hyp" }
 subsume-core = { path = "../subsume/subsume-core" }
