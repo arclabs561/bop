@@ -88,10 +88,13 @@ fn test_concurrent_task_claim_race_condition() -> turmoil::Result {
 
     // Shared state for the "Registry" to simulate task locking
     let claimed_tasks = Arc::new(Mutex::new(std::collections::HashSet::new()));
+    let results: Arc<Mutex<std::collections::HashMap<String, Message>>> =
+        Arc::new(Mutex::new(std::collections::HashMap::new()));
+    let claimed_tasks_for_host = claimed_tasks.clone();
 
     // 1. Setup "Registry" Node (Simulating hiqlite DB)
     sim.host("registry", move || {
-        let claimed = claimed_tasks.clone();
+        let claimed = claimed_tasks_for_host.clone();
         async move {
             let listener = turmoil::net::TcpListener::bind("0.0.0.0:8080").await?;
             loop {
@@ -131,8 +134,9 @@ fn test_concurrent_task_claim_race_condition() -> turmoil::Result {
         }
     });
 
-    // 2. Setup Agent 1 (Fast)
-    sim.client("agent-1", async {
+    // 2. Setup Agent 1
+    let results_a1 = results.clone();
+    sim.client("agent-1", async move {
         let stream = turmoil::net::TcpStream::connect("registry:8080").await?;
         let (mut rd, mut wr) = tokio::io::split(stream);
         
@@ -142,17 +146,14 @@ fn test_concurrent_task_claim_race_condition() -> turmoil::Result {
         let mut buf = vec![0; 1024];
         let n = rd.read(&mut buf).await?;
         let resp: Message = serde_json::from_slice(&buf[..n])?;
-        
-        if resp == Message::Ack {
-            Ok(())
-        } else {
-            Err(std::io::Error::new(std::io::ErrorKind::Other, "Agent 1 failed to claim").into())
-        }
+
+        results_a1.lock().unwrap().insert("agent-1".to_string(), resp);
+        Ok(())
     });
 
-    // 3. Setup Agent 2 (Slightly slower, should fail claim)
-    sim.client("agent-2", async {
-        tokio::time::sleep(Duration::from_millis(5)).await; // Slight delay
+    // 3. Setup Agent 2
+    let results_a2 = results.clone();
+    sim.client("agent-2", async move {
         let stream = turmoil::net::TcpStream::connect("registry:8080").await?;
         let (mut rd, mut wr) = tokio::io::split(stream);
         
@@ -162,17 +163,29 @@ fn test_concurrent_task_claim_race_condition() -> turmoil::Result {
         let mut buf = vec![0; 1024];
         let n = rd.read(&mut buf).await?;
         let resp: Message = serde_json::from_slice(&buf[..n])?;
-        
-        // Agent 2 EXPECTS to fail (Nack) because Agent 1 claimed it
-        if resp == Message::Nack {
-            Ok(())
-        } else {
-            Err(std::io::Error::new(std::io::ErrorKind::Other, "Agent 2 claimed task it shouldn't have").into())
-        }
+
+        results_a2.lock().unwrap().insert("agent-2".to_string(), resp);
+        Ok(())
     });
 
-    // 4. Run
-    sim.run()
+    // 4. Run, then assert mutual exclusion.
+    sim.run()?;
+
+    let claimed = claimed_tasks.lock().unwrap();
+    assert_eq!(claimed.len(), 1, "exactly one task should be claimed");
+    assert!(claimed.contains("task-1"), "task-1 should be claimed");
+
+    let results = results.lock().unwrap();
+    let r1 = results.get("agent-1").expect("agent-1 recorded result");
+    let r2 = results.get("agent-2").expect("agent-2 recorded result");
+
+    // Invariant: exactly one ACK and one NACK (order doesn't matter).
+    let acks = (r1 == &Message::Ack) as u8 + (r2 == &Message::Ack) as u8;
+    let nacks = (r1 == &Message::Nack) as u8 + (r2 == &Message::Nack) as u8;
+    assert_eq!(acks, 1, "expected exactly one Ack, got r1={r1:?} r2={r2:?}");
+    assert_eq!(nacks, 1, "expected exactly one Nack, got r1={r1:?} r2={r2:?}");
+
+    Ok(())
 }
 
 #[test]

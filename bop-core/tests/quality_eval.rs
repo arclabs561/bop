@@ -1,4 +1,4 @@
-use bop_core::llm::{LlmClient, LlmProvider, Message};
+use bop_agent_core::llm::{LlmClient, LlmProvider, Message};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]

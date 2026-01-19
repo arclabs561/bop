@@ -1,6 +1,6 @@
-use bop_core::orchestrator::{Orchestrator, Task, TaskStatus};
-use bop_core::storage::{ClusterRegistry, KnowledgeStore, KnowledgeItem};
-use bop_core::session::{SessionStore, Session};
+use bop_agent_core::orchestrator::{Orchestrator, Task, TaskStatus};
+use bop_agent_core::storage::{ClusterRegistry, KnowledgeStore, KnowledgeItem};
+use bop_agent_core::session::{SessionStore, Session};
 use uuid::Uuid;
 use tempfile::tempdir;
 
@@ -38,7 +38,7 @@ async fn test_session_persistence_redb() -> anyhow::Result<()> {
     
     let store = SessionStore::open(&path)?;
     let mut session = Session::new();
-    session.add_message(bop_core::llm::Message::user("Hello distributed world"));
+    session.add_message(bop_agent_core::llm::Message::user("Hello distributed world"));
     
     store.save(&session)?;
     let loaded = store.load(session.id)?.unwrap();

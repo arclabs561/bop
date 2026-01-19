@@ -18,7 +18,7 @@ use ratatui::{
 };
 use std::io;
 
-use bop_core::{Agent, LlmProvider};
+use bop_agent_core::{Agent, LlmProvider};
 
 struct App {
     agent: Agent,

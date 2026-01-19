@@ -1,11 +1,12 @@
 [package]
-name = "bop-core"
+name = "bop-agent-core"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 authors.workspace = true
-description = "Core agent logic for BOP - research orchestration, LLM, MCP"
+description = "A2 agent core for BOP - research orchestration, sessions, tool wiring"
+publish = false
 
 [dependencies]
 # Async
@@ -19,16 +20,16 @@ serde_json = { workspace = true }
 thiserror = { workspace = true }
 anyhow = { workspace = true }
 
-# HTTP (LLM APIs)
-reqwest = { workspace = true }
-
 # Logging
 tracing = { workspace = true }
 
 # Storage
-sled = { workspace = true }
-redb = { workspace = true }
 hiqlite = { workspace = true }
+
+# Extracted (small core + persistence)
+riff-agent-core = { workspace = true }
+riff-agent-store = { workspace = true }
+riff-llm-client = { workspace = true }
 
 # Constraints
 varisat = { workspace = true, optional = true }
@@ -46,6 +47,9 @@ aws-sdk-costexplorer = { workspace = true }
 hop-core = { workspace = true }
 axi = { workspace = true }
 
+# Optional numeric dependency (only used by explainability helpers).
+ndarray = { workspace = true, optional = true }
+
 # Scholar Stack integration (optional)
 # Note: For serious retrieval, use hop-core at the CLI/app level.
 # These are kept minimal - bop-core focuses on agent/LLM logic.
@@ -56,6 +60,12 @@ default = []
 constraints = ["dep:varisat"]
 # Enable cerno-fuse for result fusion (RRF, weighted, etc.)
 fusion = ["dep:cerno-fuse"]
+
+# Optional explainability: token-level OT alignment artifacts.
+#
+# This enables hop-core's `token-ot` feature and exposes a small “explain why these match”
+# helper that returns a compact artifact (not a full matrix dump).
+token-ot-explain = ["dep:ndarray", "hop-core/token-ot"]
 
 [dev-dependencies]
 proptest = { workspace = true }

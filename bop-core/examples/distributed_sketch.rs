@@ -1,6 +1,6 @@
 // Example of Distributed Coordination using hiqlite
-use bop_core::orchestrator::{Orchestrator, Task};
-use bop_core::storage::ClusterRegistry;
+use bop_agent_core::orchestrator::{Orchestrator, Task};
+use bop_agent_core::storage::ClusterRegistry;
 use uuid::Uuid;
 
 #[tokio::main]
@@ -13,8 +13,8 @@ async fn main() -> anyhow::Result<()> {
         println!("Run with: HQL_NODES='1 localhost:8100 localhost:8200' cargo run --example distributed_sketch");
         
         println!("Distributed coordination logic implemented in:");
-        println!(" - bop-core/src/orchestrator.rs (Task Queue)");
-        println!(" - bop-core/src/storage.rs (Node Heartbeats)");
+        println!(" - bop-agent-core (path: bop-core/) /src/orchestrator.rs (Task Queue)");
+        println!(" - bop-agent-core (path: bop-core/) /src/storage.rs (Node Heartbeats)");
         println!(" - jin/src/persistence/locking.rs (Distributed Locks)");
         
         return Ok(());

@@ -285,6 +285,8 @@ async fn main() -> Result<()> {
     if let Err(e) = &result {
         if cli.json {
             let err_json = serde_json::json!({
+                "schema_version": 1,
+                "ok": false,
                 "error": e.to_string(),
                 "chain": e.chain().skip(1).map(|c| c.to_string()).collect::<Vec<_>>()
             });
@@ -309,7 +311,7 @@ async fn cmd_query(
     system: Option<&str>,
     json_output: bool,
 ) -> Result<()> {
-    use bop_core::Agent;
+    use bop_agent_core::Agent;
 
     let llm = make_provider(provider, model, local_url)?;
     let model_name = get_model_name(&llm);
@@ -328,6 +330,8 @@ async fn cmd_query(
 
     if json_output {
         let output = serde_json::json!({
+            "schema_version": 1,
+            "ok": true,
             "question": question,
             "response": response,
             "model": model_name,
@@ -341,8 +345,8 @@ async fn cmd_query(
 }
 
 /// Create LLM provider from CLI args
-fn make_provider(provider: &str, model: Option<&str>, local_url: &str) -> Result<bop_core::LlmProvider> {
-    use bop_core::LlmProvider;
+fn make_provider(provider: &str, model: Option<&str>, local_url: &str) -> Result<bop_agent_core::LlmProvider> {
+    use bop_agent_core::LlmProvider;
 
     match provider {
         "auto" => LlmProvider::auto(model).map_err(|e| anyhow::anyhow!("{}", e)),
@@ -370,8 +374,8 @@ fn make_provider(provider: &str, model: Option<&str>, local_url: &str) -> Result
 }
 
 /// Get model name from provider for display
-fn get_model_name(provider: &bop_core::LlmProvider) -> String {
-    use bop_core::LlmProvider;
+fn get_model_name(provider: &bop_agent_core::LlmProvider) -> String {
+    use bop_agent_core::LlmProvider;
     match provider {
         LlmProvider::OpenRouter { model, .. } => model.clone(),
         LlmProvider::Anthropic { model, .. } => model.clone(),
@@ -388,7 +392,7 @@ async fn cmd_research(
     provider: &str,
     json_output: bool,
 ) -> Result<()> {
-    use bop_core::ResearchAgent;
+    use bop_agent_core::ResearchAgent;
 
     let llm = make_provider(provider, model, "")?;
     let model_name = get_model_name(&llm);
@@ -418,6 +422,8 @@ async fn cmd_research(
 
     if json_output {
         let output = serde_json::json!({
+            "schema_version": 1,
+            "ok": true,
             "topic": topic,
             "depth": depth,
             "result": result,
@@ -432,7 +438,7 @@ async fn cmd_research(
 }
 
 async fn cmd_chat(model: Option<&str>, provider: &str, local_url: &str, _session_id: Option<&str>) -> Result<()> {
-    use bop_core::Agent;
+    use bop_agent_core::Agent;
 
     let llm = make_provider(provider, model, local_url)?;
     let model_name = get_model_name(&llm);
@@ -541,21 +547,26 @@ async fn cmd_chat(model: Option<&str>, provider: &str, local_url: &str, _session
 }
 
 async fn cmd_session(action: SessionAction, json_output: bool) -> Result<()> {
-    use bop_core::session::SessionStore;
+    use bop_agent_core::SessionStore;
 
-    let store_path = dirs::data_dir()
+    // redb expects a *file path*, not a directory.
+    // Keep XDG_DATA_HOME-based tests hermetic by using dirs::data_dir().
+    let store_dir = dirs::data_dir()
         .unwrap_or_else(|| PathBuf::from("."))
-        .join("bop")
-        .join("sessions");
-
-    std::fs::create_dir_all(&store_path)?;
+        .join("bop");
+    std::fs::create_dir_all(&store_dir)?;
+    let store_path = store_dir.join("sessions.redb");
     let store = SessionStore::open(&store_path)?;
 
     match action {
         SessionAction::List => {
             let sessions = store.list()?;
             if json_output {
-                let output = serde_json::json!({ "sessions": sessions.iter().map(|s| s.to_string()).collect::<Vec<_>>() });
+                let output = serde_json::json!({
+                    "schema_version": 1,
+                    "ok": true,
+                    "sessions": sessions.iter().map(|s| s.to_string()).collect::<Vec<_>>()
+                });
                 println!("{}", serde_json::to_string_pretty(&output)?);
             } else {
                 // Empty list = no output (Unix convention)
@@ -571,7 +582,13 @@ async fn cmd_session(action: SessionAction, json_output: bool) -> Result<()> {
                 .ok_or_else(|| anyhow::anyhow!("session not found: {}", id))?;
 
             if json_output {
-                println!("{}", session.to_json()?);
+                let session_v: serde_json::Value = serde_json::from_str(&session.to_json()?)?;
+                let output = serde_json::json!({
+                    "schema_version": 1,
+                    "ok": true,
+                    "session": session_v
+                });
+                println!("{}", serde_json::to_string_pretty(&output)?);
             } else {
                 println!("Session: {}", session.id);
                 println!("Created: {}", session.created_at);
@@ -594,7 +611,16 @@ async fn cmd_session(action: SessionAction, json_output: bool) -> Result<()> {
         SessionAction::Delete { id } => {
             let uuid = id.parse().context("invalid session ID")?;
             store.delete(uuid)?;
-            eprintln!("Deleted: {}", id);
+            if json_output {
+                let output = serde_json::json!({
+                    "schema_version": 1,
+                    "ok": true,
+                    "deleted": id
+                });
+                println!("{}", serde_json::to_string_pretty(&output)?);
+            } else {
+                eprintln!("Deleted: {}", id);
+            }
         }
     }
 
@@ -602,7 +628,7 @@ async fn cmd_session(action: SessionAction, json_output: bool) -> Result<()> {
 }
 
 async fn cmd_ops(action: OpsAction, json_output: bool) -> Result<()> {
-    use bop_core::Stigmergy;
+    use bop_agent_core::Stigmergy;
 
     match action {
         OpsAction::Clean { bucket, dry_run } => {
@@ -623,6 +649,8 @@ async fn cmd_ops(action: OpsAction, json_output: bool) -> Result<()> {
 
             if json_output {
                 let output = serde_json::json!({
+                    "schema_version": 1,
+                    "ok": true,
                     "status": "success",
                     "deleted": deleted,
                     "dry_run": dry_run,
@@ -641,7 +669,12 @@ async fn cmd_ops(action: OpsAction, json_output: bool) -> Result<()> {
             let markers = stig.sense_markers(topic.as_deref(), None).await?;
 
             if json_output {
-                println!("{}", serde_json::to_string_pretty(&markers)?);
+                let output = serde_json::json!({
+                    "schema_version": 1,
+                    "ok": true,
+                    "markers": markers
+                });
+                println!("{}", serde_json::to_string_pretty(&output)?);
             } else {
                 for marker in markers {
                     println!("[{}] {}: {} (intensity: {:.2})", 
@@ -651,11 +684,16 @@ async fn cmd_ops(action: OpsAction, json_output: bool) -> Result<()> {
         }
         OpsAction::Cost { mtd } => {
             if mtd {
-                let monitor = bop_core::CostMonitor::new().await?;
+                let monitor = bop_agent_core::CostMonitor::new().await?;
                 let stats = monitor.get_mtd_stats().await?;
 
                 if json_output {
-                    println!("{}", serde_json::to_string_pretty(&stats)?);
+                    let output = serde_json::json!({
+                        "schema_version": 1,
+                        "ok": true,
+                        "stats": stats
+                    });
+                    println!("{}", serde_json::to_string_pretty(&output)?);
                 } else {
                     println!("AWS Cost Analysis (MTD: {} to {}):", stats.period_start, stats.period_end);
                     println!("  Total USD: ${:.2}", stats.total_usd);
@@ -672,7 +710,7 @@ async fn cmd_ops(action: OpsAction, json_output: bool) -> Result<()> {
 }
 
 async fn cmd_curate(db_path: &std::path::Path, stale_days: i64, json_output: bool) -> Result<()> {
-    use bop_core::{storage::KnowledgeStore, CurationAgent};
+    use bop_agent_core::{KnowledgeStore, CurationAgent};
 
     let store = KnowledgeStore::open(db_path)?;
     let agent = CurationAgent::new(store).with_stale_days(stale_days);
@@ -680,7 +718,12 @@ async fn cmd_curate(db_path: &std::path::Path, stale_days: i64, json_output: boo
     let stats = agent.curate().await?;
 
     if json_output {
-        println!("{}", serde_json::to_string_pretty(&stats)?);
+        let output = serde_json::json!({
+            "schema_version": 1,
+            "ok": true,
+            "stats": stats
+        });
+        println!("{}", serde_json::to_string_pretty(&output)?);
     } else {
         println!("Curation complete:");
         println!("  Checked: {}", stats.checked);

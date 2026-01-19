@@ -1,4 +1,4 @@
-use bop_core::orchestrator::{Task, TaskStatus};
+use bop_agent_core::orchestrator::{Task, TaskStatus};
 use proptest::prelude::*;
 use uuid::Uuid;
 

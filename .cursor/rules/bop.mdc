@@ -29,7 +29,7 @@ from interaction. Agents "bop around" exploring topics, riffing on ideas.
 
 ```
 bop/
-├── bop-core/           # Core agent logic
+├── bop-core/           # A2 agent core (package name: bop-agent-core)
 │   └── src/
 │       ├── agent.rs        # KnowledgeAgent
 │       ├── llm.rs          # LLM abstraction (Anthropic/OpenAI/Local)
@@ -38,11 +38,12 @@ bop/
 │       ├── research.rs     # ResearchAgent
 │       ├── session.rs      # Session persistence (sled)
 │       └── storage.rs      # Knowledge store
-├── bop-cli/            # CLI binary (primary interface)
+├── bop-cli/            # A2 agent CLI (package name: bop-agent-cli; binary: bop-agent)
 │   └── src/
 │       ├── main.rs         # Commands: query, research, chat, session
 │       ├── output.rs       # Output formatting
 │       └── tui.rs          # Optional TUI (--features tui)
+├── bop-platform/       # A3+ platform (package name: bop; binary: bop)
 ├── bop-serve/          # TODO: axum server
 └── bop-py/             # TODO: pyo3 bindings
 ```

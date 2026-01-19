@@ -1,4 +1,4 @@
-use bop_core::storage::{KnowledgeStore, KnowledgeItem};
+use bop_agent_core::storage::{KnowledgeStore, KnowledgeItem};
 use criterion::{criterion_group, criterion_main, Criterion};
 use tempfile::tempdir;
 use uuid::Uuid;

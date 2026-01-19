@@ -1,0 +1,18 @@
+[package]
+# Platform crate (A3+). Note: the *binary* is named `bop`.
+# This matches the `hop-cli` pattern: package name != binary name.
+name = "bop-platform"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "BOP platform (A3+): supervisor/ops layer over bop-agent"
+publish = false
+
+[[bin]]
+name = "bop"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = { workspace = true }

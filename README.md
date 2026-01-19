@@ -73,8 +73,9 @@ bop tui
 ## Architecture
 
 ```
-bop-core/    Core agent, LLM, MCP, session
-bop-cli/     CLI binary
+bop-core/    A2 agent core crate (package name: bop-agent-core)
+bop-cli/     A2 agent CLI crate (package name: bop-agent-cli; binary: bop-agent)
+bop-platform/ A3+ platform crate (package name: bop; binary: bop)
 ```
 
 Part of the Scholar Stack: hop (ingestion) + bop (agents).

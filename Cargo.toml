@@ -3,6 +3,10 @@ resolver = "2"
 members = [
     "bop-core",
     "bop-cli",
+    "bop-platform",
+    "riff-agent-core",
+    "riff-agent-store",
+    "riff-llm-client",
 ]
 
 [workspace.package]
@@ -36,6 +40,7 @@ subsume-core = { path = "../subsume/subsume-core" }
 subsume-ndarray = { path = "../subsume/subsume-ndarray" }
 slabs = { path = "../slabs" }
 wass = { path = "../wass" }
+ndarray = "0.17.2"
 ort = "2.0.0-rc.10"
 rusqlite = "0.32"
 
@@ -49,9 +54,17 @@ rustyline = "15.0"
 ratatui = "0.29"
 crossterm = "0.28"
 
-# Core
-bop-core = { path = "bop-core" }
-bop-cli = { path = "bop-cli" }
+# Core (crate names; paths kept stable)
+bop-agent-core = { path = "bop-core" }
+bop-agent-cli = { path = "bop-cli" }
+
+# Extracted “small core” crates (currently colocated; intended to move out later).
+riff-agent-core = { path = "riff-agent-core" }
+riff-agent-store = { path = "riff-agent-store" }
+riff-llm-client = { path = "riff-llm-client" }
+
+# Platform (A3+; binary name `bop`)
+bop-platform = { path = "bop-platform" }
 
 # HTTP client (for LLM APIs)
 reqwest = { version = "0.12", features = ["json", "stream"] }

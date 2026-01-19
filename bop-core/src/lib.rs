@@ -9,7 +9,7 @@
 //! # Example
 //!
 //! ```ignore
-//! use bop_core::{Agent, LlmProvider};
+//! use bop_agent_core::{Agent, LlmProvider};
 //!
 //! let provider = LlmProvider::anthropic("claude-sonnet-4-20250514");
 //! let agent = Agent::new(provider);
@@ -19,6 +19,7 @@
 pub mod agent;
 pub mod curation;
 pub mod error;
+pub mod explain;
 pub mod llm;
 pub mod mcp;
 pub mod ops;
@@ -36,5 +37,6 @@ pub use llm::LlmProvider;
 pub use ops::cost::{CostMonitor, CostStats};
 pub use orchestrator::Orchestrator;
 pub use research::ResearchAgent;
-pub use session::Session;
+pub use riff_agent_core::{Message, Role, Session};
+pub use riff_agent_store::{ClusterRegistry, KnowledgeItem, KnowledgeStore, SessionStore, StoreError};
 pub use stigmergy::{Stigmergy, StigmergyMarker, MarkerType};

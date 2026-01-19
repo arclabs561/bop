@@ -1,19 +1,20 @@
 [package]
-name = "bop-cli"
+name = "bop-agent-cli"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 authors.workspace = true
-description = "BOP CLI - Research agent command line interface"
+description = "BOP agent CLI (A2) - query, research, chat, sessions"
+publish = false
 
 [[bin]]
-name = "bop"
+name = "bop-agent"
 path = "src/main.rs"
 
 [dependencies]
 # Core
-bop-core = { workspace = true }
+bop-agent-core = { workspace = true }
 
 # Async
 tokio = { workspace = true }
@@ -51,3 +52,8 @@ indicatif = { workspace = true }
 [features]
 default = []
 tui = ["dep:ratatui", "dep:crossterm"]
+
+[dev-dependencies]
+assert_cmd = "2.0"
+predicates = "3.0"
+tempfile = "3.10"

@@ -5,6 +5,7 @@
 use std::io::{self, Write};
 
 /// Print to stdout, respecting quiet mode
+#[allow(dead_code)] // shared CLI utility; some commands don't currently use it
 pub fn print_info(quiet: bool, msg: &str) {
     if !quiet {
         eprintln!("{}", msg);
@@ -12,6 +13,7 @@ pub fn print_info(quiet: bool, msg: &str) {
 }
 
 /// Print progress indicator
+#[allow(dead_code)] // shared CLI utility; some commands don't currently use it
 pub fn print_progress(quiet: bool, msg: &str) {
     if !quiet {
         eprint!("\r{}", msg);
@@ -20,6 +22,7 @@ pub fn print_progress(quiet: bool, msg: &str) {
 }
 
 /// Clear progress line
+#[allow(dead_code)] // shared CLI utility; some commands don't currently use it
 pub fn clear_progress(quiet: bool) {
     if !quiet {
         eprint!("\r\x1b[K");

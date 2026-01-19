@@ -1,0 +1,18 @@
+[package]
+name = "riff-llm-client"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "LLM client helpers (OpenRouter/Anthropic/OpenAI/local). Provider glue only."
+publish = false
+
+[dependencies]
+thiserror = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+reqwest = { workspace = true }
+
+riff-agent-core = { workspace = true }
+

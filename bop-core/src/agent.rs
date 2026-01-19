@@ -28,7 +28,7 @@ impl Default for AgentConfig {
             system_prompt: "You are a helpful research assistant.".into(),
             max_turns: 10,
             tool_use_enabled: true,
-            use_bop: true,
+            use_bop: true, // Default to axi-powered engine
         }
     }
 }
@@ -143,7 +143,7 @@ impl Agent {
         }
     }
 
-    /// Internal query using Bop engine
+    /// Internal query using Bop engine (axi-based)
     async fn query_bop(&mut self, input: &str) -> Result<String> {
         use axi::adapters::{
             anthropic::AnthropicAdapter,
@@ -152,6 +152,8 @@ impl Agent {
             openrouter::OpenRouterAdapter,
         };
         use axi::RunOutcome;
+
+        self.state = AgentState::Thinking;
 
         let provider = self.llm.provider();
         let adapter: Box<dyn Model> = match provider {
@@ -172,28 +174,60 @@ impl Agent {
             }
         };
 
-        let bop_agent = self.bop_agent.take().unwrap_or_else(|| {
+        let mut bop_agent = self.bop_agent.take().unwrap_or_else(|| {
             BopAgent::new((), &self.config.system_prompt)
         });
 
+        // Ensure system prompt is updated if config changed
+        bop_agent.set_system(self.config.system_prompt.clone());
+
         // Map history to bop messages
-        for _msg in &self.history {
-            // bop::agent::Message mapping logic
+        // axi::Agent::run_with_history expects the FULL conversation.
+        // We construct it from self.history + new input.
+        let mut axi_messages = Vec::with_capacity(self.history.len() + 1);
+        for msg in &self.history {
+            let m = match msg.role {
+                crate::llm::Role::System => axi::agent::Message::System(msg.content.clone()),
+                crate::llm::Role::User => axi::agent::Message::User(msg.content.clone()),
+                crate::llm::Role::Assistant => axi::agent::Message::assistant(msg.content.clone()),
+            };
+            axi_messages.push(m);
         }
         
-        let result = bop_agent.run::<String>(adapter.as_ref(), input, None);
-        
-        self.bop_agent = Some(bop_agent);
+        // Add current input
+        let input_str = input.to_string();
+        axi_messages.push(axi::agent::Message::User(input_str.clone()));
 
-        match result {
-            Ok(RunOutcome::Completed(run)) => {
-                let output = run.output;
-                self.history.push(Message::user(input));
-                self.history.push(Message::assistant(&output));
-                Ok(output)
+        // Run axi agent in blocking thread (since axi uses sync ureq)
+        let result = tokio::task::spawn_blocking(move || {
+            bop_agent.run_with_history::<serde_json::Value>(adapter.as_ref(), axi_messages, None).map(|out| (bop_agent, out))
+        }).await.map_err(|e| anyhow::anyhow!("Task join error: {e}"))??;
+
+        let (returned_agent, outcome) = result;
+        self.bop_agent = Some(returned_agent);
+
+        match outcome {
+            RunOutcome::Completed(run) => {
+                let output_text = if let serde_json::Value::String(s) = run.output {
+                    s
+                } else {
+                    serde_json::to_string(&run.output).unwrap_or_default()
+                };
+
+                // Update history
+                if self.history.is_empty() {
+                    self.history.push(Message::system(&self.config.system_prompt));
+                }
+                self.history.push(Message::user(input_str));
+                self.history.push(Message::assistant(&output_text));
+                
+                self.state = AgentState::Idle;
+                Ok(output_text)
             }
-            Ok(RunOutcome::Deferred(_)) => Err(anyhow::anyhow!("deferred").into()),
-            Err(e) => Err(anyhow::anyhow!(e.to_string()).into()),
+            RunOutcome::Deferred(_) => {
+                self.state = AgentState::Error { message: "Deferred run not supported in chat mode".into() };
+                Err(anyhow::anyhow!("deferred run").into())
+            }
         }
     }
 
