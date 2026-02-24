@@ -11,12 +11,12 @@ async fn main() -> anyhow::Result<()> {
     if std::env::var("HQL_NODES").is_err() {
         println!("HQL_NODES not set. Skipping distributed connection.");
         println!("Run with: HQL_NODES='1 localhost:8100 localhost:8200' cargo run --example distributed_sketch");
-        
+
         println!("Distributed coordination logic implemented in:");
         println!(" - bop-agent-core (path: bop-core/) /src/orchestrator.rs (Task Queue)");
         println!(" - bop-agent-core (path: bop-core/) /src/storage.rs (Node Heartbeats)");
-        println!(" - jin/src/persistence/locking.rs (Distributed Locks)");
-        
+        println!(" - vicinity/src/persistence/locking.rs (Distributed Locks)");
+
         return Ok(());
     }
 
@@ -32,7 +32,7 @@ async fn main() -> anyhow::Result<()> {
     let node_id = Uuid::new_v4();
     println!("Registering node: {}", node_id);
     registry.heartbeat(node_id).await?;
-    
+
     let active = registry.active_nodes().await?;
     println!("Active nodes: {:?}", active);
 

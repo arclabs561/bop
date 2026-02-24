@@ -45,7 +45,12 @@ aws-sdk-costexplorer = { workspace = true }
 
 # Knowledge primitives
 hop-core = { workspace = true }
-axi = { workspace = true }
+# A0/A1 contracts + adapters.
+#
+# Note: `axi*` is currently kept private (publish=false). Use explicit path deps so this crate
+# never accidentally “publishes” a workspace dependency on a private crate.
+axi = { path = "../../axi/crates/axi-kit", package = "axi" }
+axi-providers = { path = "../../axi/crates/axi-providers" }
 
 # Optional numeric dependency (only used by explainability helpers).
 ndarray = { workspace = true, optional = true }
@@ -53,13 +58,13 @@ ndarray = { workspace = true, optional = true }
 # Scholar Stack integration (optional)
 # Note: For serious retrieval, use hop-core at the CLI/app level.
 # These are kept minimal - bop-core focuses on agent/LLM logic.
-cerno-fuse = { workspace = true, optional = true }
+rankops = { workspace = true, optional = true }
 
 [features]
 default = []
 constraints = ["dep:varisat"]
-# Enable cerno-fuse for result fusion (RRF, weighted, etc.)
-fusion = ["dep:cerno-fuse"]
+# Enable rankops for result fusion (RRF, weighted, etc.)
+fusion = ["dep:rankops"]
 
 # Optional explainability: token-level OT alignment artifacts.
 #

@@ -57,7 +57,11 @@ impl TokenOtExplanation {
         let top_edges = top_edges_by_mass(&plan, top_k_edges);
 
         // Recover dist from score: score = 1/(1+dist) => dist = (1/score) - 1.
-        let dist = if score > 0.0 { (1.0 / score) - 1.0 } else { f32::INFINITY };
+        let dist = if score > 0.0 {
+            (1.0 / score) - 1.0
+        } else {
+            f32::INFINITY
+        };
 
         Ok(Self {
             score,
@@ -157,7 +161,14 @@ mod tests {
         assert!(!ex.top_edges.is_empty());
 
         // Minimal falsifiable claim: at least one obvious boilerplate token is mostly deleted.
-        let focus = ["subscribe", "newsletter", "cookies", "policy", "share", "twitter"];
+        let focus = [
+            "subscribe",
+            "newsletter",
+            "cookies",
+            "policy",
+            "share",
+            "twitter",
+        ];
         let mut best_rate = 0.0f32;
         let mut best_tok = "(none)";
         for (tok, _del, rate) in &ex.top_deleted_query {
@@ -172,4 +183,3 @@ mod tests {
         );
     }
 }
-

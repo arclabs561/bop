@@ -3,10 +3,10 @@
 //! Based on the "Sober Engineering" model for distributed agent coordination.
 //! Agents leave markers in S3 that other agents sense and act upon.
 
-use serde::{Deserialize, Serialize};
-use chrono::{DateTime, Utc};
 use anyhow::Result;
 use aws_sdk_s3::Client;
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 /// Marker types for stigmergy coordination
@@ -75,7 +75,11 @@ impl Stigmergy {
     }
 
     /// List active markers for a topic or type
-    pub async fn sense_markers(&self, topic: Option<&str>, marker_type: Option<MarkerType>) -> Result<Vec<StigmergyMarker>> {
+    pub async fn sense_markers(
+        &self,
+        topic: Option<&str>,
+        marker_type: Option<MarkerType>,
+    ) -> Result<Vec<StigmergyMarker>> {
         let prefix = if let Some(ref mt) = marker_type {
             format!("{}{}/", self.prefix, mt)
         } else {
@@ -83,7 +87,8 @@ impl Stigmergy {
         };
 
         let mut markers = Vec::new();
-        let response = self.client
+        let response = self
+            .client
             .list_objects_v2()
             .bucket(&self.bucket)
             .prefix(prefix)
@@ -99,7 +104,8 @@ impl Stigmergy {
 
                     // Purposeful fetching: skip if recently seen or stale metadata
                     // For now, fetch all active markers
-                    let data = self.client
+                    let data = self
+                        .client
                         .get_object()
                         .bucket(&self.bucket)
                         .key(key)
@@ -138,10 +144,7 @@ impl Stigmergy {
     pub async fn leave_marker(&self, marker: StigmergyMarker) -> Result<()> {
         let key = format!(
             "{}{}/{}_{}.json",
-            self.prefix,
-            marker.marker_type,
-            marker.topic,
-            marker.id
+            self.prefix, marker.marker_type, marker.topic, marker.id
         );
 
         let body = serde_json::to_vec(&marker)?;
@@ -162,10 +165,7 @@ impl Stigmergy {
     pub async fn delete_marker(&self, marker: &StigmergyMarker) -> Result<()> {
         let key = format!(
             "{}{}/{}_{}.json",
-            self.prefix,
-            marker.marker_type,
-            marker.topic,
-            marker.id
+            self.prefix, marker.marker_type, marker.topic, marker.id
         );
 
         self.client
@@ -179,15 +179,21 @@ impl Stigmergy {
     }
 
     /// Reinforce a marker by increasing its intensity
-    pub async fn reinforce_marker(&self, marker: &mut StigmergyMarker, agent_id: &str, action_taken: bool) -> Result<()> {
+    pub async fn reinforce_marker(
+        &self,
+        marker: &mut StigmergyMarker,
+        agent_id: &str,
+        action_taken: bool,
+    ) -> Result<()> {
         let reinforcement = if action_taken { 0.2 } else { 0.1 };
         marker.intensity = (marker.intensity + reinforcement).min(1.0);
-        
+
         // Record who reinforced it in metadata
-        let reinforced_by = marker.metadata
+        let reinforced_by = marker
+            .metadata
             .entry("reinforced_by".to_string())
             .or_insert(serde_json::Value::Array(Vec::new()));
-        
+
         if let Some(arr) = reinforced_by.as_array_mut() {
             let agent_val = serde_json::Value::String(agent_id.to_string());
             if !arr.contains(&agent_val) {

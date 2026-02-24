@@ -43,13 +43,10 @@ Evaluation Criteria:
             query, context, response
         );
 
-        let messages = vec![
-            Message::system(system_prompt),
-            Message::user(user_msg),
-        ];
+        let messages = vec![Message::system(system_prompt), Message::user(user_msg)];
 
         let result = self.client.complete(&messages).await?;
-        
+
         // Find JSON block if LLM adds markdown formatting
         let json_str = if let Some(start) = result.find('{') {
             if let Some(end) = result.rfind('}') {
@@ -76,7 +73,7 @@ async fn test_rag_quality_invariant() -> anyhow::Result<()> {
             return Ok(());
         }
     };
-    
+
     let client = LlmClient::new(provider);
     let judge = EvaluationJudge::new(client);
 
@@ -87,7 +84,7 @@ async fn test_rag_quality_invariant() -> anyhow::Result<()> {
 
     let score = judge.evaluate_response(query, context, response).await?;
     println!("Evaluation Score (Good): {:?}", score);
-    
+
     assert!(score.groundedness > 0.8);
     assert!(score.utility > 0.8);
 
@@ -98,8 +95,11 @@ async fn test_rag_quality_invariant() -> anyhow::Result<()> {
 
     let score = judge.evaluate_response(query, context, response).await?;
     println!("Evaluation Score (Hallucination): {:?}", score);
-    
-    assert!(score.groundedness < 0.5, "Hallucination should have low groundedness");
+
+    assert!(
+        score.groundedness < 0.5,
+        "Hallucination should have low groundedness"
+    );
 
     Ok(())
 }

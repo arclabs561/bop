@@ -97,4 +97,3 @@ impl Default for Session {
         Self::new()
     }
 }
-

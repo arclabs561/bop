@@ -1,4 +1,4 @@
-use bop_agent_core::storage::{KnowledgeStore, KnowledgeItem};
+use bop_agent_core::storage::{KnowledgeItem, KnowledgeStore};
 use criterion::{criterion_group, criterion_main, Criterion};
 use tempfile::tempdir;
 use uuid::Uuid;
@@ -17,11 +17,13 @@ fn bench_redb_vs_sled(c: &mut Criterion) {
         })
     });
 
-    let items: Vec<KnowledgeItem> = (0..10).map(|_| {
-        let item = KnowledgeItem::new("Benchmarking read performance");
-        store.store(&item).unwrap();
-        item
-    }).collect();
+    let items: Vec<KnowledgeItem> = (0..10)
+        .map(|_| {
+            let item = KnowledgeItem::new("Benchmarking read performance");
+            store.store(&item).unwrap();
+            item
+        })
+        .collect();
 
     group.bench_function("Redb Get", |b| {
         let mut i = 0;

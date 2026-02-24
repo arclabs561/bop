@@ -78,7 +78,7 @@ impl Orchestrator {
     /// Add a task to the queue
     pub async fn add_task(&mut self, task: Task) -> Result<Uuid> {
         let id = task.id;
-        
+
         if let Some(db) = &self.db {
             let status_str = serde_json::to_string(&task.status)?;
             db.execute(
@@ -94,7 +94,7 @@ impl Orchestrator {
         } else {
             self.tasks.push(task);
         }
-        
+
         Ok(id)
     }
 
@@ -114,7 +114,7 @@ impl Orchestrator {
                     Some(s) => Some(Uuid::parse_str(&s)?),
                     None => None,
                 };
-                
+
                 self.tasks.push(Task {
                     id: task_id,
                     description: row.description,
@@ -136,7 +136,7 @@ impl Orchestrator {
                 if let Some(db) = &self.db {
                     let status_str = serde_json::to_string(&TaskStatus::InProgress)?;
                     let pending_str = serde_json::to_string(&TaskStatus::Pending)?;
-                    
+
                     let rows_affected = db.execute(
                         "UPDATE tasks SET status = $1, assigned_to = $2 WHERE id = $3 AND status = $4",
                         vec![
@@ -177,8 +177,9 @@ impl Orchestrator {
                             status_str.into(),
                             task.result.clone().into(),
                             task.id.to_string().into(),
-                        ]
-                    ).await?;
+                        ],
+                    )
+                    .await?;
                 }
             }
 
@@ -191,7 +192,12 @@ impl Orchestrator {
     /// Get all tasks
     pub async fn tasks(&self) -> Result<Vec<Task>> {
         if let Some(db) = &self.db {
-            let rows: Vec<TaskRow> = db.query_as("SELECT id, description, status, assigned_to, result FROM tasks", vec![]).await?;
+            let rows: Vec<TaskRow> = db
+                .query_as(
+                    "SELECT id, description, status, assigned_to, result FROM tasks",
+                    vec![],
+                )
+                .await?;
             let mut tasks = Vec::new();
             for row in rows {
                 let status: TaskStatus = serde_json::from_str(&row.status)?;

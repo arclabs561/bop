@@ -13,7 +13,10 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum LlmError {
     #[error("{var} not set. {hint}")]
-    MissingEnv { var: &'static str, hint: &'static str },
+    MissingEnv {
+        var: &'static str,
+        hint: &'static str,
+    },
 
     #[error("http error: {0}")]
     Http(#[from] reqwest::Error),
@@ -122,12 +125,21 @@ impl LlmClient {
             LlmProvider::Anthropic { model, api_key } => {
                 self.complete_anthropic(model, api_key, messages).await
             }
-            LlmProvider::OpenAI { model, api_key } => self.complete_openai(model, api_key, messages).await,
-            LlmProvider::Local { model, base_url } => self.complete_local(model, base_url, messages).await,
+            LlmProvider::OpenAI { model, api_key } => {
+                self.complete_openai(model, api_key, messages).await
+            }
+            LlmProvider::Local { model, base_url } => {
+                self.complete_local(model, base_url, messages).await
+            }
         }
     }
 
-    async fn complete_openrouter(&self, model: &str, api_key: &str, messages: &[Message]) -> Result<String> {
+    async fn complete_openrouter(
+        &self,
+        model: &str,
+        api_key: &str,
+        messages: &[Message],
+    ) -> Result<String> {
         #[derive(Serialize)]
         struct Request<'a> {
             model: &'a str,
@@ -180,7 +192,12 @@ impl LlmClient {
             .ok_or_else(|| LlmError::Provider("No response from OpenRouter".into()))
     }
 
-    async fn complete_anthropic(&self, model: &str, api_key: &str, messages: &[Message]) -> Result<String> {
+    async fn complete_anthropic(
+        &self,
+        model: &str,
+        api_key: &str,
+        messages: &[Message],
+    ) -> Result<String> {
         #[derive(Serialize)]
         struct Request<'a> {
             model: &'a str,
@@ -241,17 +258,29 @@ impl LlmClient {
 
         let resp: Response = serde_json::from_str(&body)?;
         if let Some(err) = resp.error {
-            return Err(LlmError::Provider(format!("{}: {}", err.error_type, err.message)));
+            return Err(LlmError::Provider(format!(
+                "{}: {}",
+                err.error_type, err.message
+            )));
         }
 
         let content = resp
             .content
             .ok_or_else(|| LlmError::Provider("No content in response".into()))?;
 
-        Ok(content.into_iter().map(|c| c.text).collect::<Vec<_>>().join(""))
+        Ok(content
+            .into_iter()
+            .map(|c| c.text)
+            .collect::<Vec<_>>()
+            .join(""))
     }
 
-    async fn complete_openai(&self, model: &str, api_key: &str, messages: &[Message]) -> Result<String> {
+    async fn complete_openai(
+        &self,
+        model: &str,
+        api_key: &str,
+        messages: &[Message],
+    ) -> Result<String> {
         #[derive(Serialize)]
         struct Request<'a> {
             model: &'a str,
@@ -287,7 +316,12 @@ impl LlmClient {
             .ok_or_else(|| LlmError::Provider("No response from OpenAI".into()))
     }
 
-    async fn complete_local(&self, model: &str, base_url: &str, messages: &[Message]) -> Result<String> {
+    async fn complete_local(
+        &self,
+        model: &str,
+        base_url: &str,
+        messages: &[Message],
+    ) -> Result<String> {
         #[derive(Serialize)]
         struct Request<'a> {
             model: &'a str,
@@ -320,4 +354,3 @@ impl LlmClient {
         Ok(resp.message.content)
     }
 }
-

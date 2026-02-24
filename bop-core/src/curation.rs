@@ -5,10 +5,10 @@
 //! - Individual memory provides 68.7% improvement over baselines
 //! - Curation consolidates, cleans, and resolves conflicts in shared memory
 
+use anyhow::Result;
+use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use chrono::{DateTime, Utc, Duration};
-use anyhow::Result;
 
 use crate::storage::KnowledgeStore;
 use hop_core::deduplication::{DuplicateDetector, SemanticDuplicateDetector};
@@ -77,9 +77,15 @@ impl CurationAgent {
             if let Some(ref detector) = self.detector {
                 // This is a naive O(N^2) or O(N*K) implementation for now
                 // In a real system, we'd use vector search to find candidates
-                let candidates: Vec<(hop_core::types::DocumentId, String)> = items.iter()
+                let candidates: Vec<(hop_core::types::DocumentId, String)> = items
+                    .iter()
                     .filter(|i| i.id != item.id)
-                    .map(|i| (hop_core::types::DocumentId::new(i.id.to_string()), i.content.clone()))
+                    .map(|i| {
+                        (
+                            hop_core::types::DocumentId::new(i.id.to_string()),
+                            i.content.clone(),
+                        )
+                    })
                     .collect();
 
                 let threshold = 0.85; // High similarity for consolidation

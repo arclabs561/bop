@@ -24,7 +24,7 @@ proptest! {
             Just(Action::Claim),
             Just(Action::Complete),
             Just(Action::Fail),
-        ], 1..20)) 
+        ], 1..20))
     {
         let mut task = Task::new("Invariant check");
         let mut current_status = TaskStatus::Pending;

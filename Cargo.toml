@@ -16,6 +16,7 @@ rust-version = "1.85"
 license = "MIT OR Apache-2.0"
 authors = ["Arc <attobop@gmail.com>"]
 repository = "https://github.com/arclabs561/bop"
+publish = false
 
 [workspace.dependencies]
 # Async runtime
@@ -31,10 +32,10 @@ anyhow = "1.0"
 
 # Utilities
 secrecy = "0.10"
-cerno-fuse = { path = "../cerno/cerno-fuse" }
+rankops = { path = "../rankops" }
 cerno-rerank = { path = "../cerno/cerno-rerank" }
 lattix = { path = "../lattix" }
-jin = { path = "../jin" }
+vicinity = { path = "../vicinity" }
 hyp = { path = "../hyp" }
 subsume-core = { path = "../subsume/subsume-core" }
 subsume-ndarray = { path = "../subsume/subsume-ndarray" }

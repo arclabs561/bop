@@ -38,5 +38,7 @@ pub use ops::cost::{CostMonitor, CostStats};
 pub use orchestrator::Orchestrator;
 pub use research::ResearchAgent;
 pub use riff_agent_core::{Message, Role, Session};
-pub use riff_agent_store::{ClusterRegistry, KnowledgeItem, KnowledgeStore, SessionStore, StoreError};
-pub use stigmergy::{Stigmergy, StigmergyMarker, MarkerType};
+pub use riff_agent_store::{
+    ClusterRegistry, KnowledgeItem, KnowledgeStore, SessionStore, StoreError,
+};
+pub use stigmergy::{MarkerType, Stigmergy, StigmergyMarker};

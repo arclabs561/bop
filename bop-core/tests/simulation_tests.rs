@@ -1,7 +1,7 @@
-use turmoil::Builder;
+use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use std::sync::{Arc, Mutex};
+use turmoil::Builder;
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, PartialEq)]
 enum Message {
@@ -139,15 +139,20 @@ fn test_concurrent_task_claim_race_condition() -> turmoil::Result {
     sim.client("agent-1", async move {
         let stream = turmoil::net::TcpStream::connect("registry:8080").await?;
         let (mut rd, mut wr) = tokio::io::split(stream);
-        
-        let msg = Message::ClaimTask { task_id: "task-1".to_string() };
+
+        let msg = Message::ClaimTask {
+            task_id: "task-1".to_string(),
+        };
         wr.write_all(&serde_json::to_vec(&msg)?).await?;
-        
+
         let mut buf = vec![0; 1024];
         let n = rd.read(&mut buf).await?;
         let resp: Message = serde_json::from_slice(&buf[..n])?;
 
-        results_a1.lock().unwrap().insert("agent-1".to_string(), resp);
+        results_a1
+            .lock()
+            .unwrap()
+            .insert("agent-1".to_string(), resp);
         Ok(())
     });
 
@@ -156,15 +161,20 @@ fn test_concurrent_task_claim_race_condition() -> turmoil::Result {
     sim.client("agent-2", async move {
         let stream = turmoil::net::TcpStream::connect("registry:8080").await?;
         let (mut rd, mut wr) = tokio::io::split(stream);
-        
-        let msg = Message::ClaimTask { task_id: "task-1".to_string() };
+
+        let msg = Message::ClaimTask {
+            task_id: "task-1".to_string(),
+        };
         wr.write_all(&serde_json::to_vec(&msg)?).await?;
-        
+
         let mut buf = vec![0; 1024];
         let n = rd.read(&mut buf).await?;
         let resp: Message = serde_json::from_slice(&buf[..n])?;
 
-        results_a2.lock().unwrap().insert("agent-2".to_string(), resp);
+        results_a2
+            .lock()
+            .unwrap()
+            .insert("agent-2".to_string(), resp);
         Ok(())
     });
 
@@ -183,7 +193,10 @@ fn test_concurrent_task_claim_race_condition() -> turmoil::Result {
     let acks = (r1 == &Message::Ack) as u8 + (r2 == &Message::Ack) as u8;
     let nacks = (r1 == &Message::Nack) as u8 + (r2 == &Message::Nack) as u8;
     assert_eq!(acks, 1, "expected exactly one Ack, got r1={r1:?} r2={r2:?}");
-    assert_eq!(nacks, 1, "expected exactly one Nack, got r1={r1:?} r2={r2:?}");
+    assert_eq!(
+        nacks, 1,
+        "expected exactly one Nack, got r1={r1:?} r2={r2:?}"
+    );
 
     Ok(())
 }
@@ -199,7 +212,9 @@ fn test_network_partition_resilience() -> turmoil::Result {
             tokio::spawn(async move {
                 let mut buf = vec![0; 1024];
                 while let Ok(n) = stream.read(&mut buf).await {
-                    if n == 0 { break; }
+                    if n == 0 {
+                        break;
+                    }
                     let bytes = serde_json::to_vec(&Message::Ack).unwrap();
                     let _ = stream.write_all(&bytes).await;
                 }
@@ -210,9 +225,11 @@ fn test_network_partition_resilience() -> turmoil::Result {
     sim.client("agent-1", async {
         // Initially connected
         let mut stream = turmoil::net::TcpStream::connect("registry:8081").await?;
-        let msg = Message::Register { node_id: "agent-1".to_string() };
+        let msg = Message::Register {
+            node_id: "agent-1".to_string(),
+        };
         stream.write_all(&serde_json::to_vec(&msg)?).await?;
-        
+
         let mut buf = vec![0; 1024];
         let n = stream.read(&mut buf).await?;
         assert_eq!(serde_json::from_slice::<Message>(&buf[..n])?, Message::Ack);
@@ -233,18 +250,18 @@ fn test_network_partition_resilience() -> turmoil::Result {
     });
 
     // Partition logic: cut link, wait, then restore
-    // We can't dynamically restore in turmoil easily without builder hacks, 
+    // We can't dynamically restore in turmoil easily without builder hacks,
     // but we can set a failure rate that changes or use a long duration.
     // Actually, let's just use packet loss 1.0 for a period if possible.
-    
+
     sim.partition("agent-1", "registry");
-    
+
     // Run simulation for a bit while partitioned
-    let _ = sim.run(); 
-    
+    let _ = sim.run();
+
     // turmoil::run() runs until all clients finish.
     // If agent-1 is partitioned, it might hang or fail.
-    
+
     Ok(())
 }
 

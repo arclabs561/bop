@@ -362,7 +362,8 @@ impl ClusterRegistry {
         let now = chrono::Utc::now();
 
         for (id_str, last_seen_str) in rows {
-            let last_seen = chrono::DateTime::parse_from_rfc3339(&last_seen_str)?.with_timezone(&chrono::Utc);
+            let last_seen =
+                chrono::DateTime::parse_from_rfc3339(&last_seen_str)?.with_timezone(&chrono::Utc);
             if now.signed_duration_since(last_seen).num_seconds() < 30 {
                 if let Ok(id) = Uuid::parse_str(&id_str) {
                     active.push(id);
@@ -373,4 +374,3 @@ impl ClusterRegistry {
         Ok(active)
     }
 }
-

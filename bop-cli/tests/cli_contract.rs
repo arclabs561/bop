@@ -25,4 +25,3 @@ fn bop_session_list_json_is_versioned() {
         .stdout(predicate::str::contains("\"schema_version\": 1"))
         .stdout(predicate::str::contains("\"ok\": true"));
 }
-

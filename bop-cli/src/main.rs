@@ -249,7 +249,17 @@ async fn main() -> Result<()> {
             provider,
             local_url,
             system,
-        } => cmd_query(&question, model.as_deref(), &provider, &local_url, system.as_deref(), cli.json).await,
+        } => {
+            cmd_query(
+                &question,
+                model.as_deref(),
+                &provider,
+                &local_url,
+                system.as_deref(),
+                cli.json,
+            )
+            .await
+        }
 
         Commands::Research {
             topic,
@@ -257,7 +267,17 @@ async fn main() -> Result<()> {
             output,
             model,
             provider,
-        } => cmd_research(&topic, depth, output.as_deref(), model.as_deref(), &provider, cli.json).await,
+        } => {
+            cmd_research(
+                &topic,
+                depth,
+                output.as_deref(),
+                model.as_deref(),
+                &provider,
+                cli.json,
+            )
+            .await
+        }
 
         Commands::Chat {
             model,
@@ -345,7 +365,11 @@ async fn cmd_query(
 }
 
 /// Create LLM provider from CLI args
-fn make_provider(provider: &str, model: Option<&str>, local_url: &str) -> Result<bop_agent_core::LlmProvider> {
+fn make_provider(
+    provider: &str,
+    model: Option<&str>,
+    local_url: &str,
+) -> Result<bop_agent_core::LlmProvider> {
     use bop_agent_core::LlmProvider;
 
     match provider {
@@ -408,10 +432,7 @@ async fn cmd_research(
     spinner.set_message(format!("Researching: {} (depth {})", topic, depth));
     spinner.enable_steady_tick(std::time::Duration::from_millis(100));
 
-    let result = agent
-        .research(topic)
-        .await
-        .context("research failed")?;
+    let result = agent.research(topic).await.context("research failed")?;
 
     spinner.finish_and_clear();
 
@@ -437,7 +458,12 @@ async fn cmd_research(
     Ok(())
 }
 
-async fn cmd_chat(model: Option<&str>, provider: &str, local_url: &str, _session_id: Option<&str>) -> Result<()> {
+async fn cmd_chat(
+    model: Option<&str>,
+    provider: &str,
+    local_url: &str,
+    _session_id: Option<&str>,
+) -> Result<()> {
     use bop_agent_core::Agent;
 
     let llm = make_provider(provider, model, local_url)?;
@@ -634,7 +660,7 @@ async fn cmd_ops(action: OpsAction, json_output: bool) -> Result<()> {
         OpsAction::Clean { bucket, dry_run } => {
             let stig = Stigmergy::new(bucket).await?;
             let markers = stig.sense_markers(None, None).await?;
-            
+
             let mut deleted = 0;
             for marker in markers {
                 if marker.is_expired() {
@@ -677,8 +703,10 @@ async fn cmd_ops(action: OpsAction, json_output: bool) -> Result<()> {
                 println!("{}", serde_json::to_string_pretty(&output)?);
             } else {
                 for marker in markers {
-                    println!("[{}] {}: {} (intensity: {:.2})", 
-                        marker.marker_type, marker.agent_id, marker.topic, marker.intensity);
+                    println!(
+                        "[{}] {}: {} (intensity: {:.2})",
+                        marker.marker_type, marker.agent_id, marker.topic, marker.intensity
+                    );
                 }
             }
         }
@@ -695,7 +723,10 @@ async fn cmd_ops(action: OpsAction, json_output: bool) -> Result<()> {
                     });
                     println!("{}", serde_json::to_string_pretty(&output)?);
                 } else {
-                    println!("AWS Cost Analysis (MTD: {} to {}):", stats.period_start, stats.period_end);
+                    println!(
+                        "AWS Cost Analysis (MTD: {} to {}):",
+                        stats.period_start, stats.period_end
+                    );
                     println!("  Total USD: ${:.2}", stats.total_usd);
                     println!("  Top Services:");
                     for (svc, amt) in stats.top_services {
@@ -710,7 +741,7 @@ async fn cmd_ops(action: OpsAction, json_output: bool) -> Result<()> {
 }
 
 async fn cmd_curate(db_path: &std::path::Path, stale_days: i64, json_output: bool) -> Result<()> {
-    use bop_agent_core::{KnowledgeStore, CurationAgent};
+    use bop_agent_core::{CurationAgent, KnowledgeStore};
 
     let store = KnowledgeStore::open(db_path)?;
     let agent = CurationAgent::new(store).with_stale_days(stale_days);

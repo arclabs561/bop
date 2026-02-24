@@ -3,9 +3,11 @@
 //! Tracks AWS spend patterns and detects anomalies.
 
 use anyhow::Result;
+use aws_sdk_costexplorer::types::{
+    DateInterval, Granularity, GroupDefinition, GroupDefinitionType,
+};
 use aws_sdk_costexplorer::Client;
-use aws_sdk_costexplorer::types::{DateInterval, Granularity, GroupDefinition, GroupDefinitionType};
-use chrono::{Utc, Datelike};
+use chrono::{Datelike, Utc};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -33,12 +35,10 @@ impl CostMonitor {
         let start = format!("{}-{:02}-01", now.year(), now.month());
         let end = now.format("%Y-%m-%d").to_string();
 
-        let interval = DateInterval::builder()
-            .start(&start)
-            .end(&end)
-            .build()?;
+        let interval = DateInterval::builder().start(&start).end(&end).build()?;
 
-        let response = self.client
+        let response = self
+            .client
             .get_cost_and_usage()
             .time_period(interval)
             .granularity(Granularity::Monthly)
@@ -47,7 +47,7 @@ impl CostMonitor {
                 GroupDefinition::builder()
                     .r#type(GroupDefinitionType::Dimension)
                     .key("SERVICE")
-                    .build()
+                    .build(),
             )
             .send()
             .await?;
@@ -59,13 +59,17 @@ impl CostMonitor {
             for result in results {
                 if let Some(groups) = result.groups {
                     for group in groups {
-                        let service_name = group.keys.and_then(|k| k.first().cloned()).unwrap_or_else(|| "Unknown".to_string());
-                        let amount = group.metrics
+                        let service_name = group
+                            .keys
+                            .and_then(|k| k.first().cloned())
+                            .unwrap_or_else(|| "Unknown".to_string());
+                        let amount = group
+                            .metrics
                             .and_then(|m| m.get("UnblendedCost").cloned())
                             .and_then(|v| v.amount)
                             .and_then(|a| a.parse::<f64>().ok())
                             .unwrap_or(0.0);
-                        
+
                         total += amount;
                         services.push((service_name, amount));
                     }
