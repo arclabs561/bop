@@ -65,9 +65,8 @@ data/results/
 cache/
 sessions/
 
-# Mutation testing workspace (if used, otherwise can be removed)
-mutants/.pytest_cache/
-mutants/**/__pycache__/
+# Mutation testing (mutmut generates 298k-line trampoline files)
+mutants/
 
 # Node.js
 node_modules/
@@ -103,6 +102,9 @@ Thumbs.db
 
 # OpenMemory - IDE/Assistant specific rules
 .cursor/rules/openmemory.mdc
+
+# Generated assets (logo collage is ~15MB output)
+assets/logos/logo_collage_actual.png
 
 # Rust
 target/
