@@ -1,5 +1,9 @@
 # bop
 
+[![crates.io](https://img.shields.io/crates/v/bop.svg)](https://crates.io/crates/bop)
+[![Documentation](https://docs.rs/bop/badge.svg)](https://docs.rs/bop)
+[![CI](https://github.com/arclabs561/bop/actions/workflows/ci.yml/badge.svg)](https://github.com/arclabs561/bop/actions/workflows/ci.yml)
+
 Research agent CLI. Agents bop around exploring and synthesizing.
 
 ## Install
